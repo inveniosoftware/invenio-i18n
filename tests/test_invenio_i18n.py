@@ -62,10 +62,24 @@ def test_init_ext(app):
 
 def test_default_lang(app):
     """Test default language."""
-    app.config.update(I18N_LANGUAGES=["en", "de"], BABEL_DEFAULT_LOCALE="da")
+    app.config.update(
+        I18N_LANGUAGES=[("en", "English"), ("de", "German")],
+        BABEL_DEFAULT_LOCALE="da")
     i18n = InvenioI18N(app)
     with app.app_context():
         assert [str(x) for x in i18n.get_locales()] == ['da', 'en', 'de']
+
+
+def test_get_languages(app):
+    """Test default language."""
+    app.config.update(
+        I18N_LANGUAGES=[
+            ("en", lazy_gettext("engelsk")), ("de", lazy_gettext("tysk"))],
+        BABEL_DEFAULT_LOCALE="da")
+    i18n = InvenioI18N(app)
+    with app.app_context():
+        assert i18n.get_languages() == \
+            [('da', 'dansk'), ('en', 'engelsk'), ('de', 'tysk')]
 
 
 def test_json_encoder(app):
@@ -77,7 +91,7 @@ def test_json_encoder(app):
 
 def test_timezone_selector(app):
     """Test format_datetime."""
-    app.config['I18N_LANGUAGES'] = ['da']
+    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
     InvenioI18N(app)
     with app.test_request_context():
         assert format_datetime(datetime(1987, 3, 5, 17, 12)) == \
@@ -98,7 +112,7 @@ def test_timezone_selector(app):
 
 def test_locale_selector(app):
     """Test locale selector."""
-    app.config['I18N_LANGUAGES'] = ['da']
+    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
     InvenioI18N(app)
 
     with app.test_request_context(headers=[('Accept-Language', 'da')]):
@@ -113,7 +127,7 @@ def test_locale_selector(app):
 
 def test_get_locales(app):
     """Test getting locales."""
-    app.config['I18N_LANGUAGES'] = ['da']
+    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
     i18n = InvenioI18N(app)
 
     with app.app_context():

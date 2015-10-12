@@ -32,11 +32,14 @@ from flask import current_app, request
 
 
 def get_locale():
-    """Get locale based on Accept-Language HTTP headers."""
+    """Get locale based on Accept-Language HTTP headers.
+
+    Will only accept languages defined in ``I18N_LANGUAGES``.
+    """
     return request.accept_languages.best_match(
         [str(l) for l in current_app.extensions['invenio-i18n'].get_locales()])
 
 
 def get_timezone():
-    """Get timezone of server."""
+    """Get default timezone (i.e. ``BABEL_DEFAULT_TIMEZONE``)."""
     return current_app.extensions['babel'].default_timezone

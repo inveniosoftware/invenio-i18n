@@ -35,7 +35,7 @@ from pkg_resources import iter_entry_points, resource_filename, resource_isdir
 
 
 class NoCompiledTranslationError(Exception):
-    """Raised when no compiled *.mo translations are found."""
+    """Raised when no compiled ``*.mo`` translations are found."""
 
 
 class MultidirDomain(Domain):
@@ -93,7 +93,7 @@ class MultidirDomain(Domain):
         return translations or NullTranslations()
 
     def get_translations(self):
-        """Return the correct gettext translations for request.
+        """Return the correct gettext translations for a request.
 
         This will never fail and return a dummy translation object if used
         outside of the request or if a translation cannot be found.

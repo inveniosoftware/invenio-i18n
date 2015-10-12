@@ -34,10 +34,16 @@ from flask_babelex import to_user_timezone, to_utc
 
 
 def filter_to_user_timezone(dt):
-    """Convert a datetime object to the user's timezone."""
+    """Convert a datetime object to the user's timezone.
+
+    Installed on application as ``tousertimezone``.
+    """
     return to_user_timezone(dt)
 
 
 def filter_to_utc(dt):
-    """Convert a datetime object to UTC and drop tzinfo."""
+    """Convert a datetime object to UTC and drop tzinfo.
+
+    Installed on application as ``toutc``.
+    """
     return to_utc(dt)

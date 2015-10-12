@@ -29,7 +29,7 @@ from __future__ import absolute_import, print_function
 import os.path
 
 from flask import current_app
-from flask_babelex import Babel
+from flask_babelex import Babel, lazy_gettext
 from six import text_type
 
 from .babel import MultidirDomain
@@ -38,7 +38,10 @@ from .selectors import get_locale, get_timezone
 
 
 def get_lazystring_encoder(app):
-    """Custom JSONEncoder that handles lazy strings from Babel."""
+    """Custom JSONEncoder that handles lazy strings from Babel.
+
+    Installed on Flask application by default by :py:class:`InvenioI18N`.
+    """
     from speaklater import _LazyString
 
     class JSONEncoder(app.json_encoder):
@@ -52,7 +55,17 @@ def get_lazystring_encoder(app):
 
 
 class InvenioI18N(object):
-    """Invenio I18N module."""
+    """Invenio I18N extension.
+
+    :param app: Flask application.
+    :param data_formats: Override default date/time formatting.
+    :param localeselector: Callback function used for locale selection.
+        Defaults to using :py:func:`invenio_i18n.selectors.get_locale()`.
+    :param timezoneselector: Callback function used for timezone selection.
+        Defaults to ``BABEL_DEFAULT_TIMEZONE``.
+    :param entrypoint: Entrypoint used to load translations from. Set to
+        ``None`` to not load translations from entry points.
+    """
 
     def __init__(self, app=None, date_formats=None, localeselector=None,
                  timezoneselector=None,
@@ -67,16 +80,27 @@ class InvenioI18N(object):
         self.timezoneselector = timezoneselector
         self.entrypoint = entrypoint
         self._locales_cache = None
+        self._languages_cache = None
 
         if app:
             self.init_app(app)
 
     def init_app(self, app):
-        """Flask application initialization."""
-        # Initialize Flask-BabelEx
+        """Flask application initialization.
+
+        The initialization will:
+
+         * Set default values for the configuration variables.
+         * Load translations from paths specified in
+           ``I18N_TRANSLATIONS_PATHS``.
+         * Load translations from ``app.root_path>/translations`` if it exists.
+         * Load translations from a specified entry point.
+         * Add ``toutc`` and ``tousertimezone`` template filters.
+         * Install a custom JSON encoder on app.
+        """
         app.config.setdefault("I18N_LANGUAGES", [])
 
-        # TODO: allow to plug custom localeselector and timezoneselector
+        # Initialize Flask-BabelEx
         self.babel.init_app(app)
         self.babel.localeselector(self.localeselector or get_locale)
         self.babel.timezoneselector(self.timezoneselector or get_timezone)
@@ -104,11 +128,31 @@ class InvenioI18N(object):
 
         app.extensions['invenio-i18n'] = self
 
+    def iter_languages(self):
+        """Iterate over list of languages."""
+        default_lang = self.babel.default_locale.language
+        default_title = self.babel.default_locale.get_display_name(
+            default_lang)
+
+        yield (default_lang, lazy_gettext(default_title))
+
+        for l, title in current_app.config.get('I18N_LANGUAGES', []):
+            yield l, title
+
+    def get_languages(self):
+        """Get list of languages."""
+        if self._languages_cache is None:
+            self._languages_cache = list(self.iter_languages())
+        return self._languages_cache
+
     def get_locales(self):
-        """Get a list of supported locales."""
+        """Get a list of supported locales.
+
+        Computes the list using ``I18N_LANGUAGES`` configuration variable.
+        """
         if self._locales_cache is None:
             langs = [self.babel.default_locale]
-            for l in current_app.config.get('I18N_LANGUAGES', []):
+            for l, dummy_title in current_app.config.get('I18N_LANGUAGES', []):
                 langs.append(self.babel.load_locale(l))
             self._locales_cache = langs
         return self._locales_cache

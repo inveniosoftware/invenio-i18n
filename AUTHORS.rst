@@ -27,4 +27,4 @@ Authors
 
 Invenio internationalization module.
 
-- CERN <info@invenio-software.org>
+- Lars Holm Nielsen <lars.holm.nielsen@cern.ch>

@@ -26,10 +26,13 @@
 
 from __future__ import absolute_import, print_function
 
-import pytest
-from babel.support import NullTranslations
+from os.path import dirname, join
 
-from invenio_i18n.babel import MultidirDomain
+import pytest
+from babel.support import NullTranslations, Translations
+from flask_babelex import get_locale, gettext
+
+from invenio_i18n.babel import MultidirDomain, set_locale
 
 
 def test_init():
@@ -43,6 +46,25 @@ def test_init():
     assert not d.has_paths()
 
 
+def test_merge_translations(app):
+    """Test initialization."""
+    d = MultidirDomain(
+        paths=[join(dirname(__file__), 'translations')],
+        entrypoint='invenio_i18n.translations')
+
+    with app.test_request_context():
+        with set_locale('en'):
+            t = d.get_translations()
+            assert isinstance(t, Translations)
+            # Only in tests/translations
+            assert t.gettext('Test string') == 'Test string from test'
+            # Only in invenio_i18n/translations
+            assert t.gettext('Block translate %s') % 'a' \
+                == 'Block translate a'
+            # In both - tests/translations overwrites invenio_i18n/translations
+            assert t.gettext('Translate') == 'From test catalog'
+
+
 def test_add_nonexisting_path():
     """Test add non-existing path."""
     d = MultidirDomain()
@@ -53,3 +75,32 @@ def test_get_translations():
     """Test get translations."""
     d = MultidirDomain()
     assert isinstance(d.get_translations(), NullTranslations)
+
+
+def test_get_translations_existing_and_missing_mo(app):
+    """Test get translations for language with existing/missing *.mo files."""
+    app.config['I18N_LANGUAGES'] = [('de', 'German')]
+
+    d = MultidirDomain(entrypoint='invenio_i18n.translations')
+
+    with app.test_request_context():
+        with set_locale('en'):
+            assert isinstance(d.get_translations(), Translations)
+        with set_locale('de'):
+            assert isinstance(d.get_translations(), NullTranslations)
+
+
+def test_set_locale(app):
+    """Test get translations for language with existing/missing *.mo files."""
+    # Wokring outside request context
+    try:
+        with set_locale('en'):
+            assert False
+    except RuntimeError:
+        pass
+
+    with app.test_request_context():
+        with set_locale('en'):
+            assert get_locale() == 'en'
+        with set_locale('da'):
+            assert get_locale() == 'da'

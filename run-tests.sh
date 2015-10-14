@@ -23,6 +23,7 @@
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
 python setup.py compile_catalog && \
+pybabel compile -d tests/translations/ -l en && \
 pep257 invenio_i18n && \
 isort -rc -c -df **/*.py && \
 check-manifest --ignore ".travis-*" && \

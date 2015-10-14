@@ -27,19 +27,35 @@
 from __future__ import absolute_import, print_function
 
 import os
+from contextlib import contextmanager
 
 from babel.support import NullTranslations, Translations
-from flask import _request_ctx_stack
+from flask import _request_ctx_stack, current_app
 from flask_babelex import Domain, get_locale
 from pkg_resources import iter_entry_points, resource_filename, resource_isdir
 
 
-class NoCompiledTranslationError(Exception):
-    """Raised when no compiled ``*.mo`` translations are found."""
+@contextmanager
+def set_locale(ln):
+    """Set Babel localization in request context."""
+    ctx = _request_ctx_stack.top
+    if ctx is None:
+        raise RuntimeError("Working outside of request context.")
+    locale = getattr(ctx, 'babel_locale', None)
+    setattr(ctx, 'babel_locale', ln)
+    yield
+    setattr(ctx, 'babel_locale', locale)
 
 
 class MultidirDomain(Domain):
-    """Domain supporting merging translations from many catalogs."""
+    """Domain supporting merging translations from many catalogs.
+
+    The domain contains an internal list of paths that it loads translations
+    from. The translations are merged in order of the list of paths, hence
+    the last path in the list will overwrite strings set by previous paths.
+
+    Entry points are added to the list of paths before the ``paths``.
+    """
 
     def __init__(self, paths=[], entrypoint=None, domain='messages'):
         """Initialize domain."""
@@ -72,11 +88,12 @@ class MultidirDomain(Domain):
         """Get translation for a specific locale."""
         translations = None
 
-        for dirname in reversed(self.paths):
+        for dirname in self.paths:
             # Load a single catalog.
             catalog = Translations.load(dirname, [locale], domain=self.domain)
             if translations is None:
-                translations = catalog
+                if isinstance(catalog, NullTranslations):
+                    translations = catalog
                 continue
 
             try:
@@ -85,9 +102,10 @@ class MultidirDomain(Domain):
             except AttributeError:
                 # Translations is probably NullTranslations
                 if isinstance(catalog, NullTranslations):
-                    raise NoCompiledTranslationError(
-                        "Compiled translations seems to be missing in %s."
-                        % dirname)
+                    current_app.logger.debug(
+                        "Compiled translations seems to be missing"
+                        " in {0}.".format(dirname))
+                    continue
                 raise
 
         return translations or NullTranslations()

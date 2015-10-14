@@ -21,7 +21,7 @@ msgstr ""
 
 #: invenio_i18n/babel.py:41
 msgid "Translate"
-msgstr ""
+msgstr "Translate"
 
 #: invenio_i18n/babel.py:42
 #, python-format

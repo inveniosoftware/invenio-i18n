@@ -1,8 +1,8 @@
 =====================
- Invenio-I18N v0.1.0
+ Invenio-I18N v1.0.0
 =====================
 
-Invenio-I18N v0.1.0 was released on TBD, 2015.
+Invenio-I18N v1.0.0 was released on October 26, 2015.
 
 About
 -----
@@ -19,7 +19,7 @@ What's new
 Installation
 ------------
 
-   $ pip install invenio-i18n==0.1.0
+   $ pip install invenio-i18n==1.0.0
 
 Documentation
 -------------

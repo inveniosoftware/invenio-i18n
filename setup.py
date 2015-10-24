@@ -37,7 +37,7 @@ tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
     'isort>=4.2.2',
-    'pep257>=0.6.0',
+    'pep257>=0.7.0',
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
@@ -46,7 +46,7 @@ tests_require = [
 
 extras_require = {
     'docs': [
-        "Sphinx>=1.3",
+        'Sphinx>=1.3',
     ],
     'tests': tests_require,
 }
@@ -121,8 +121,11 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
-        "invenio_i18n.translations": [
-            "messages = invenio_i18n"
+        'invenio_base.apps': [
+            'invenio_i18n = invenio_i18n:InvenioI18N',
+        ],
+        'invenio_i18n.translations': [
+            'messages = invenio_i18n'
         ],
     },
     extras_require=extras_require,

@@ -75,6 +75,12 @@ Configuration
                             should not include ``BABEL_DEFAULT_LOCALE``
                             in this list). Defaults to:
                             ``[]``.
+`I18N_SESSION_KEY`          Key to retrieve from Flask session object
+                            the variable which is containing the language
+                            for the current session.
+`I18N_USER_LANG_ATTR`       Key to retrieve from the User object the
+                            variable which is containing the prefered
+                            language of the user.
 =========================== =============================================
 
 In addition, Flask-BabelEx sets system-wide defaults using the following

@@ -38,7 +38,7 @@ from invenio_i18n.babel import MultidirDomain, set_locale
 def test_init():
     """Test initialization."""
     d = MultidirDomain(
-        paths=['.', '..'], entrypoint='invenio_i18n.translations')
+        paths=['.', '..'], entry_point_group='invenio_i18n.translations')
     assert d
     assert d.has_paths()
 
@@ -50,7 +50,7 @@ def test_merge_translations(app):
     """Test initialization."""
     d = MultidirDomain(
         paths=[join(dirname(__file__), 'translations')],
-        entrypoint='invenio_i18n.translations')
+        entry_point_group='invenio_i18n.translations')
 
     with app.test_request_context():
         with set_locale('en'):
@@ -81,7 +81,7 @@ def test_get_translations_existing_and_missing_mo(app):
     """Test get translations for language with existing/missing *.mo files."""
     app.config['I18N_LANGUAGES'] = [('de', 'German')]
 
-    d = MultidirDomain(entrypoint='invenio_i18n.translations')
+    d = MultidirDomain(entry_point_group='invenio_i18n.translations')
 
     with app.test_request_context():
         with set_locale('en'):

@@ -22,25 +22,31 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-include .dockerignore
-include .editorconfig
-include *.rst
-include *.sh
-include *.txt
-include LICENSE
-include babel.ini
-include pytest.ini
-recursive-include docs *.bat
-recursive-include docs *.py
-recursive-include docs *.rst
-recursive-include docs Makefile
-recursive-include misc *.py
-recursive-include misc *.rst
-recursive-include tests *.py
-recursive-include invenio_i18n *.po
-recursive-include invenio_i18n *.mo
-recursive-include tests *.po
-recursive-include tests *.mo
-recursive-include examples *.html
-recursive-include examples *.po
-recursive-include examples *.py
+
+"""Minimal Flask application example for development.
+
+Run the development server:
+
+.. code-block:: console
+
+   $ flask -a app.py run
+
+"""
+
+from __future__ import absolute_import, print_function
+
+from flask import Flask, render_template
+
+from invenio_i18n import InvenioI18N
+
+# Create Flask application
+app = Flask(__name__)
+app.config.update(
+    I18N_LANGUAGES=[("da", "Danish"), ("en", "English"), ("es", "Spanish")],
+)
+InvenioI18N(app)
+
+
+@app.route("/")
+def index():
+    return render_template('invenio_i18n/page.html')

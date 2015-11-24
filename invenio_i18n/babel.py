@@ -57,11 +57,11 @@ class MultidirDomain(Domain):
     Entry points are added to the list of paths before the ``paths``.
     """
 
-    def __init__(self, paths=[], entrypoint=None, domain='messages'):
+    def __init__(self, paths=[], entry_point_group=None, domain='messages'):
         """Initialize domain."""
         self.paths = []
-        if entrypoint:
-            self.add_entrypoint(entrypoint)
+        if entry_point_group:
+            self.add_entrypoint(entry_point_group)
         for p in paths:
             self.add_path(p)
         super(MultidirDomain, self).__init__(domain=domain)

@@ -28,16 +28,58 @@ See full documentation of corresponding methods in Flask-BabelEx:
 https://pythonhosted.org/Flask-BabelEx/
 """
 
-from flask import current_app, request
+from flask import current_app, request, session
+
+try:
+    from flask_login import current_user
+except ImportError:  # pragma nocover
+    current_user = None
 
 
 def get_locale():
-    """Get locale based on Accept-Language HTTP headers.
+    """
+    Get locale based on the several rules.
+
+    Ordered from more priority to default:
+
+    - User has specified a concrete language in the querystring.
+    - Current session has a language set.
+    - User has a language set in the profile.
+    - Headers of the HTTP request.
+    - Default language from BABEL_DEFAULT_LOCALE.
 
     Will only accept languages defined in ``I18N_LANGUAGES``.
     """
-    return request.accept_languages.best_match(
-        [str(l) for l in current_app.extensions['invenio-i18n'].get_locales()])
+    locales = [str(l) for l in
+               current_app.extensions['invenio-i18n'].get_locales()]
+
+    # In the case of the user specifies a language for the resource.
+    if 'ln' in request.args:
+        language = request.args.get('ln')
+        if language in locales:
+            return language
+
+    # In the case of the user has set a language for the current session.
+    language_session_key = current_app.config['I18N_SESSION_KEY']
+    if language_session_key in session:
+        language = session[language_session_key]
+        if language in locales:
+            return language
+
+    # In the case of the registered user has a prefered language.
+    if hasattr(current_app, 'login_manager') and \
+            current_user.is_authenticated:
+        language_user_key = current_app.config['I18N_USER_LANG_ATTR']
+        if getattr(current_user, language_user_key) in locales:
+            return getattr(current_user, language_user_key)
+
+    # Using the headers that the navigator has sent.
+    headers_best_match = request.accept_languages.best_match(locales)
+    if headers_best_match is not None:
+        return headers_best_match
+
+    # If there is no way to know the language, return BABEL_DEFAULT_LOCALE
+    return current_app.config['BABEL_DEFAULT_LOCALE']
 
 
 def get_timezone():

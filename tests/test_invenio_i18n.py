@@ -46,7 +46,7 @@ def test_init(app):
     """Test extension initalization."""
     i18n = InvenioI18N(app)
     assert i18n.babel
-    assert i18n.entrypoint
+    assert i18n.entry_point_group
     assert app.config.get("I18N_LANGUAGES") == []
     assert 'toutc' in app.jinja_env.filters
     assert 'tousertimezone' in app.jinja_env.filters
@@ -55,7 +55,7 @@ def test_init(app):
 def test_init_ext(app):
     """Test extension initalization."""
     app.config["I18N_LANGUAGES"] = ["da"]
-    i18n = InvenioI18N(entrypoint=None)
+    i18n = InvenioI18N(entry_point_group=None)
     i18n.init_app(app)
     assert i18n.babel
 

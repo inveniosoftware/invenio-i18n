@@ -42,6 +42,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
+    'flask_login>=0.3.2',
 ]
 
 extras_require = {

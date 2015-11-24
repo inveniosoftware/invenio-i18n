@@ -69,7 +69,7 @@ class InvenioI18N(object):
 
     def __init__(self, app=None, date_formats=None, localeselector=None,
                  timezoneselector=None,
-                 entrypoint='invenio_i18n.translations'):
+                 entry_point_group='invenio_i18n.translations'):
         """Initialize extension."""
         self.babel = Babel(
             date_formats=date_formats,
@@ -78,7 +78,7 @@ class InvenioI18N(object):
 
         self.localeselector = localeselector
         self.timezoneselector = timezoneselector
-        self.entrypoint = entrypoint
+        self.entry_point_group = entry_point_group
         self._locales_cache = None
         self._languages_cache = None
 
@@ -99,6 +99,8 @@ class InvenioI18N(object):
          * Install a custom JSON encoder on app.
         """
         app.config.setdefault("I18N_LANGUAGES", [])
+        app.config.setdefault("I18N_SESSION_KEY", "language")
+        app.config.setdefault("I18N_USER_LANG_ATTR", "prefered_language")
 
         # Initialize Flask-BabelEx
         self.babel.init_app(app)
@@ -115,8 +117,8 @@ class InvenioI18N(object):
         if os.path.exists(app_translations):
             domain.add_path(app_translations)
         # 3. Entrypoints
-        if self.entrypoint:
-            domain.add_entrypoint(self.entrypoint)
+        if self.entry_point_group:
+            domain.add_entrypoint(self.entry_point_group)
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).

@@ -141,3 +141,15 @@ def test_get_locale_default(app):
 
     with app.test_request_context():
         assert 'en' == get_locale()
+
+
+def test_get_locale_anonymous_user(app):
+    """Test anonymous user locale selection by default."""
+    app.secret_key = 'secret key'
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'login'
+    InvenioI18N(app)
+
+    with app.test_request_context():
+        assert 'en' == get_locale()

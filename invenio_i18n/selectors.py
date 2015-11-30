@@ -37,12 +37,11 @@ except ImportError:  # pragma nocover
 
 
 def get_locale():
-    """
-    Get locale based on the several rules.
+    """Get locale.
 
-    Ordered from more priority to default:
+    Searches for locale in the following the order:
 
-    - User has specified a concrete language in the querystring.
+    - User has specified a concrete language in the query string.
     - Current session has a language set.
     - User has a language set in the profile.
     - Headers of the HTTP request.
@@ -68,7 +67,7 @@ def get_locale():
 
     # In the case of the registered user has a prefered language.
     if hasattr(current_app, 'login_manager') and \
-            current_user.is_authenticated:
+            current_user.is_authenticated():
         language_user_key = current_app.config['I18N_USER_LANG_ATTR']
         if getattr(current_user, language_user_key, None) in locales:
             return getattr(current_user, language_user_key)

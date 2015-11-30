@@ -22,7 +22,7 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-u"""Invenio internationalization module.
+"""Invenio internationalization module.
 
 This module provide features for loading and merging message catalogs. It is
 built on top of `Flask-BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_ and
@@ -58,10 +58,10 @@ as well as internationalization features:
 
 >>> from flask_babelex import gettext
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
-...     gettext('Translate') == u'Translate'
+...     gettext('Translate') == 'Translate'
 True
 >>> with app.test_request_context(headers=[('Accept-Language', 'da')]):
-...     gettext('Translate') == u'Oversætte'
+...     gettext('Translate') != u'Translate'
 True
 
 

@@ -37,11 +37,11 @@ class FakeUser(object):
     """Fake class simulation a user."""
 
     def __init__(self, prefered_language):
-        self.is_authenticated = True
+        """Initialize fake user."""
         self.prefered_language = prefered_language
 
     def is_active(self):
-        """True, out fake user is active."""
+        """True, fake user is active."""
         return True
 
     def get_id(self):
@@ -49,7 +49,7 @@ class FakeUser(object):
         return 1
 
     def is_authenticated(self):
-        """True, out fake user is authenticated"""
+        """True, fake user is authenticated."""
         return True
 
 

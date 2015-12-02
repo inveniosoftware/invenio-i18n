@@ -68,20 +68,26 @@ True
 Configuration
 -------------
 
-=========================== =============================================
-`I18N_TRASNLATION_PATHS`    List of paths to load message catalogs from.
-                            Defaults to ``[]``.
-`I18N_LANGUAGES`            List of tuples of available languages (you
-                            should not include ``BABEL_DEFAULT_LOCALE``
-                            in this list). Defaults to:
-                            ``[]``.
-`I18N_SESSION_KEY`          Key to retrieve from Flask session object
-                            the variable which is containing the language
-                            for the current session.
-`I18N_USER_LANG_ATTR`       Key to retrieve from the User object the
-                            variable which is containing the prefered
-                            language of the user.
-=========================== =============================================
+================================ =============================================
+`I18N_TRASNLATION_PATHS`         List of paths to load message catalogs from.
+                                 Defaults to ``[]``.
+`I18N_LANGUAGES`                 List of tuples of available languages (you
+                                 should not include ``BABEL_DEFAULT_LOCALE``
+                                 in this list). Defaults to:
+                                 ``[]``.
+`I18N_SESSION_KEY`               Key to retrieve from Flask session object
+                                 the variable which is containing the language
+                                 for the current session.
+`I18N_USER_LANG_ATTR`            Key to retrieve from the User object the
+                                 variable which is containing the prefered
+                                 language of the user.
+`I18N_SET_LANGUAGE_URL`          URL prefix for set language view. Set to
+                                 ``None`` to prevent view from being installed.
+                                 Default: ``/lang``.
+`I18N_DEFAULT_REDIRECT_ENDPOINT` Default endpoint to redirect to if no next
+                                 parameter is provided to set language view.
+                                 Default: ``/``.
+================================ =============================================
 
 In addition, Flask-BabelEx sets system-wide defaults using the following
 configuration variables:

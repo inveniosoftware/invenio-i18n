@@ -49,8 +49,8 @@ def get_locale():
 
     Will only accept languages defined in ``I18N_LANGUAGES``.
     """
-    locales = [str(l) for l in
-               current_app.extensions['invenio-i18n'].get_locales()]
+    locales = [x[0] for x in
+               current_app.extensions['invenio-i18n'].get_languages()]
 
     # In the case of the user specifies a language for the resource.
     if 'ln' in request.args:

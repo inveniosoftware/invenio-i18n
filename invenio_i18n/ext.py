@@ -35,6 +35,7 @@ from six import text_type
 from .babel import MultidirDomain
 from .jinja2 import filter_to_user_timezone, filter_to_utc
 from .selectors import get_locale, get_timezone
+from .views import blueprint
 
 
 def get_lazystring_encoder(app):
@@ -99,6 +100,8 @@ class InvenioI18N(object):
          * Install a custom JSON encoder on app.
         """
         app.config.setdefault("I18N_LANGUAGES", [])
+        app.config.setdefault("I18N_SET_LANGUAGE_URL", "/lang")
+        app.config.setdefault("I18N_DEFAULT_REDIRECT_ENDPOINT", None)
         app.config.setdefault("I18N_SESSION_KEY", "language")
         app.config.setdefault("I18N_USER_LANG_ATTR", "prefered_language")
 
@@ -119,6 +122,12 @@ class InvenioI18N(object):
         # 3. Entrypoints
         if self.entry_point_group:
             domain.add_entrypoint(self.entry_point_group)
+
+        # Register blueprint if URL is set.
+        if app.config['I18N_SET_LANGUAGE_URL'] \
+           and app.config['I18N_LANGUAGES']:
+            app.register_blueprint(
+                blueprint, url_prefix=app.config['I18N_SET_LANGUAGE_URL'])
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).

@@ -50,3 +50,9 @@ Locale/timezone selectors
 .. automodule:: invenio_i18n.selectors
    :members:
    :undoc-members:
+
+Views
+-----
+.. automodule:: invenio_i18n.views
+   :members:
+   :undoc-members:

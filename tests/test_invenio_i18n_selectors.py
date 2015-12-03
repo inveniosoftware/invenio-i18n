@@ -38,19 +38,13 @@ class FakeUser(object):
 
     def __init__(self, prefered_language):
         """Initialize fake user."""
+        self.is_active = True
+        self.is_authenticated = True
         self.prefered_language = prefered_language
-
-    def is_active(self):
-        """True, fake user is active."""
-        return True
 
     def get_id(self):
         """Return a default ID. This is only a fake object."""
         return 1
-
-    def is_authenticated(self):
-        """True, fake user is authenticated."""
-        return True
 
 
 def test_get_locale_querystring(app):

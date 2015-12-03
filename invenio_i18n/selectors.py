@@ -67,7 +67,7 @@ def get_locale():
 
     # In the case of the registered user has a prefered language.
     if hasattr(current_app, 'login_manager') and \
-            current_user.is_authenticated():
+            current_user.is_authenticated:
         language_user_key = current_app.config['I18N_USER_LANG_ATTR']
         if getattr(current_user, language_user_key, None) in locales:
             return getattr(current_user, language_user_key)

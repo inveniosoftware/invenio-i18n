@@ -42,7 +42,7 @@ tests_require = [
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
-    'Flask-Login<0.3.0,>=0.2.11',
+    'Flask-Login>=0.3.0',
 ]
 
 extras_require = {

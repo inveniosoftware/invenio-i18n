@@ -30,7 +30,7 @@ from os.path import dirname, join
 
 import pytest
 from babel.support import NullTranslations, Translations
-from flask_babelex import get_locale
+from flask_babelex import Babel, get_locale
 
 from invenio_i18n.babel import MultidirDomain, set_locale
 
@@ -48,6 +48,8 @@ def test_init():
 
 def test_merge_translations(app):
     """Test initialization."""
+    Babel(app)
+
     d = MultidirDomain(
         paths=[join(dirname(__file__), 'translations')],
         entry_point_group='invenio_i18n.translations')
@@ -80,6 +82,7 @@ def test_get_translations():
 def test_get_translations_existing_and_missing_mo(app):
     """Test get translations for language with existing/missing *.mo files."""
     app.config['I18N_LANGUAGES'] = [('de', 'German')]
+    Babel(app)
 
     d = MultidirDomain(entry_point_group='invenio_i18n.translations')
 
@@ -93,6 +96,7 @@ def test_get_translations_existing_and_missing_mo(app):
 def test_set_locale(app):
     """Test get translations for language with existing/missing *.mo files."""
     # Wokring outside request context
+    Babel(app)
     try:
         with set_locale('en'):
             assert False
@@ -101,6 +105,6 @@ def test_set_locale(app):
 
     with app.test_request_context():
         with set_locale('en'):
-            assert get_locale() == 'en'
+            assert str(get_locale()) == 'en'
         with set_locale('da'):
-            assert get_locale() == 'da'
+            assert str(get_locale()) == 'da'

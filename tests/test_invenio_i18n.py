@@ -33,7 +33,8 @@ from flask_babelex import format_datetime, format_number, get_locale, \
     gettext, lazy_gettext
 from pytz import timezone
 
-from invenio_i18n import InvenioI18N
+from invenio_i18n.babel import set_locale
+from invenio_i18n.ext import InvenioI18N, current_i18n
 
 
 def test_version():
@@ -50,6 +51,8 @@ def test_init(app):
     assert app.config.get("I18N_LANGUAGES") == []
     assert 'toutc' in app.jinja_env.filters
     assert 'tousertimezone' in app.jinja_env.filters
+    assert 'language_name' in app.jinja_env.filters
+    assert 'language_name_local' in app.jinja_env.filters
 
 
 def test_init_ext(app):
@@ -134,6 +137,22 @@ def test_get_locales(app):
         assert [str(l) for l in i18n.get_locales()] == ['en', 'da']
 
 
+def test_current_i18n(app):
+    """Test getting locales."""
+    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
+    InvenioI18N(app)
+
+    with app.test_request_context(headers=[('Accept-Language', 'da')]):
+        assert current_i18n.language == 'da'
+        assert str(current_i18n.locale) == 'da'
+        assert str(current_i18n.timezone) == 'UTC'
+
+    with app.test_request_context(headers=[('Accept-Language', 'en')]):
+        assert current_i18n.language == 'en'
+        assert str(current_i18n.locale) == 'en'
+        assert str(current_i18n.timezone) == 'UTC'
+
+
 def test_jinja_templates(app):
     """Test template rendering."""
     InvenioI18N(app)
@@ -159,3 +178,20 @@ def test_jinja_templates(app):
 
         tpl = r"{% trans %}Block translate{{var}}{% endtrans %}"
         assert render_template_string(tpl, var='!') == 'Block translate!'
+
+        assert render_template_string("{{'en'|language_name}}") == 'English'
+        assert render_template_string("{{'da'|language_name}}") == 'Danish'
+        assert render_template_string("{{'en'|language_name_local}}") \
+            == 'English'
+        assert render_template_string("{{'da'|language_name_local}}") \
+            == 'dansk'
+
+        with set_locale('da'):
+            assert render_template_string("{{'en'|language_name}}") \
+                == 'engelsk'
+            assert render_template_string("{{'da'|language_name}}") \
+                == 'dansk'
+            assert render_template_string("{{'en'|language_name_local}}") \
+                == 'English'
+            assert render_template_string("{{'da'|language_name_local}}") \
+                == 'dansk'

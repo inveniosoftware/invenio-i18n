@@ -41,10 +41,11 @@ def set_locale(ln):
     ctx = _request_ctx_stack.top
     if ctx is None:
         raise RuntimeError("Working outside of request context.")
-    locale = getattr(ctx, 'babel_locale', None)
-    setattr(ctx, 'babel_locale', ln)
+    new_locale = current_app.extensions['babel'].load_locale(ln)
+    old_locale = getattr(ctx, 'babel_locale', None)
+    setattr(ctx, 'babel_locale', new_locale)
     yield
-    setattr(ctx, 'babel_locale', locale)
+    setattr(ctx, 'babel_locale', old_locale)
 
 
 class MultidirDomain(Domain):

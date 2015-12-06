@@ -30,7 +30,8 @@ https://pythonhosted.org/Flask-BabelEx/
 
 from __future__ import absolute_import, print_function
 
-from flask_babelex import to_user_timezone, to_utc
+from flask import current_app
+from flask_babelex import get_locale, to_user_timezone, to_utc
 
 
 def filter_to_user_timezone(dt):
@@ -47,3 +48,15 @@ def filter_to_utc(dt):
     Installed on application as ``toutc``.
     """
     return to_utc(dt)
+
+
+def filter_language_name(lang_code):
+    """Convert language code into display name in current locale."""
+    return current_app.extensions['babel'].load_locale(
+        lang_code).get_display_name(get_locale().language)
+
+
+def filter_language_name_local(lang_code):
+    """Convert language code into display name in local locale."""
+    return current_app.extensions['babel'].load_locale(
+        lang_code).display_name

@@ -29,13 +29,19 @@ from __future__ import absolute_import, print_function
 import os.path
 
 from flask import current_app
-from flask_babelex import Babel, lazy_gettext
+from flask_babelex import get_locale as get_current_locale
+from flask_babelex import get_timezone as get_current_timezone
+from flask_babelex import Babel
 from six import text_type
+from werkzeug.local import LocalProxy
 
 from .babel import MultidirDomain
-from .jinja2 import filter_to_user_timezone, filter_to_utc
+from .jinja2 import filter_language_name, filter_language_name_local, \
+    filter_to_user_timezone, filter_to_utc
 from .selectors import get_locale, get_timezone
 from .views import blueprint
+
+current_i18n = LocalProxy(lambda: current_app.extensions['invenio-i18n'])
 
 
 def get_lazystring_encoder(app):
@@ -133,6 +139,10 @@ class InvenioI18N(object):
         # already installs other filters).
         app.add_template_filter(filter_to_utc, name="toutc")
         app.add_template_filter(filter_to_user_timezone, name="tousertimezone")
+        app.add_template_filter(filter_language_name, name="language_name")
+        app.add_template_filter(
+            filter_language_name_local, name="language_name_local")
+        app.context_processor(lambda: dict(current_i18n=current_i18n))
 
         # Lazy string aware JSON encoder.
         app.json_encoder = get_lazystring_encoder(app)
@@ -145,7 +155,7 @@ class InvenioI18N(object):
         default_title = self.babel.default_locale.get_display_name(
             default_lang)
 
-        yield (default_lang, lazy_gettext(default_title))
+        yield (default_lang, default_title)
 
         for l, title in current_app.config.get('I18N_LANGUAGES', []):
             yield l, title
@@ -167,3 +177,18 @@ class InvenioI18N(object):
                 langs.append(self.babel.load_locale(l))
             self._locales_cache = langs
         return self._locales_cache
+
+    @property
+    def locale(self):
+        """Get current locale."""
+        return get_current_locale()
+
+    @property
+    def language(self):
+        """Get current language code."""
+        return get_current_locale().language
+
+    @property
+    def timezone(self):
+        """Get current timezone."""
+        return get_current_timezone()

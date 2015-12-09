@@ -33,6 +33,7 @@ from six.moves.urllib.parse import urljoin, urlparse
 blueprint = Blueprint(
     'invenio_i18n',
     __name__,
+    template_folder='templates',
 )
 
 
@@ -47,20 +48,19 @@ def is_local_url(target):
 def get_redirect_target():
     """Get URL to redirect to and ensure that it is local."""
     for target in request.values.get('next'), request.referrer:
-        if not target:
-            continue
-        if is_local_url(target):
+        if target and is_local_url(target):
             return target
 
 
-@blueprint.route('/<lang_code>/', methods=['POST'])
+@blueprint.route('/', methods=['POST'])
+@blueprint.route('/<lang_code>/', methods=['GET'])
 def set_lang(lang_code=None):
     """Set language in session and redirect."""
     # Check if language is available.
-    lang_code = lang_code.lower()
+    lang_code = lang_code or request.values.get('lang_code')
     languages = dict(current_app.extensions['invenio-i18n'].get_languages())
-    if lang_code not in languages:
-        abort(404)
+    if lang_code is None or lang_code not in languages:
+        abort(404 if request.method == 'GET' else 400)
 
     # Set language in session.
     session[current_app.config['I18N_SESSION_KEY']] = lang_code.lower()

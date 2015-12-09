@@ -52,7 +52,7 @@ def test_lang_view(app):
 
     with app.test_client() as client:
         # Set language to danish
-        res = client.post(da_lang_url)
+        res = client.get(da_lang_url)
         assert res.status_code == 302
         assert res.location == 'http://localhost/'
         assert session[app.config['I18N_SESSION_KEY']] == 'da'
@@ -61,7 +61,7 @@ def test_lang_view(app):
         assert res.get_data(as_text=True) == 'da'
 
         # Set language to english
-        res = client.post(en_lang_url)
+        res = client.get(en_lang_url)
         assert res.status_code == 302
         assert res.location == 'http://localhost/'
         assert session[app.config['I18N_SESSION_KEY']] == 'en'
@@ -70,7 +70,7 @@ def test_lang_view(app):
         assert res.get_data(as_text=True) == 'en'
 
         # Try to set invalid language.
-        res = client.post(es_lang_url)
+        res = client.get(es_lang_url)
         assert res.status_code == 404
 
 
@@ -92,22 +92,22 @@ def test_lang_view_redirect(app):
 
     with app.test_client() as client:
         # Request body
-        res = client.post(da_lang_url, data={'next': next_url})
+        res = client.get(da_lang_url, data={'next': next_url})
         assert res.status_code == 302
         assert res.location == 'http://localhost/page/'
         assert session[app.config['I18N_SESSION_KEY']] == 'da'
 
         # Query string
-        res = client.post(da_lang_url + "?next={0}".format(next_url))
+        res = client.get(da_lang_url + "?next={0}".format(next_url))
         assert res.location == 'http://localhost/page/'
 
         # Referrer header
-        res = client.post(da_lang_url, headers={'Referer': next_url})
+        res = client.get(da_lang_url, headers={'Referer': next_url})
         assert res.location == 'http://localhost/page/'
 
         # Unsafe redirects
-        res = client.post(da_lang_url + "?next=http://example.org")
+        res = client.get(da_lang_url + "?next=http://example.org")
         assert res.location == 'http://localhost/'
-        res = client.post(
+        res = client.get(
             da_lang_url, headers={'Referer': 'http://example.org'})
         assert res.location == 'http://localhost/'

@@ -2,7 +2,7 @@
  Invenio-I18N v1.0.0
 =====================
 
-Invenio-I18N v1.0.0 was released on December 1, 2015.
+Invenio-I18N v1.0.0 was released on December 10, 2015.
 
 About
 -----

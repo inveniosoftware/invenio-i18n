@@ -24,7 +24,7 @@
 
 python setup.py compile_catalog && \
 pybabel compile -d tests/translations/ -l en && \
-pep257 invenio_i18n && \
+pydocstyle invenio_i18n && \
 isort -rc -c -df **/*.py && \
 check-manifest --ignore ".travis-*" && \
 sphinx-build -qnNW docs docs/_build/html && \

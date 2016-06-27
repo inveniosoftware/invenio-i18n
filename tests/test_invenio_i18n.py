@@ -109,8 +109,8 @@ def test_timezone_selector(app):
             == '05 12 1987'
     with app.test_request_context(headers=[('Accept-Language', 'da')]):
         assert str(get_locale()) == 'da'
-        assert format_datetime(datetime(1987, 3, 5, 17, 12)) == \
-            '05/03/1987 17.12.00'
+        assert format_datetime(datetime(1987, 3, 5, 17, 12), 'short') == \
+            '05/03/1987 17.12'
 
 
 def test_locale_selector(app):

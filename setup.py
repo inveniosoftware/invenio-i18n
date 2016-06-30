@@ -115,7 +115,7 @@ setup(
     keywords='invenio internationalization i18n localization l10n',
     license='GPLv2',
     author='CERN',
-    author_email='info@invenio-software.org',
+    author_email='info@inveniosoftware.org',
     url='https://github.com/inveniosoftware/invenio-i18n',
     packages=packages,
     zip_safe=False,

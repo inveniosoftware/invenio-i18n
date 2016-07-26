@@ -1,8 +1,8 @@
 =======================
- Invenio-I18N v1.0.0a4
+ Invenio-I18N v1.0.0b1
 =======================
 
-Invenio-I18N v1.0.0a4 was released on December 18, 2015.
+Invenio-I18N v1.0.0b1 was released on July 26, 2016.
 
 About
 -----
@@ -19,18 +19,18 @@ What's new
 Installation
 ------------
 
-   $ pip install invenio-i18n==1.0.0a4
+   $ pip install invenio-i18n==1.0.0b1
 
 Documentation
 -------------
 
-   http://pythonhosted.org/invenio-i18n/
+   https://pythonhosted.org/invenio-i18n/
 
 Happy hacking and thanks for flying Invenio-I18N.
 
 | Invenio Development Team
 |   Email: info@inveniosoftware.org
 |   IRC: #invenio on irc.freenode.net
-|   Twitter: http://twitter.com/inveniosoftware
+|   Twitter: https://twitter.com/inveniosoftware
 |   GitHub: https://github.com/inveniosoftware/invenio-i18n
 |   URL: http://inveniosoftware.org

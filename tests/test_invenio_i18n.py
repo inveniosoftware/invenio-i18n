@@ -139,18 +139,26 @@ def test_get_locales(app):
 
 def test_current_i18n(app):
     """Test getting locales."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
+    app.config['I18N_LANGUAGES'] = [('da', 'Danish'), ('ar', 'Arabic')]
     InvenioI18N(app)
 
     with app.test_request_context(headers=[('Accept-Language', 'da')]):
         assert current_i18n.language == 'da'
         assert str(current_i18n.locale) == 'da'
         assert str(current_i18n.timezone) == 'UTC'
+        assert current_i18n.locale.text_direction == 'ltr'
 
     with app.test_request_context(headers=[('Accept-Language', 'en')]):
         assert current_i18n.language == 'en'
         assert str(current_i18n.locale) == 'en'
         assert str(current_i18n.timezone) == 'UTC'
+        assert current_i18n.locale.text_direction == 'ltr'
+
+    with app.test_request_context(headers=[('Accept-Language', 'ar')]):
+        assert current_i18n.language == 'ar'
+        assert str(current_i18n.locale) == 'ar'
+        assert str(current_i18n.timezone) == 'UTC'
+        assert current_i18n.locale.text_direction == 'rtl'
 
 
 def test_jinja_templates(app):

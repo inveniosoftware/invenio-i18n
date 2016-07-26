@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,31 +22,22 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
+"""Compatibility module for Python 2 and 3.
 
-[aliases]
-test = pytest
+The code is inspired by ``six`` library and cheat sheet from
+`http://python-future.org/compatible_idioms.html`_
+"""
 
-[build_sphinx]
-source-dir = docs/
-build-dir = docs/_build
-all_files = 1
+import sys
 
-[bdist_wheel]
-universal = 1
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
-[compile_catalog]
-directory = invenio_i18n/translations/
+if PY3:
+    text_type = str
 
-[extract_messages]
-copyright_holder = CERN
-msgid_bugs_address = info@inveniosoftware.org
-mapping-file = babel.ini
-output-file = invenio_i18n/translations/messages.pot
+    from urllib.parse import urljoin, urlparse
+else:
+    text_type = unicode
 
-[init_catalog]
-input-file = invenio_i18n/translations/messages.pot
-output-dir = invenio_i18n/translations/
-
-[update_catalog]
-input-file = invenio_i18n/translations/messages.pot
-output-dir = invenio_i18n/translations/
+    from urlparse import urljoin, urlparse

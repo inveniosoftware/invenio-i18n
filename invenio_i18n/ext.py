@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -32,9 +32,9 @@ from flask import current_app
 from flask_babelex import get_locale as get_current_locale
 from flask_babelex import get_timezone as get_current_timezone
 from flask_babelex import Babel
-from six import text_type
 from werkzeug.local import LocalProxy
 
+from ._compat import text_type
 from .babel import MultidirDomain
 from .jinja2 import filter_language_name, filter_language_name_local, \
     filter_to_user_timezone, filter_to_utc

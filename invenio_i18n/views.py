@@ -28,7 +28,8 @@ from __future__ import absolute_import, print_function
 
 from flask import Blueprint, abort, current_app, redirect, request, session, \
     url_for
-from six.moves.urllib.parse import urljoin, urlparse
+
+from ._compat import urljoin, urlparse
 
 blueprint = Blueprint(
     'invenio_i18n',

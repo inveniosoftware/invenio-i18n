@@ -30,29 +30,24 @@ Extension
 
 .. automodule:: invenio_i18n.ext
    :members:
-   :undoc-members:
 
 Translation Domain
 ------------------
 
 .. automodule:: invenio_i18n.babel
    :members:
-   :undoc-members:
 
 Jinja2 filters
 --------------
 .. automodule:: invenio_i18n.jinja2
    :members:
-   :undoc-members:
 
 Locale/timezone selectors
 -------------------------
 .. automodule:: invenio_i18n.selectors
    :members:
-   :undoc-members:
 
 Views
 -----
 .. automodule:: invenio_i18n.views
    :members:
-   :undoc-members:

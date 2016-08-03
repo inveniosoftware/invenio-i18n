@@ -105,11 +105,11 @@ class InvenioI18N(object):
          * Add ``toutc`` and ``tousertimezone`` template filters.
          * Install a custom JSON encoder on app.
         """
-        app.config.setdefault("I18N_LANGUAGES", [])
-        app.config.setdefault("I18N_SET_LANGUAGE_URL", "/lang")
-        app.config.setdefault("I18N_DEFAULT_REDIRECT_ENDPOINT", None)
-        app.config.setdefault("I18N_SESSION_KEY", "language")
-        app.config.setdefault("I18N_USER_LANG_ATTR", "prefered_language")
+        app.config.setdefault('I18N_LANGUAGES', [])
+        app.config.setdefault('I18N_SET_LANGUAGE_URL', '/lang')
+        app.config.setdefault('I18N_DEFAULT_REDIRECT_ENDPOINT', None)
+        app.config.setdefault('I18N_SESSION_KEY', 'language')
+        app.config.setdefault('I18N_USER_LANG_ATTR', 'prefered_language')
 
         # Initialize Flask-BabelEx
         self.babel.init_app(app)
@@ -119,7 +119,7 @@ class InvenioI18N(object):
         # Add paths to search for message catalogs
         domain = self.babel._default_domain
         # 1. Paths listed in I18N_TRANSLATIONS_PATHS
-        for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
+        for p in app.config.get('I18N_TRANSLATIONS_PATHS', []):
             domain.add_path(p)
         # 2. <app.root_path>/translations
         app_translations = os.path.join(app.root_path, 'translations')
@@ -137,11 +137,11 @@ class InvenioI18N(object):
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).
-        app.add_template_filter(filter_to_utc, name="toutc")
-        app.add_template_filter(filter_to_user_timezone, name="tousertimezone")
-        app.add_template_filter(filter_language_name, name="language_name")
+        app.add_template_filter(filter_to_utc, name='toutc')
+        app.add_template_filter(filter_to_user_timezone, name='tousertimezone')
+        app.add_template_filter(filter_language_name, name='language_name')
         app.add_template_filter(
-            filter_language_name_local, name="language_name_local")
+            filter_language_name_local, name='language_name_local')
         app.context_processor(lambda: dict(current_i18n=current_i18n))
 
         # Lazy string aware JSON encoder.

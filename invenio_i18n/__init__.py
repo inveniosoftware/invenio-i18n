@@ -30,10 +30,8 @@ most external modules should just depend on Flask-BabelEx instead of
 Invenio-I18N. Only applications in need of loading and merging many message
 catalogs should integrate this module.
 
-
 Quick start
 -----------
-
 First initialize the extension (Flask-BabelEx is also automatically initialized
 by the extension):
 
@@ -64,12 +62,11 @@ True
 ...     gettext('Translate') != u'Translate'
 True
 
-
 Configuration
 -------------
 
 ================================ =============================================
-`I18N_TRASNLATION_PATHS`         List of paths to load message catalogs from.
+`I18N_TRANSLATION_PATHS`         List of paths to load message catalogs from.
                                  Defaults to ``[]``.
 `I18N_LANGUAGES`                 List of tuples of available languages (you
                                  should not include ``BABEL_DEFAULT_LOCALE``
@@ -112,17 +109,16 @@ You specify translations in Python by importing ``gettext`` or ``lazy_gettext``
 from Flask-BabelEx:
 
 >>> from flask_babelex import gettext as _
->>> _("Test") == 'Test'
+>>> _('Test') == 'Test'
 True
 
 For further details and examples see:
 
  * https://pythonhosted.org/Flask-BabelEx/#using-translations
- * http://babel.pocoo.org/docs/messages/#working-with-message-catalogs
+ * http://babel.pocoo.org/en/latest/messages.html#working-with-message-catalogs
 
-
-Templates
-~~~~~~~~~
+Jinja2
+~~~~~~
 In templates you can use either the underscore function:
 
 >>> from flask import render_template_string
@@ -133,13 +129,51 @@ True
 or the ``{% trans %}`` tag:
 
 >>> with app.app_context():
-...     r = render_template_string("{% trans %}Long translation{% endtrans %}")
-...     r == "Long translation"
+...     r = render_template_string('{% trans %}Long translation{% endtrans %}')
+...     r == 'Long translation'
 True
 
 For further details and examples see:
 
 * http://jinja.pocoo.org/docs/dev/templates/#i18n
+
+Templates
+---------
+This section only gives a very quick introduction into custom context variables
+and filters.
+
+Context
+~~~~~~~
+The ``current_i18n`` global variable is available within Jinja2 templates
+to give access to an instance of :class:`~invenio_i18n.ext.InvenioI18N`
+attached to current application context.
+
+>>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
+...     r = render_template_string('{{ current_i18n.language }}')
+...     r == 'en'
+True
+>>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
+...     r = render_template_string('{{ current_i18n.timezone }}')
+...     r == 'UTC'
+True
+>>> with app.test_request_context(headers=[('Accept-Language', 'da')]):
+...     r = render_template_string('{{ current_i18n.locale }}')
+...     r == 'da'
+True
+
+Filters
+~~~~~~~
+There are several useful filters automatically added to the Jinja2 template
+context:
+
+* ``tousertimezone`` converts a datetime object to the user's timezone
+  (see :func:`~invenio_i18n.jinja2.filter_to_user_timezone`).
+* ``toutc`` converts a datetime object to UTC and drop tzinfo
+  (see :func:`~invenio_i18n.jinja2.filter_to_utc`).
+* ``language_name`` converts language code into display name in current locale
+  (see :func:`~invenio_i18n.jinja2.filter_language_name`).
+* ``language_name_local`` converts language code into display name in local
+  locale (see :func:`~invenio_i18n.jinja2.filter_language_name_local`).
 """
 
 from __future__ import absolute_import, print_function

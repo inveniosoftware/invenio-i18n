@@ -34,6 +34,7 @@ from flask_babelex import get_timezone as get_current_timezone
 from flask_babelex import Babel
 from werkzeug.local import LocalProxy
 
+from . import config
 from ._compat import text_type
 from .babel import MultidirDomain
 from .jinja2 import filter_language_name, filter_language_name_local, \
@@ -105,11 +106,7 @@ class InvenioI18N(object):
          * Add ``toutc`` and ``tousertimezone`` template filters.
          * Install a custom JSON encoder on app.
         """
-        app.config.setdefault('I18N_LANGUAGES', [])
-        app.config.setdefault('I18N_SET_LANGUAGE_URL', '/lang')
-        app.config.setdefault('I18N_DEFAULT_REDIRECT_ENDPOINT', None)
-        app.config.setdefault('I18N_SESSION_KEY', 'language')
-        app.config.setdefault('I18N_USER_LANG_ATTR', 'prefered_language')
+        self.init_config(app)
 
         # Initialize Flask-BabelEx
         self.babel.init_app(app)
@@ -148,6 +145,12 @@ class InvenioI18N(object):
         app.json_encoder = get_lazystring_encoder(app)
 
         app.extensions['invenio-i18n'] = self
+
+    def init_config(self, app):
+        """Initialize configuration."""
+        for k in dir(config):
+            if k.startswith('I18N_'):
+                app.config.setdefault(k, getattr(config, k))
 
     def iter_languages(self):
         """Iterate over list of languages."""

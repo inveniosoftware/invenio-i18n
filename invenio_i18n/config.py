@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2016 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -22,22 +22,32 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Compatibility module for Python 2 and 3.
+"""Configuration for the Invenio internationalization module."""
 
-The code is inspired by ``six`` library and cheat sheet from
-`http://python-future.org/compatible_idioms.html`_
+I18N_TRANSLATIONS_PATHS = []
+"""List of paths to load message catalogs from."""
+
+I18N_LANGUAGES = []
+"""List of tuples of available languages.
+
+.. note:: You should not include ``BABEL_DEFAULT_LOCALE`` in this list.
 """
 
-import sys
+I18N_SET_LANGUAGE_URL = '/lang'
+"""URL prefix for set language view.
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
+Set to ``None`` to prevent view from being installed.
+"""
 
-if PY3:  # pragma: no cover
-    text_type = str
+I18N_DEFAULT_REDIRECT_ENDPOINT = None
+"""Endpoint to redirect if no next parameter is provided."""
 
-    from urllib.parse import urljoin, urlparse
-else:
-    text_type = unicode
+I18N_SESSION_KEY = 'language'
+"""Key to retrieve language identifier from the current session object."""
 
-    from urlparse import urljoin, urlparse
+I18N_USER_LANG_ATTR = 'prefered_language'
+"""Attribute name which contains language identifier on the User object.
+
+It is used only when the login manager is installed and a user is
+authenticated. Set to ``None`` to prevent selector from being used.
+"""

@@ -65,38 +65,13 @@ True
 Configuration
 -------------
 
-================================ =============================================
-`I18N_TRANSLATION_PATHS`         List of paths to load message catalogs from.
-                                 Defaults to ``[]``.
-`I18N_LANGUAGES`                 List of tuples of available languages (you
-                                 should not include ``BABEL_DEFAULT_LOCALE``
-                                 in this list). Defaults to:
-                                 ``[]``.
-`I18N_SESSION_KEY`               Key to retrieve from Flask session object
-                                 the variable which is containing the language
-                                 for the current session.
-`I18N_USER_LANG_ATTR`            Key to retrieve from the User object the
-                                 variable which is containing the prefered
-                                 language of the user.
-`I18N_SET_LANGUAGE_URL`          URL prefix for set language view. Set to
-                                 ``None`` to prevent view from being installed.
-                                 Default: ``/lang``.
-`I18N_DEFAULT_REDIRECT_ENDPOINT` Default endpoint to redirect to if no next
-                                 parameter is provided to set language view.
-                                 Default: ``/``.
-================================ =============================================
+.. automodule:: invenio_i18n.config
+   :members:
 
-In addition, Flask-BabelEx sets system-wide defaults using the following
-configuration variables:
+In addition, Flask-BabelEx also sets system-wide defaults. For further details
+see:
 
-=========================== =============================================
-`BABEL_DEFAULT_LOCALE`      The default locale to use if no locale
-                            selector is registered.  This defaults
-                            to ``'en'``.
-`BABEL_DEFAULT_TIMEZONE`    The timezone to use for user facing dates.
-                            This defaults to ``'UTC'`` which also is the
-                            timezone your application must use internally.
-=========================== =============================================
+ * https://pythonhosted.org/Flask-BabelEx/#configuration
 
 Marking strings for translation
 -------------------------------

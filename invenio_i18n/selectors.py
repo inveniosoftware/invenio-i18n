@@ -66,11 +66,13 @@ def get_locale():
             return language
 
     # In the case of the registered user has a prefered language.
-    if hasattr(current_app, 'login_manager') and \
+    language_user_key = current_app.config['I18N_USER_LANG_ATTR']
+    if language_user_key is not None and \
+            hasattr(current_app, 'login_manager') and \
             current_user.is_authenticated:
-        language_user_key = current_app.config['I18N_USER_LANG_ATTR']
-        if getattr(current_user, language_user_key, None) in locales:
-            return getattr(current_user, language_user_key)
+        language = getattr(current_user, language_user_key, None)
+        if language is not None and language in locales:
+            return language
 
     # Using the headers that the navigator has sent.
     headers_best_match = request.accept_languages.best_match(locales)

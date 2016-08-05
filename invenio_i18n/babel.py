@@ -37,10 +37,13 @@ from pkg_resources import iter_entry_points, resource_filename, resource_isdir
 
 @contextmanager
 def set_locale(ln):
-    """Set Babel localization in request context."""
+    """Set Babel localization in request context.
+
+    :param ln: Language identifier.
+    """
     ctx = _request_ctx_stack.top
     if ctx is None:
-        raise RuntimeError("Working outside of request context.")
+        raise RuntimeError('Working outside of request context.')
     new_locale = current_app.extensions['babel'].load_locale(ln)
     old_locale = getattr(ctx, 'babel_locale', None)
     setattr(ctx, 'babel_locale', new_locale)
@@ -58,12 +61,18 @@ class MultidirDomain(Domain):
     Entry points are added to the list of paths before the ``paths``.
     """
 
-    def __init__(self, paths=[], entry_point_group=None, domain='messages'):
-        """Initialize domain."""
+    def __init__(self, paths=None, entry_point_group=None, domain='messages'):
+        """Initialize domain.
+
+        :param paths: List of paths with translations.
+        :param entry_point_group: Name of entry point group.
+        :param domain: Name of message catalog domain.
+            (Default: ``'messages'``)
+        """
         self.paths = []
         if entry_point_group:
             self.add_entrypoint(entry_point_group)
-        for p in paths:
+        for p in paths or []:
             self.add_path(p)
         super(MultidirDomain, self).__init__(domain=domain)
 
@@ -71,18 +80,18 @@ class MultidirDomain(Domain):
         """Determine if any paths have been specified."""
         return bool(self.paths)
 
-    def add_entrypoint(self, entrypoint):
-        """Load translations from an entrypoint."""
-        for ep in iter_entry_points(group=entrypoint):
+    def add_entrypoint(self, entry_point_group):
+        """Load translations from an entry point."""
+        for ep in iter_entry_points(group=entry_point_group):
             if not resource_isdir(ep.module_name, 'translations'):
                 continue
             dirname = resource_filename(ep.module_name, 'translations')
             self.add_path(dirname)
 
     def add_path(self, path):
-        """Load translations from a path."""
+        """Load translations from an existing path."""
         if not os.path.exists(path):
-            raise RuntimeError("Path does not exists: %s." % path)
+            raise RuntimeError('Path does not exists: %s.' % path)
         self.paths.append(path)
 
     def _get_translation_for_locale(self, locale):
@@ -104,8 +113,8 @@ class MultidirDomain(Domain):
                 # Translations is probably NullTranslations
                 if isinstance(catalog, NullTranslations):
                     current_app.logger.debug(
-                        "Compiled translations seems to be missing"
-                        " in {0}.".format(dirname))
+                        'Compiled translations seems to be missing'
+                        ' in {0}.'.format(dirname))
                     continue
                 raise
 

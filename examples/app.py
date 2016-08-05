@@ -29,7 +29,8 @@ Run the development server:
 
 .. code-block:: console
 
-   $ flask -a app.py run
+   $ cd examples
+   $ FLASK_APP=app.py flask run
 
 """
 
@@ -42,11 +43,11 @@ from invenio_i18n import InvenioI18N
 # Create Flask application
 app = Flask(__name__)
 app.config.update(
-    I18N_LANGUAGES=[("da", "Danish"), ("en", "English"), ("es", "Spanish")],
+    I18N_LANGUAGES=[('da', 'Danish'), ('en', 'English'), ('es', 'Spanish')],
 )
 InvenioI18N(app)
 
 
-@app.route("/")
+@app.route('/')
 def index():
     return render_template('invenio_i18n/page.html')

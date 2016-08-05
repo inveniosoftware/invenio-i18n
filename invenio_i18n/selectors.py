@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015 CERN.
+# Copyright (C) 2015, 2016 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -24,8 +24,8 @@
 
 """Default locale and timezone selectors for Flask-BabelEx.
 
-See full documentation of corresponding methods in Flask-BabelEx:
-https://pythonhosted.org/Flask-BabelEx/
+See `Flask-BabelEx documentation <https://pythonhosted.org/Flask-BabelEx/>`_
+for corresponding methods.
 """
 
 from flask import current_app, request, session
@@ -45,7 +45,7 @@ def get_locale():
     - Current session has a language set.
     - User has a language set in the profile.
     - Headers of the HTTP request.
-    - Default language from BABEL_DEFAULT_LOCALE.
+    - Default language from ``BABEL_DEFAULT_LOCALE``.
 
     Will only accept languages defined in ``I18N_LANGUAGES``.
     """

@@ -48,7 +48,7 @@ current_i18n = LocalProxy(lambda: current_app.extensions['invenio-i18n'])
 def get_lazystring_encoder(app):
     """Custom JSONEncoder that handles lazy strings from Babel.
 
-    Installed on Flask application by default by :py:class:`InvenioI18N`.
+    Installed on Flask application by default by :class:`InvenioI18N`.
     """
     from speaklater import _LazyString
 
@@ -63,22 +63,22 @@ def get_lazystring_encoder(app):
 
 
 class InvenioI18N(object):
-    """Invenio I18N extension.
-
-    :param app: Flask application.
-    :param data_formats: Override default date/time formatting.
-    :param localeselector: Callback function used for locale selection.
-        Defaults to using :py:func:`invenio_i18n.selectors.get_locale()`.
-    :param timezoneselector: Callback function used for timezone selection.
-        Defaults to ``BABEL_DEFAULT_TIMEZONE``.
-    :param entrypoint: Entrypoint used to load translations from. Set to
-        ``None`` to not load translations from entry points.
-    """
+    """Invenio I18N extension."""
 
     def __init__(self, app=None, date_formats=None, localeselector=None,
                  timezoneselector=None,
                  entry_point_group='invenio_i18n.translations'):
-        """Initialize extension."""
+        """Initialize extension.
+
+        :param app: Flask application.
+        :param data_formats: Override default date/time formatting.
+        :param localeselector: Callback function used for locale selection.
+            (Default: :func:`invenio_i18n.selectors.get_locale()`)
+        :param timezoneselector: Callback function used for timezone selection.
+            (Default: ``BABEL_DEFAULT_TIMEZONE``)
+        :param entry_point_group: Entrypoint used to load translations from.
+            Set to ``None`` to not load translations from entry points.
+        """
         self.babel = Babel(
             date_formats=date_formats,
             configure_jinja=True,

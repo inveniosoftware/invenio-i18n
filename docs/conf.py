@@ -138,8 +138,8 @@ html_theme_options = {
     'github_banner': True,
     'show_powered_by': False,
     'extra_nav_links': {
-        'invenio-i18n@GitHub': 'http://github.com/inveniosoftware/invenio-i18n',
-        'invenio-i18n@PyPI': 'http://pypi.python.org/pypi/invenio-i18n/',
+        'invenio-i18n@GitHub': 'https://github.com/inveniosoftware/invenio-i18n',
+        'invenio-i18n@PyPI': 'https://pypi.python.org/pypi/invenio-i18n/',
     }
 }
 

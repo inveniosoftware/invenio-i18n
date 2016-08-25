@@ -38,7 +38,7 @@ by the extension):
 >>> from flask import Flask
 >>> from flask_babelex import lazy_gettext as _
 >>> app = Flask('myapp')
->>> app.config['I18N_LANGUAGES'] = [('da', _('Danish'))]
+>>> app.config['I18N_LANGUAGES'] = [('cs', _('Czech')), ('da', _('Danish'))]
 >>> from invenio_i18n import InvenioI18N
 >>> i18n = InvenioI18N(app)
 
@@ -48,7 +48,7 @@ You can now use the Flask-BabelEx localization features:
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
 ...     format_number(10.1) == '10.1'
 True
->>> with app.test_request_context(headers=[('Accept-Language', 'da')]):
+>>> with app.test_request_context(headers=[('Accept-Language', 'cs')]):
 ...     format_number(10.1) == '10,1'
 True
 
@@ -56,10 +56,10 @@ as well as internationalization features:
 
 >>> from flask_babelex import gettext
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
-...     gettext('Translate') == 'Translate'
+...     gettext('Language:') == 'Language:'
 True
->>> with app.test_request_context(headers=[('Accept-Language', 'da')]):
-...     gettext('Translate') != u'Translate'
+>>> with app.test_request_context(headers=[('Accept-Language', 'cs')]):
+...     gettext('Language:') == 'Jazyk:'
 True
 
 Configuration

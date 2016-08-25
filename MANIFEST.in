@@ -24,6 +24,7 @@
 
 include .dockerignore
 include .editorconfig
+include .tx/config
 include *.rst
 include *.sh
 include *.txt
@@ -39,6 +40,7 @@ recursive-include misc *.rst
 recursive-include tests *.py
 recursive-include invenio_i18n *.po
 recursive-include invenio_i18n *.mo
+recursive-include invenio_i18n *.pot
 recursive-include invenio_i18n *.html
 recursive-include tests *.po
 recursive-include tests *.mo

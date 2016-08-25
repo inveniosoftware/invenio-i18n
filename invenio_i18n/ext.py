@@ -79,11 +79,12 @@ class InvenioI18N(object):
         :param entry_point_group: Entrypoint used to load translations from.
             Set to ``None`` to not load translations from entry points.
         """
+        self.domain = MultidirDomain()
         self.babel = Babel(
             date_formats=date_formats,
             configure_jinja=True,
-            default_domain=MultidirDomain())
-
+            default_domain=self.domain,
+        )
         self.localeselector = localeselector
         self.timezoneselector = timezoneselector
         self.entry_point_group = entry_point_group
@@ -113,18 +114,16 @@ class InvenioI18N(object):
         self.babel.localeselector(self.localeselector or get_locale)
         self.babel.timezoneselector(self.timezoneselector or get_timezone)
 
-        # Add paths to search for message catalogs
-        domain = self.babel._default_domain
         # 1. Paths listed in I18N_TRANSLATIONS_PATHS
         for p in app.config.get('I18N_TRANSLATIONS_PATHS', []):
-            domain.add_path(p)
+            self.domain.add_path(p)
         # 2. <app.root_path>/translations
         app_translations = os.path.join(app.root_path, 'translations')
         if os.path.exists(app_translations):
-            domain.add_path(app_translations)
+            self.domain.add_path(app_translations)
         # 3. Entrypoints
         if self.entry_point_group:
-            domain.add_entrypoint(self.entry_point_group)
+            self.domain.add_entrypoint(self.entry_point_group)
 
         # Register blueprint if URL is set.
         if app.config['I18N_SET_LANGUAGE_URL'] \

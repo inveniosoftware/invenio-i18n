@@ -27,6 +27,7 @@
 from __future__ import absolute_import, print_function
 
 from datetime import datetime
+from os.path import dirname, join
 
 from flask import render_template_string
 from flask_babelex import format_datetime, format_number, get_locale, \
@@ -48,7 +49,7 @@ def test_init(app):
     i18n = InvenioI18N(app)
     assert i18n.babel
     assert i18n.entry_point_group
-    assert app.config.get("I18N_LANGUAGES") == []
+    assert app.config.get('I18N_LANGUAGES') == []
     assert 'toutc' in app.jinja_env.filters
     assert 'tousertimezone' in app.jinja_env.filters
     assert 'language_name' in app.jinja_env.filters
@@ -57,7 +58,7 @@ def test_init(app):
 
 def test_init_ext(app):
     """Test extension initalization."""
-    app.config["I18N_LANGUAGES"] = ["da"]
+    app.config['I18N_LANGUAGES'] = ['da']
     i18n = InvenioI18N(entry_point_group=None)
     i18n.init_app(app)
     assert i18n.babel
@@ -66,8 +67,8 @@ def test_init_ext(app):
 def test_default_lang(app):
     """Test default language."""
     app.config.update(
-        I18N_LANGUAGES=[("en", "English"), ("de", "German")],
-        BABEL_DEFAULT_LOCALE="da")
+        I18N_LANGUAGES=[('en', 'English'), ('de', 'German')],
+        BABEL_DEFAULT_LOCALE='da')
     i18n = InvenioI18N(app)
     with app.app_context():
         assert [str(x) for x in i18n.get_locales()] == ['da', 'en', 'de']
@@ -77,8 +78,8 @@ def test_get_languages(app):
     """Test default language."""
     app.config.update(
         I18N_LANGUAGES=[
-            ("en", lazy_gettext("engelsk")), ("de", lazy_gettext("tysk"))],
-        BABEL_DEFAULT_LOCALE="da")
+            ('en', lazy_gettext('engelsk')), ('de', lazy_gettext('tysk'))],
+        BABEL_DEFAULT_LOCALE='da')
     i18n = InvenioI18N(app)
     with app.app_context():
         assert i18n.get_languages() == \
@@ -88,8 +89,8 @@ def test_get_languages(app):
 def test_json_encoder(app):
     """Test extension initalization."""
     InvenioI18N(app)
-    assert app.json_encoder().encode("test") == '"test"'
-    assert app.json_encoder().encode(lazy_gettext("test")) == '"test"'
+    assert app.json_encoder().encode('test') == '"test"'
+    assert app.json_encoder().encode(lazy_gettext('test')) == '"test"'
 
 
 def test_timezone_selector(app):
@@ -115,8 +116,11 @@ def test_timezone_selector(app):
 
 def test_locale_selector(app):
     """Test locale selector."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish')]
-    InvenioI18N(app)
+    app.config.update(
+        I18N_LANGUAGES=[('da', 'Danish')],
+        I18N_TRANSLATIONS_PATHS=[join(dirname(__file__), 'translations')],
+    )
+    i18n = InvenioI18N(app)
 
     with app.test_request_context(headers=[('Accept-Language', 'da')]):
         assert str(get_locale()) == 'da'
@@ -125,7 +129,7 @@ def test_locale_selector(app):
     with app.test_request_context(headers=[('Accept-Language', 'en')]):
         assert str(get_locale()) == 'en'
         assert format_number(10.1) == '10.1'
-        assert gettext('Translate') == 'Translate'
+        assert gettext('Translate') == 'From test catalog'
 
 
 def test_get_locales(app):
@@ -174,32 +178,32 @@ def test_jinja_templates(app):
 
     with app.test_request_context():
         assert render_template_string(
-            "{{dt|datetimeformat}}", dt=dt) == \
-            "Mar 5, 1987, 5:12:00 PM"
+            '{{dt|datetimeformat}}', dt=dt) == \
+            'Mar 5, 1987, 5:12:00 PM'
         assert render_template_string(
-            "{{dt|toutc}}", dt=dt_tz) == \
-            "1987-03-05 16:12:00"
+            '{{dt|toutc}}', dt=dt_tz) == \
+            '1987-03-05 16:12:00'
         assert render_template_string(
-            "{{dt|tousertimezone}}", dt=dt_tz) == \
-            "1987-03-05 16:12:00+00:00"
-        assert render_template_string("{{_('Translate')}}") == 'Translate'
+            '{{dt|tousertimezone}}', dt=dt_tz) == \
+            '1987-03-05 16:12:00+00:00'
+        assert render_template_string('{{_("Translate")}}') == 'Translate'
 
-        tpl = r"{% trans %}Block translate{{var}}{% endtrans %}"
+        tpl = r'{% trans %}Block translate{{var}}{% endtrans %}'
         assert render_template_string(tpl, var='!') == 'Block translate!'
 
-        assert render_template_string("{{'en'|language_name}}") == 'English'
-        assert render_template_string("{{'da'|language_name}}") == 'Danish'
-        assert render_template_string("{{'en'|language_name_local}}") \
+        assert render_template_string('{{"en"|language_name}}') == 'English'
+        assert render_template_string('{{"da"|language_name}}') == 'Danish'
+        assert render_template_string('{{"en"|language_name_local}}') \
             == 'English'
-        assert render_template_string("{{'da'|language_name_local}}") \
+        assert render_template_string('{{"da"|language_name_local}}') \
             == 'dansk'
 
         with set_locale('da'):
-            assert render_template_string("{{'en'|language_name}}") \
+            assert render_template_string('{{"en"|language_name}}') \
                 == 'engelsk'
-            assert render_template_string("{{'da'|language_name}}") \
+            assert render_template_string('{{"da"|language_name}}') \
                 == 'dansk'
-            assert render_template_string("{{'en'|language_name_local}}") \
+            assert render_template_string('{{"en"|language_name_local}}') \
                 == 'English'
-            assert render_template_string("{{'da'|language_name_local}}") \
+            assert render_template_string('{{"da"|language_name_local}}') \
                 == 'dansk'

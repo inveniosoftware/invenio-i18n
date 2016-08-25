@@ -102,7 +102,7 @@ class MultidirDomain(Domain):
             # Load a single catalog.
             catalog = Translations.load(dirname, [locale], domain=self.domain)
             if translations is None:
-                if isinstance(catalog, NullTranslations):
+                if isinstance(catalog, Translations):
                     translations = catalog
                 continue
 

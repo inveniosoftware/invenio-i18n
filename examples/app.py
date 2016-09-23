@@ -29,9 +29,21 @@ Run the development server:
 
 .. code-block:: console
 
+   $ pip install -e .[all]
    $ cd examples
-   $ FLASK_APP=app.py flask run
+   $ ./app-setup.sh
 
+Run example development server:
+
+.. code-block:: console
+
+    $ FLASK_APP=app.py flask run --debugger -p 5000
+
+To be able to uninstall the example app:
+
+.. code-block:: console
+
+    $ ./app-teardown.sh
 """
 
 from __future__ import absolute_import, print_function

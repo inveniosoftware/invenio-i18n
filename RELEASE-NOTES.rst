@@ -24,7 +24,7 @@ Installation
 Documentation
 -------------
 
-   https://pythonhosted.org/invenio-i18n/
+   https://invenio-i18n.readthedocs.io/
 
 Happy hacking and thanks for flying Invenio-I18N.
 

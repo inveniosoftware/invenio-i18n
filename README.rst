@@ -46,4 +46,4 @@ Invenio internationalization module.
 *This is an experimental developer preview release.*
 
 * Free software: GPLv2 license
-* Documentation: https://pythonhosted.org/invenio-i18n/
+* Documentation: https://invenio-i18n.readthedocs.io/

@@ -32,15 +32,16 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
+    'Flask-Login>=0.3.0',
     'check-manifest>=0.25',
     'coverage>=4.0',
+    'invenio-assets>=1.0.0a4',
     'isort>=4.2.2',
     'pydocstyle>=1.0.0',
     'pytest-cache>=1.0',
     'pytest-cov>=1.8.0',
     'pytest-pep8>=1.0.6',
     'pytest>=2.8.0',
-    'Flask-Login>=0.3.0',
 ]
 
 extras_require = {
@@ -87,6 +88,9 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
+        'invenio_assets.bundles': [
+            'invenio_i18n_js = invenio_i18n.bundles:js',
+        ],
         'invenio_base.apps': [
             'invenio_i18n = invenio_i18n:InvenioI18N',
         ],

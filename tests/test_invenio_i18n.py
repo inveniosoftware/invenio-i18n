@@ -32,6 +32,7 @@ from os.path import dirname, join
 from flask import render_template_string
 from flask_babelex import format_datetime, format_number, get_locale, \
     gettext, lazy_gettext
+from invenio_assets import InvenioAssets
 from pytz import timezone
 
 from invenio_i18n.babel import set_locale
@@ -207,3 +208,12 @@ def test_jinja_templates(app):
                 == 'English'
             assert render_template_string('{{"da"|language_name_local}}') \
                 == 'dansk'
+
+
+def test_bundles(app):
+    """Test package bundles."""
+    InvenioAssets(app)
+
+    with app.app_context():
+        from invenio_i18n.bundles import js
+        assert js

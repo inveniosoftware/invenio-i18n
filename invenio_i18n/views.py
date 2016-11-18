@@ -35,6 +35,7 @@ blueprint = Blueprint(
     'invenio_i18n',
     __name__,
     template_folder='templates',
+    static_folder='static',
 )
 
 

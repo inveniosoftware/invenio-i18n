@@ -22,44 +22,17 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-
-"""Minimal Flask application example for development.
-
-Run the development server:
-
-.. code-block:: console
-
-   $ pip install -e .[all]
-   $ cd examples
-   $ ./app-setup.sh
-
-Run example development server:
-
-.. code-block:: console
-
-    $ FLASK_APP=app.py flask run --debugger -p 5000
-
-To be able to uninstall the example app:
-
-.. code-block:: console
-
-    $ ./app-teardown.sh
-"""
+"""Bundles for Invenio-I18N."""
 
 from __future__ import absolute_import, print_function
 
-from flask import Flask, render_template
+from invenio_assets import NpmBundle, RequireJSFilter
 
-from invenio_i18n import InvenioI18N
-
-# Create Flask application
-app = Flask(__name__)
-app.config.update(
-    I18N_LANGUAGES=[('da', 'Danish'), ('en', 'English'), ('es', 'Spanish')],
+js = NpmBundle(
+    'js/invenio_i18n/angularLangSelector.js',
+    filters=RequireJSFilter(),
+    output='gen/i18n.%(version)s.js',
+    npm={
+        'angular-gettext': '~2.3.8',
+    }
 )
-InvenioI18N(app)
-
-
-@app.route('/')
-def index():
-    return render_template('invenio_i18n/page.html')

@@ -40,7 +40,7 @@ from .babel import MultidirDomain
 from .jinja2 import filter_language_name, filter_language_name_local, \
     filter_to_user_timezone, filter_to_utc
 from .selectors import get_locale, get_timezone
-from .views import blueprint
+from .views import create_blueprint
 
 current_i18n = LocalProxy(lambda: current_app.extensions['invenio-i18n'])
 
@@ -125,11 +125,13 @@ class InvenioI18N(object):
         if self.entry_point_group:
             self.domain.add_entrypoint(self.entry_point_group)
 
-        # Register blueprint if URL is set.
-        if app.config['I18N_SET_LANGUAGE_URL'] \
-           and app.config['I18N_LANGUAGES']:
-            app.register_blueprint(
-                blueprint, url_prefix=app.config['I18N_SET_LANGUAGE_URL'])
+        # Register default routes if URL is set.
+        register_default_routes = app.config['I18N_SET_LANGUAGE_URL'] \
+            and app.config['I18N_LANGUAGES']
+        app.register_blueprint(
+            create_blueprint(register_default_routes=register_default_routes),
+            url_prefix=app.config['I18N_SET_LANGUAGE_URL']
+        )
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).

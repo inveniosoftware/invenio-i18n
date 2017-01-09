@@ -31,13 +31,6 @@ from flask import Blueprint, abort, current_app, redirect, request, session, \
 
 from ._compat import urljoin, urlparse
 
-blueprint = Blueprint(
-    'invenio_i18n',
-    __name__,
-    template_folder='templates',
-    static_folder='static',
-)
-
 
 def is_local_url(target):
     """Determine if URL is safe to redirect to."""
@@ -54,8 +47,6 @@ def get_redirect_target():
             return target
 
 
-@blueprint.route('/', methods=['POST'])
-@blueprint.route('/<lang_code>/', methods=['GET'])
 def set_lang(lang_code=None):
     """Set language in session and redirect."""
     # Check if language is available.
@@ -74,3 +65,20 @@ def set_lang(lang_code=None):
         target = url_for(endpoint) if endpoint else '/'
 
     return redirect(target)
+
+
+def create_blueprint(register_default_routes=True):
+    """Create Invenio-I18N blueprint."""
+    blueprint = Blueprint(
+        'invenio_i18n',
+        __name__,
+        template_folder='templates',
+        static_folder='static',
+    )
+
+    if register_default_routes:
+        blueprint.add_url_rule('/', view_func=set_lang, methods=['POST'])
+        blueprint.add_url_rule('/<lang_code>', view_func=set_lang,
+                               methods=['GET'])
+
+    return blueprint

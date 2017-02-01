@@ -7,6 +7,7 @@
 <body>
 <p>{{_('Hello world')}}</p>
 
+<h3>Using ln query parameter:</h3>
 <ul>
     <li>
         <a href="?ln=en">English version</a>
@@ -18,5 +19,15 @@
         <a href="?ln=es">Spanish version</a>
     </li>
 </ul>
+
+<h3>Using language selector macros:</h3>
+{% from "invenio_i18n/macros/language_selector.html" import language_selector,
+   language_selector_form, language_selector_dropdown %}
+<pre>language_selector</pre>
+{{ language_selector() }}
+<pre>language_selector_form</pre>
+{{ language_selector_form() }}
+<pre>language_selector_dropdown</pre>
+{{ language_selector_dropdown() }}
 </body>
 </html>

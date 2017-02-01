@@ -62,17 +62,6 @@ True
 ...     gettext('Language:') == 'Jazyk:'
 True
 
-Configuration
--------------
-
-.. automodule:: invenio_i18n.config
-   :members:
-
-In addition, Flask-BabelEx also sets system-wide defaults. For further details
-see:
-
- * https://pythonhosted.org/Flask-BabelEx/#configuration
-
 Marking strings for translation
 -------------------------------
 Following is a short overview on how to mark strings in Python code and
@@ -149,6 +138,28 @@ context:
   (see :func:`~invenio_i18n.jinja2.filter_language_name`).
 * ``language_name_local`` converts language code into display name in local
   locale (see :func:`~invenio_i18n.jinja2.filter_language_name_local`).
+
+Macros
+~~~~~~
+Invenio-I18N also provides three templates macros that you can use to render a
+language selector in templates with:
+
+* ``language_selector`` - Renders a list of links and uses GET requests to
+  change the locale.
+* ``language_selector_form`` - Same as above, but uses POST requests to change
+  the locale.
+* ``language_selector_dropdown`` - Renders a dropdown with languages and uses
+  a POST request to change the locale.
+
+You use the macros by importing one of them from
+``invenio_i18n/macros/language_selector.html``, for instance:
+
+>>> with app.test_request_context():
+...     r = render_template_string(
+...         '{% from "invenio_i18n/macros/language_selector.html"'
+...         '   import language_selector %}'
+...         '{{ language_selector() }}'
+...     )
 """
 
 from __future__ import absolute_import, print_function

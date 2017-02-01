@@ -41,9 +41,14 @@
         :target: https://github.com/inveniosoftware/invenio-i18n/blob/master/LICENSE
 
 
-Invenio internationalization module.
+Invenio internationalization module based on
+`Flask-BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_.
 
-*This is an experimental developer preview release.*
+Features:
 
-* Free software: GPLv2 license
-* Documentation: https://invenio-i18n.readthedocs.io/
+* Loading and merging message catalogs.
+* Algorithm for detecting a user's locale.
+* Views for changing the locale.
+* Jinja2 macros and filters for I18N.
+
+Further documentation available at https://invenio-i18n.readthedocs.io/

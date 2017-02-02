@@ -140,7 +140,7 @@ class InvenioI18N(object):
         app.add_template_filter(filter_language_name, name='language_name')
         app.add_template_filter(
             filter_language_name_local, name='language_name_local')
-        app.context_processor(lambda: dict(current_i18n=current_i18n))
+        app.add_template_global(current_i18n, name='current_i18n')
 
         # Lazy string aware JSON encoder.
         app.json_encoder = get_lazystring_encoder(app)

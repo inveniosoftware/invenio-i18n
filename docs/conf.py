@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2015, 2016 CERN.
+# Copyright (C) 2015, 2016, 2017 CERN.
 #
 # Invenio is free software; you can redistribute it
 # and/or modify it under the terms of the GNU General Public License as
@@ -69,7 +69,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Invenio-I18N'
-copyright = u'2015, CERN'
+copyright = u'2015, 2016, 2017 CERN'
 author = u'CERN'
 
 # The version info for the project you're documenting, acts as replacement for

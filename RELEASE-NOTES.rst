@@ -1,15 +1,13 @@
 =======================
- Invenio-I18N v1.0.0b1
+ Invenio-I18N v1.0.0b2
 =======================
 
-Invenio-I18N v1.0.0b1 was released on July 26, 2016.
+Invenio-I18N v1.0.0b2 was released on February 2, 2017.
 
 About
 -----
 
 Invenio internationalization module.
-
-*This is an experimental developer preview release.*
 
 What's new
 ----------
@@ -19,7 +17,7 @@ What's new
 Installation
 ------------
 
-   $ pip install invenio-i18n==1.0.0b1
+   $ pip install invenio-i18n==1.0.0b2
 
 Documentation
 -------------

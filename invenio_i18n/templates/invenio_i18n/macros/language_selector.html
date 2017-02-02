@@ -45,7 +45,7 @@
       <p class="form-control-static">{{ _('Language:') }}</p>
       <select name="lang_code" onchange="this.form.submit()">
         {% for language_item in config.I18N_LANGUAGES %}
-          <option value="{{ language_item[0] }}">{{ language_item[1] }}</option>
+          <option {% if current_i18n.language == language_item[0] %}selected {% endif %}value="{{ language_item[0] }}">{{ language_item[1] }}</option>
         {% endfor %}
       </select>
     </div>

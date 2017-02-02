@@ -22,7 +22,13 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Configuration for the Invenio internationalization module."""
+"""Configuration for the Invenio internationalization module.
+
+In addition to the configuration variables listed below, Flask-BabelEx also
+sets system-wide defaults. For further details see:
+
+ * https://pythonhosted.org/Flask-BabelEx/#configuration
+"""
 
 I18N_TRANSLATIONS_PATHS = []
 """List of paths to load message catalogs from."""

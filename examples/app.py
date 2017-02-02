@@ -39,6 +39,10 @@ Run example development server:
 
     $ FLASK_APP=app.py flask run --debugger -p 5000
 
+The example application will render "Hello World" and display language
+selectors for english, danish and spanish that allow you to change the text to
+the given language.
+
 To be able to uninstall the example app:
 
 .. code-block:: console
@@ -55,6 +59,7 @@ from invenio_i18n import InvenioI18N
 # Create Flask application
 app = Flask(__name__)
 app.config.update(
+    SECRET_KEY='CHANGE_ME',
     I18N_LANGUAGES=[('da', 'Danish'), ('en', 'English'), ('es', 'Spanish')],
 )
 InvenioI18N(app)

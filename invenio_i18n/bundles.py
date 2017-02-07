@@ -33,6 +33,7 @@ js = NpmBundle(
     filters=RequireJSFilter(),
     output='gen/i18n.%(version)s.js',
     npm={
+        'angular': '~1.4.9',
         'angular-gettext': '~2.3.8',
     }
 )

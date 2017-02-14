@@ -22,7 +22,7 @@
 # waive the privileges and immunities granted to it by virtue of its status
 # as an Intergovernmental Organization or submit itself to any jurisdiction.
 
-"""Invenio internationalization module.
+r"""Invenio internationalization module.
 
 This module provide features for loading and merging message catalogs. It is
 built on top of `Flask-BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_ and
@@ -101,6 +101,21 @@ For further details and examples see:
 
 * http://jinja.pocoo.org/docs/dev/templates/#i18n
 
+Angular
+~~~~~~~
+There is also simple integration for Angular application using Angular-Gettext
+library. First, you need to mark HTML tags which contain translatable string
+or expression.
+
+.. code-block:: html
+
+   <a href="/" translate>Hello {{name}}</a>
+
+For further details see:
+
+* https://angular-gettext.rocketeer.be/
+* https://github.com/neillc/angular-gettext-babel
+
 Templates
 ---------
 This section only gives a very quick introduction into custom context variables
@@ -160,6 +175,128 @@ You use the macros by importing one of them from
 ...         '   import language_selector %}'
 ...         '{{ language_selector() }}'
 ...     )
+
+Working with Message Catalogs
+-----------------------------
+Babel package contains really good documentation which you should read
+first:
+
+* http://babel.pocoo.org/en/latest/messages.html
+
+Angular-Gettext
+~~~~~~~~~~~~~~~
+This part focuses on how to configure Babel extraction for Angular application
+in custom ``babel-js.ini`` file:
+
+.. code-block:: text
+
+  [angular_gettext: **/static/templates/**/**.html]
+
+To make message extraction and catalog extraction easier you can add following
+aliases to ``setup.cfg`` (replace ``${PACKAGE_PATH}`` with package path):
+
+.. code-block:: text
+
+  [aliases]
+  extract_messages_js = extract_messages -F babel-js.ini -o \
+      ${PACKAGE_PATH}/translations/messages-js.pot
+  init_catalog_js = init_catalog -D messages-js --input-file \
+      ${PACKAGE_PATH}/translations/messages-js.pot
+  update_catalog_js = update_catalog -D messages-js --input-file \
+      ${PACKAGE_PATH}/translations/messages-js.pot
+
+Integration with Transifex service
+----------------------------------
+There is a Python package that provides CLI. You can start by installing
+*Transifex* package and check if the ``tx`` command is available:
+
+.. code-block:: console
+
+   $ pip install transifex-client
+   $ tx --version
+   0.12.2
+
+The integration is configured in ``.tx/config`` file (replace
+``${PACKAGE_PATH}`` and ``${PACKAGE_NAME}``).
+
+.. code-block:: text
+
+   [main]
+   host = https://www.transifex.com
+
+   [invenio.${PACKAGE_NAME}-messages]
+   file_filter = ${PACKAGE_PATH}/translations/<lang>/LC_MESSAGES/messages.po
+   source_file = ${PACKAGE_PATH}/translations/messages.pot
+   source_lang = en
+   type = PO
+
+   [invenio.${PACKAGE_NAME}-messages-js]
+   file_filter = ${PACKAGE_PATH}/translations/<lang>/LC_MESSAGES/messages-js.po
+   source_file = ${PACKAGE_PATH}/translations/messages-js.pot
+   source_lang = en
+   type = PO
+
+1. Create message catalog
+~~~~~~~~~~~~~~~~~~~~~~~~~
+Start by extracting localizable messages from a collection of source files.
+
+.. code-block:: console
+
+   $ python setup.py extract_messages
+   $ python setup.py init_catalog -l <lang>
+
+If you have localizable Angular messages run commands with ``_js`` suffix too.
+
+.. code-block:: console
+
+   $ python setup.py extract_messages_js
+   $ python setup.py init_catalog_js -l <lang>
+
+2. Transifex project
+~~~~~~~~~~~~~~~~~~~~
+Ensure project has been created on Transifex under the ``inveniosoftware``
+organisation.
+
+
+3. First push
+~~~~~~~~~~~~~
+Push source (``.pot``) and translations (``.po``) to Transifex.
+
+.. code-block:: console
+
+   $ tx push -s -t
+
+.. note::
+
+   From now on do not edit ``.po`` files localy, but only on Transifex.
+
+4. Fetch changes
+~~~~~~~~~~~~~~~~
+Pull translations for a single/all language(s) from Transifex.
+
+.. code-block:: console
+
+   $ tx pull -l <lang>
+   $ tx pull -a
+
+Check fetched tranlations, commit changes
+``git commit -a -s -m 'i18n: updates from Transifex'`` and create
+pull-request.
+
+5. Update message catalog
+~~~~~~~~~~~~~~~~~~~~~~~~~
+When new localizable messages are introduced or changes, the message
+catalog needs to be extracted again. Then you need to push the source
+files to Transifex service which will take care about updating catalogs.
+At the end pull translations for all languages from Transifex and commit
+the changes.
+
+.. code-block:: console
+
+   $ python setup.py extract_messages
+   $ python setup.py extract_messages_js
+   $ tx push -s
+   $ tx pull -a
 """
 
 from __future__ import absolute_import, print_function

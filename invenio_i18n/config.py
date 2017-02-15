@@ -36,6 +36,14 @@ I18N_TRANSLATIONS_PATHS = []
 I18N_LANGUAGES = []
 """List of tuples of available languages.
 
+Example configuration with english and danish with english as default language:
+
+.. code-block:: python
+
+    from flask_babelex import lazy_gettext as _
+    BABEL_DEFAULT_LOCALE = 'en'
+    I18N_LANGUAGES = (('da', _('Danish')),)
+
 .. note:: You should not include ``BABEL_DEFAULT_LOCALE`` in this list.
 """
 

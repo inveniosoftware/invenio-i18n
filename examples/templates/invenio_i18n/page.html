@@ -7,27 +7,36 @@
 <body>
 <p>{{_('Hello world')}}</p>
 
-<h3>Using ln query parameter (overrides session):</h3>
+<h3>Using ln query parameter (overrides everything else):</h3>
 <ul>
+    {% for l in current_i18n.get_locales() %}
     <li>
-        <a href="?ln=en">English version</a>
+        <a href="?ln={{l.language}}">{{l.get_display_name()}}</a>
     </li>
-    <li>
-        <a href="?ln=da">Danish version</a>
-    </li>
-    <li>
-        <a href="?ln=es">Spanish version</a>
-    </li>
+    {% endfor %}
 </ul>
 
 <h3>Using language selector macros:</h3>
 {% from "invenio_i18n/macros/language_selector.html" import language_selector,
    language_selector_form, language_selector_dropdown %}
+<hr />
 <pre>language_selector</pre>
 {{ language_selector() }}
+<hr />
 <pre>language_selector_form</pre>
 {{ language_selector_form() }}
+<hr />
 <pre>language_selector_dropdown</pre>
 {{ language_selector_dropdown() }}
+
+<h3>Debug:</h3>
+<table>
+<tr><td>Selected language:</td><td><pre>{{ current_i18n.locale.language }}</pre></td></tr>
+<tr><td>1. Language from request query string (?ln=):</td><td><pre>{{ 'ln' in request.args }}</pre></td></tr>
+<tr><td>2. Language from session (key '{{config.I18N_SESSION_KEY}}'):</td><td><pre>{{ session.get(config.I18N_SESSION_KEY) }}</pre></td></tr>
+<tr><td>3. Language from current_user:</td><td><pre>{{ getattr(current_user, config.I18N_USER_LANG_ATTR, None) if current_user else None }}</pre></td></tr>
+<tr><td>4. Language from Accept-Language header:</td><td><pre>{{request.headers.get('Accept-Language')}}</pre></td></tr>
+<tr><td>5. Language from default locale:</td><td><pre>{{ config.BABEL_DEFAULT_LOCALE }}</pre></td></tr>
+</table>
 </body>
 </html>

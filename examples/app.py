@@ -54,13 +54,15 @@ from __future__ import absolute_import, print_function
 
 from flask import Flask, render_template
 
+from flask_babelex import lazy_gettext as _
 from invenio_i18n import InvenioI18N
 
 # Create Flask application
 app = Flask(__name__)
 app.config.update(
     SECRET_KEY='CHANGE_ME',
-    I18N_LANGUAGES=[('da', 'Danish'), ('en', 'English'), ('es', 'Spanish')],
+    BABEL_DEFAULT_LOCALE='en',
+    I18N_LANGUAGES=[('da', _('Danish')), ('es', _('Spanish'))],
 )
 InvenioI18N(app)
 

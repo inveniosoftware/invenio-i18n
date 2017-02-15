@@ -29,9 +29,8 @@
         method="POST">
     <div class="form-group">
       <p class="form-control-static">{{ _('Language:') }}</p>
-      {% for language_item in config.I18N_LANGUAGES %}
-        <button class="btn btn-link" name="lang_code" type="submit"
-                value="{{ language_item[0] }}">{{ language_item[1] }}</button>
+      {% for l in current_i18n.get_locales() %}
+        <button class="btn btn-link" name="lang_code" type="submit" value="{{ l.language }}" {% if current_i18n.language == lang %}disabled{% endif%}>{{ l.get_display_name() }}</button>
       {% endfor %}
     </div>
   </form>
@@ -44,8 +43,8 @@
     <div class="form-group">
       <p class="form-control-static">{{ _('Language:') }}</p>
       <select name="lang_code" onchange="this.form.submit()">
-        {% for language_item in config.I18N_LANGUAGES %}
-          <option {% if current_i18n.language == language_item[0] %}selected {% endif %}value="{{ language_item[0] }}">{{ language_item[1] }}</option>
+        {% for l in current_i18n.get_locales() %}
+          <option {% if current_i18n.language == l.language %}selected {% endif %}value="{{ l.language }}">{{ l.get_display_name() }}</option>
         {% endfor %}
       </select>
     </div>
@@ -54,7 +53,11 @@
 
 {% macro language_selector() %}
   <span>{{ _('Language:') }}</span>
-  {% for language_item in config.I18N_LANGUAGES %}
-    <a href="{{ url_for('invenio_i18n.set_lang', lang_code=language_item[0]) }}">{{ language_item[1] }}</a>
-  {% endfor %}
+  {%- for l in current_i18n.get_locales() %}
+    {%- if current_i18n.language != l.language %}
+    <a href="{{ url_for('invenio_i18n.set_lang', lang_code=l.language) }}">{{ l.get_display_name() }}</a>
+    {% else %}
+    <strong>{{ l.get_display_name() }}</strong>
+    {%- endif %}
+  {%- endfor %}
 {% endmacro %}

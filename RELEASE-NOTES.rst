@@ -1,8 +1,8 @@
 =======================
- Invenio-I18N v1.0.0b2
+ Invenio-I18N v1.0.0b3
 =======================
 
-Invenio-I18N v1.0.0b2 was released on February 2, 2017.
+Invenio-I18N v1.0.0b3 was released on February 17, 2017.
 
 About
 -----
@@ -17,7 +17,7 @@ What's new
 Installation
 ------------
 
-   $ pip install invenio-i18n==1.0.0b2
+   $ pip install invenio-i18n==1.0.0b3
 
 Documentation
 -------------

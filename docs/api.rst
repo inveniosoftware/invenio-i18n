@@ -51,3 +51,14 @@ Views
 -----
 .. automodule:: invenio_i18n.views
    :members:
+
+Date/time formatting
+--------------------
+For formatting date and time using the current locale settings, you may use the methods provided by `Flask-BabelEx <http://pythonhosted.org/Flask-BabelEx/#formatting-dates>`_.
+
+These methods are also available as Jinja filters:
+
+* `format_datetime <http://pythonhosted.org/Flask-BabelEx/#flask.ext.babelex.format_datetime>`_ as ``datetimeformat``
+* `format_date <http://pythonhosted.org/Flask-BabelEx/#flask.ext.babelex.format_date>`_ as ``dateformat``
+* `format_time <http://pythonhosted.org/Flask-BabelEx/#flask.ext.babelex.format_time>`_ as ``timeformat``
+* `format_timedelta <http://pythonhosted.org/Flask-BabelEx/#flask.ext.babelex.format_timedelta>`_ as ``timedeltaformat``.

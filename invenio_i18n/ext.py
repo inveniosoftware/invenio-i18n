@@ -46,7 +46,7 @@ current_i18n = LocalProxy(lambda: current_app.extensions['invenio-i18n'])
 
 
 def get_lazystring_encoder(app):
-    """Custom JSONEncoder that handles lazy strings from Babel.
+    """Return a JSONEncoder for handling lazy strings from Babel.
 
     Installed on Flask application by default by :class:`InvenioI18N`.
     """

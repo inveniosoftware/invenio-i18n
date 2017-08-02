@@ -1,7 +1,7 @@
 /* -*- coding: utf-8 -*-
 *
 * This file is part of Invenio.
-* Copyright (C) 2016 CERN.
+* Copyright (C) 2016, 2017 CERN.
 *
 * Invenio is free software; you can redistribute it
 * and/or modify it under the terms of the GNU General Public License as
@@ -25,6 +25,7 @@
 
 require([
     "node_modules/angular/angular",
+    "node_modules/jquery/jquery.js",
     "node_modules/angular-gettext/dist/angular-gettext"
 ], function() {
     angular.module("langSelector", ["gettext"])
@@ -33,4 +34,9 @@ require([
                 gettextCatalog.setCurrentLanguage(lang);
             }
         }]);
+    $(document).ready(function() {
+        $('#lang-code').on('change', function() {
+            $('#language-code-form').submit();
+        });
+    });
 });

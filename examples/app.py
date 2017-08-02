@@ -53,8 +53,8 @@ To be able to uninstall the example app:
 from __future__ import absolute_import, print_function
 
 from flask import Flask, render_template
-
 from flask_babelex import lazy_gettext as _
+
 from invenio_i18n import InvenioI18N
 
 # Create Flask application

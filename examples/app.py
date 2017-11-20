@@ -25,7 +25,11 @@
 
 """Minimal Flask application example for development.
 
-Run the development server:
+SPHINX-START
+
+A simple example application demonstrating Invenio-I18N language rendering.
+
+First, install and set up the example application:
 
 .. code-block:: console
 
@@ -33,21 +37,23 @@ Run the development server:
    $ cd examples
    $ ./app-setup.sh
 
-Run example development server:
+Now start the example application server:
 
 .. code-block:: console
 
     $ FLASK_APP=app.py flask run --debugger -p 5000
 
-The example application will render "Hello World" and display language
-selectors for english, danish and spanish that allow you to change the text to
-the given language.
+The example application will render "Hello World" and display the language
+selectors for English, Danish and Spanish. It will allow you to change the
+text to the given language.
 
-To be able to uninstall the example app:
+You can uninstall the example application as follows:
 
 .. code-block:: console
 
     $ ./app-teardown.sh
+
+SPHINX-END
 """
 
 from __future__ import absolute_import, print_function

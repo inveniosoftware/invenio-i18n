@@ -29,9 +29,9 @@ from __future__ import absolute_import, print_function
 import os.path
 
 from flask import current_app
+from flask_babelex import Babel
 from flask_babelex import get_locale as get_current_locale
 from flask_babelex import get_timezone as get_current_timezone
-from flask_babelex import Babel
 from werkzeug.local import LocalProxy
 
 from . import config

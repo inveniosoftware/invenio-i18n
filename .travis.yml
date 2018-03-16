@@ -31,6 +31,7 @@ matrix:
   fast_finish: true
   allow_failures:
     - python: pypy
+    - env: REQUIREMENTS=devel
 
 before_install:
   - "travis_retry pip install --upgrade pip setuptools py"

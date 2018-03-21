@@ -5,13 +5,18 @@
     Invenio is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
-Authors
-=======
+Contributors
+============
 
-Invenio internationalization module.
-
-- Alizee Pace <alizee.pace@gmail.com>
-- Javier Delgado <javier.delgado.fernandez@cern.ch>
-- Jiri Kuncar <jiri.kuncar@cern.ch>
-- Lars Holm Nielsen <lars.holm.nielsen@cern.ch>
-- Tibor Simko <tibor.simko@cern.ch>
+- Alizee Pace
+- Andrew McCracken
+- Diego Rodriguez
+- Harris Tzovanakis
+- Javier Delgado
+- Jiri Kuncar
+- Lars Holm Nielsen
+- Leonardo Rossi
+- Nikos Filippakis
+- Paulina Lach
+- Sebastian Witowski
+- Tibor Simko

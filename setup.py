@@ -20,7 +20,7 @@ tests_require = [
     'Flask-Login>=0.3.0',
     'check-manifest>=0.25',
     'coverage>=4.0',
-    'invenio-assets>=1.0.0a4',
+    'invenio-assets>=1.0.0',
     'isort>=4.3.0',
     'pydocstyle>=1.0.0',
     'pytest-cov>=1.8.0',
@@ -99,7 +99,6 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
     ],
 )

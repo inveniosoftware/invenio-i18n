@@ -1,3 +1,10 @@
+..
+    This file is part of Invenio.
+    Copyright (C) 2015-2018 CERN.
+
+    Invenio is free software; you can redistribute it and/or modify it
+    under the terms of the MIT License; see LICENSE file for more details.
+
 ==============
  Invenio-I18N
 ==============
@@ -8,14 +15,8 @@
 .. image:: https://img.shields.io/coveralls/inveniosoftware/invenio-i18n.svg
         :target: https://coveralls.io/r/inveniosoftware/invenio-i18n
 
-.. image:: https://img.shields.io/github/tag/inveniosoftware/invenio-i18n.svg
-        :target: https://github.com/inveniosoftware/invenio-i18n/releases
-
-.. image:: https://img.shields.io/pypi/dm/invenio-i18n.svg
-        :target: https://pypi.python.org/pypi/invenio-i18n
-
-.. image:: https://img.shields.io/github/license/inveniosoftware/invenio-i18n.svg
-        :target: https://github.com/inveniosoftware/invenio-i18n/blob/master/LICENSE
+.. image:: https://img.shields.io/pypi/v/invenio-i18n.svg
+        :target: https://pypi.org/pypi/invenio-i18n
 
 
 Invenio internationalization module based on

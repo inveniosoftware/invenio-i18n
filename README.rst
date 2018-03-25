@@ -9,6 +9,9 @@
  Invenio-I18N
 ==============
 
+.. image:: https://img.shields.io/github/license/inveniosoftware/invenio-i18n.svg
+        :target: https://github.com/inveniosoftware/invenio-i18n/blob/master/LICENSE
+
 .. image:: https://img.shields.io/travis/inveniosoftware/invenio-i18n.svg
         :target: https://travis-ci.org/inveniosoftware/invenio-i18n
 

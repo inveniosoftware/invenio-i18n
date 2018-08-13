@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 
+
 # Idea software family
 .idea/
 
@@ -45,6 +46,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
+.pytest_cache/
 
 # Translations
 *.mo

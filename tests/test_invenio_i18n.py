@@ -86,8 +86,10 @@ def test_timezone_selector(app):
     with app.test_request_context():
         assert format_datetime(datetime(1987, 3, 5, 17, 12)) == \
             'Mar 5, 1987, 5:12:00 PM'
-        assert format_datetime(datetime(1987, 3, 5, 17, 12), 'full') == \
-            'Thursday, March 5, 1987 at 5:12:00 PM GMT+00:00'
+        # Adds the new date format due to a library update 2
+        assert format_datetime(datetime(1987, 3, 5, 17, 12), 'full') in [
+            'Thursday, March 5, 1987 at 5:12:00 PM GMT+00:00',
+            'Thursday, March 5, 1987 at 5:12:00 PM Coordinated Universal Time']
         assert format_datetime(datetime(1987, 3, 5, 17, 12), 'short') == \
             '3/5/87, 5:12 PM'
         assert format_datetime(datetime(1987, 3, 5, 17, 12), 'dd mm yyy') == \

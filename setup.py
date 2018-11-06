@@ -47,7 +47,7 @@ setup_requires = [
 install_requires = [
     'Flask>=0.11.1',
     'Flask-BabelEx>=0.9.2',
-    'flask-webpackext>=0.1.0',
+    'flask-webpackext>=1.0.0',
 ]
 
 packages = find_packages()
@@ -83,7 +83,7 @@ setup(
             'messages = invenio_i18n',
         ],
         'invenio_assets.webpack': [
-            'invenio_i18n = invenio_i18n.bundles:i18n',
+            'invenio_i18n = invenio_i18n.webpack:i18n',
         ],
     },
     extras_require=extras_require,

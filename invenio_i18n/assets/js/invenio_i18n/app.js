@@ -9,7 +9,7 @@
 
 import angular from "angular";
 import "angular-gettext/dist/angular-gettext";
-import jquery from "jquery/dist/jquery";
+import * as $ from "jquery/dist/jquery";
 
 angular.module("langSelector", ["gettext"]).factory("setLanguage", [
   "gettextCatalog",

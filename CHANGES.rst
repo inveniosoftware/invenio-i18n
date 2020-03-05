@@ -8,13 +8,18 @@
 Changes
 =======
 
+Version 1.2.0 (released 2020-03-06)
+
+- Bumps Flask-BabelEx support latest Flask/Werkzeug.
+- Replaces Flask dependency with ``invenio-base``.
+
 Version 1.1.1 (released 2018-12-12)
 
- - Fix an incorrect JS import.
+- Fix an incorrect JS import.
 
 Version 1.1.0 (released 2018-11-06)
 
- - Introduce webpack support.
+- Introduce webpack support.
 
 Version 1.0.0 (released 2018-03-23)
 

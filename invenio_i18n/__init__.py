@@ -24,7 +24,9 @@ by the extension):
 >>> app = Flask('myapp')
 >>> app.config['I18N_LANGUAGES'] = [('cs', _('Czech')), ('da', _('Danish'))]
 >>> from invenio_i18n import InvenioI18N
+>>> from invenio_i18n.views import create_blueprint_from_app
 >>> i18n = InvenioI18N(app)
+>>> app.register_blueprint(create_blueprint_from_app(app))
 
 You can now use the Flask-BabelEx localization features:
 

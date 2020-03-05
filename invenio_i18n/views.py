@@ -52,11 +52,12 @@ def set_lang(lang_code=None):
     return redirect(target)
 
 
-def create_blueprint(register_default_routes=True):
+def create_blueprint(register_default_routes=True, url_prefix=None):
     """Create Invenio-I18N blueprint."""
     blueprint = Blueprint(
         'invenio_i18n',
         __name__,
+        url_prefix=url_prefix,
         template_folder='templates',
         static_folder='static',
     )
@@ -67,3 +68,18 @@ def create_blueprint(register_default_routes=True):
                                methods=['GET'])
 
     return blueprint
+
+
+def create_blueprint_from_app(app):
+    """Create Invenio-I18N blueprint from a Flask application.
+
+    :params app: A Flask application.
+    :returns: Configured blueprint.
+    """
+    # Register default routes if URL is set.
+    register_default_routes = app.config['I18N_SET_LANGUAGE_URL'] \
+        and app.config['I18N_LANGUAGES']
+    return create_blueprint(
+        register_default_routes=register_default_routes,
+        url_prefix=app.config['I18N_SET_LANGUAGE_URL'],
+    )

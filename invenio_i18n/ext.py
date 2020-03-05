@@ -109,14 +109,6 @@ class InvenioI18N(object):
         if self.entry_point_group:
             self.domain.add_entrypoint(self.entry_point_group)
 
-        # Register default routes if URL is set.
-        register_default_routes = app.config['I18N_SET_LANGUAGE_URL'] \
-            and app.config['I18N_LANGUAGES']
-        app.register_blueprint(
-            create_blueprint(register_default_routes=register_default_routes),
-            url_prefix=app.config['I18N_SET_LANGUAGE_URL']
-        )
-
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).
         app.add_template_filter(filter_to_utc, name='toutc')

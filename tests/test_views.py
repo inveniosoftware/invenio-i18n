@@ -14,6 +14,7 @@ from flask import session, url_for
 from flask_babelex import get_locale
 
 from invenio_i18n import InvenioI18N
+from invenio_i18n.views import create_blueprint_from_app
 
 
 def test_lang_view(app):
@@ -24,6 +25,7 @@ def test_lang_view(app):
         SECRET_KEY='CHANGEME',
     )
     InvenioI18N(app)
+    app.register_blueprint(create_blueprint_from_app(app))
 
     @app.route("/")
     def index():
@@ -65,6 +67,7 @@ def test_lang_view_redirect(app):
         SECRET_KEY='CHANGEME',
     )
     InvenioI18N(app)
+    app.register_blueprint(create_blueprint_from_app(app))
 
     @app.route("/page/")
     def page():

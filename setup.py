@@ -78,6 +78,9 @@ setup(
         'invenio_base.apps': [
             'invenio_i18n = invenio_i18n:InvenioI18N',
         ],
+        'invenio_base.blueprints': [
+            'invenio_i18n = invenio_i18n.views:create_blueprint_from_app',
+        ],
         'invenio_i18n.translations': [
             'messages = invenio_i18n',
         ],

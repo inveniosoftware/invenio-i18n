@@ -17,9 +17,9 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'Flask-Login>=0.3.0',
     'check-manifest>=0.25',
     'coverage>=4.0',
+    'invenio-accounts[sqlite]>=1.1.3',
     'invenio-assets>=1.0.0',
     'isort>=4.3.0',
     'pydocstyle>=1.0.0',
@@ -45,9 +45,8 @@ setup_requires = [
 ]
 
 install_requires = [
-    'Flask>=0.11.1',
-    'Flask-BabelEx>=0.9.2',
-    'flask-webpackext>=1.0.0',
+    'invenio-base>=1.2.2',
+    'Flask-BabelEx>=0.9.4',
 ]
 
 packages = find_packages()

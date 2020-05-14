@@ -45,7 +45,7 @@ setup_requires = [
 ]
 
 install_requires = [
-    'invenio-base>=1.2.2',
+    'invenio-base>=1.2.3',
     'Flask-BabelEx>=0.9.4',
 ]
 
@@ -72,9 +72,6 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
-        'invenio_assets.bundles': [
-            'invenio_i18n_js = invenio_i18n.bundles:js',
-        ],
         'invenio_base.apps': [
             'invenio_i18n = invenio_i18n:InvenioI18N',
         ],

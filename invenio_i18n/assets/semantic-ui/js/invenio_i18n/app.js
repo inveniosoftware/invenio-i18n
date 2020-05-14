@@ -7,19 +7,7 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
-import angular from "angular";
-import "angular-gettext/dist/angular-gettext";
 import * as $ from "jquery/dist/jquery";
-
-// TODO: Delete this ?
-angular.module("langSelector", ["gettext"]).factory("setLanguage", [
-  "gettextCatalog",
-  function(gettextCatalog) {
-    function setCurrentLanguage(lang) {
-      gettextCatalog.setCurrentLanguage(lang);
-    }
-  }
-]);
 
 $(document).ready(function() {
   $("#lang-code").on("change", function() {

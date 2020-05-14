@@ -1,0 +1,24 @@
+{# -*- coding: utf-8 -*-
+
+  This file is part of Invenio.
+  Copyright (C) 2015-2018 CERN.
+  Copyright (C) 2016 TIND.
+
+  Invenio is free software; you can redistribute it and/or modify it
+  under the terms of the MIT License; see LICENSE file for more details.
+#}
+
+{% macro language_selector_dropdown() %}
+<form id="language-code-form" class="lang-select"
+      action="{{ url_for('invenio_i18n.set_lang')}}"
+      method="POST">
+  <div>
+    <label>{{ _('Language:') }}</label>
+    <select id="lang-code" name="lang_code">
+      {% for l in current_i18n.get_locales() %}
+        <option {% if current_i18n.language == l.language %}selected {% endif %}value="{{ l.language }}">{{ l.get_display_name() }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
+{% endmacro %}

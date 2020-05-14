@@ -202,5 +202,5 @@ def test_bundles(app):
     InvenioAssets(app)
 
     with app.app_context():
-        from invenio_i18n.bundles import js
-        assert js
+        from invenio_i18n.webpack import i18n
+        assert i18n

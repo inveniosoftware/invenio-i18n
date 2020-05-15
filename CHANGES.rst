@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version 1.3.0a1 (released 2020-05-15)
+
+- Integrates Semantic-UI templates and assets
+- Removes webassets-based bundles.
+
 Version 1.2.0 (released 2020-03-06)
 
 - Bumps Flask-BabelEx support latest Flask/Werkzeug.

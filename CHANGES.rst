@@ -8,7 +8,7 @@
 Changes
 =======
 
-Version 1.3.0a1 (released 2020-05-15)
+Version 1.3.0a2 (released 2020-08-28)
 
 - Integrates Semantic-UI templates and assets
 - Removes webassets-based bundles.

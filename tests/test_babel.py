@@ -77,16 +77,19 @@ def test_get_translations_existing_and_missing_mo(app):
             assert isinstance(d.get_translations(), NullTranslations)
 
 
-def test_set_locale(app):
-    """Test get translations for language with existing/missing *.mo files."""
+def test_set_locale_no_app_ctx():
+    """Test get translations when there is no application ctx."""
     # Wokring outside request context
-    Babel(app)
     try:
         with set_locale('en'):
             assert False
     except RuntimeError:
         pass
 
+
+def test_set_locale(app):
+    """Test get translations for language with existing/missing *.mo files."""
+    Babel(app)
     with app.test_request_context():
         with set_locale('en'):
             assert str(get_locale()) == 'en'

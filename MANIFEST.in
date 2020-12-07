@@ -18,6 +18,7 @@ include babel.ini
 include docs/requirements.txt
 include pytest.ini
 prune docs/_build
+recursive-include .github/workflows *.yml
 recursive-include docs *.bat *.py *.rst Makefile
 recursive-include examples *.html *.po *.py *.sh
 recursive-include invenio_i18n *.js

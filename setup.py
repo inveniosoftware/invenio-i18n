@@ -17,20 +17,15 @@ readme = open('README.rst').read()
 history = open('CHANGES.rst').read()
 
 tests_require = [
-    'check-manifest>=0.25',
-    'coverage>=4.0',
-    'invenio-accounts[sqlite]>=1.1.3',
-    'invenio-assets>=1.0.0',
-    'isort>=4.3.0',
-    'pydocstyle>=1.0.0',
-    'pytest-cov>=1.8.0',
-    'pytest-pep8>=1.0.6',
-    'pytest>=3.8.0,<5.0.0',
+    'invenio-accounts[sqlite]>=1.3.0',
+    'invenio-assets>=1.2.0',
+    'invenio-db>=1.0.8',
+    'pytest-invenio>=1.4.0',
 ]
 
 extras_require = {
     'docs': [
-        'Sphinx>=1.5.1',
+        'Sphinx>=3',
     ],
     'tests': tests_require,
 }
@@ -100,10 +95,10 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'Development Status :: 5 - Production/Stable',
     ],

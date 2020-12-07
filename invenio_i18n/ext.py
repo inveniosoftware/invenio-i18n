@@ -137,8 +137,8 @@ class InvenioI18N(object):
 
         yield (default_lang, default_title)
 
-        for l, title in current_app.config.get('I18N_LANGUAGES', []):
-            yield l, title
+        for lang, title in current_app.config.get('I18N_LANGUAGES', []):
+            yield lang, title
 
     def get_languages(self):
         """Get list of languages."""
@@ -153,8 +153,8 @@ class InvenioI18N(object):
         """
         if self._locales_cache is None:
             langs = [self.babel.default_locale]
-            for l, dummy_title in current_app.config.get('I18N_LANGUAGES', []):
-                langs.append(self.babel.load_locale(l))
+            for lang, dummy_title in current_app.config.get('I18N_LANGUAGES', []):
+                langs.append(self.babel.load_locale(lang))
             self._locales_cache = langs
         return self._locales_cache
 

@@ -126,7 +126,7 @@ def test_get_locales(app):
     i18n = InvenioI18N(app)
 
     with app.app_context():
-        assert [str(l) for l in i18n.get_locales()] == ['en', 'da']
+        assert [str(lang) for lang in i18n.get_locales()] == ['en', 'da']
 
 
 def test_current_i18n(app):

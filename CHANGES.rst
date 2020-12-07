@@ -8,10 +8,11 @@
 Changes
 =======
 
-Version 1.3.0a2 (released 2020-08-28)
+Version 1.3.0 (released 2020-12-07)
 
-- Integrates Semantic-UI templates and assets
+- Integrates Semantic-UI templates and assets.
 - Removes webassets-based bundles.
+- Adds InvenioI18N extransion to the API level applications.
 
 Version 1.2.0 (released 2020-03-06)
 

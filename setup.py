@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2016 TIND.
+# Copyright (C) 2021 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -21,11 +22,12 @@ tests_require = [
     'invenio-assets>=1.2.0',
     'invenio-db>=1.0.8',
     'pytest-invenio>=1.4.0',
+    'Flask>=1.1.4,<2.0.0',
 ]
 
 extras_require = {
     'docs': [
-        'Sphinx>=3',
+        'Sphinx>=3.3.1,<3.4',
     ],
     'tests': tests_require,
 }

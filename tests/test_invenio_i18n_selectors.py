@@ -138,4 +138,4 @@ def test_get_locale_anonymous_user(app):
 def test_fstring_wrapper():
     """Test f-string wrapper."""
     name = "example"
-    assert "Test name example" == f(_(f"Test name {name}"))
+    assert "Test name example" == f(_("Test name {name}"))

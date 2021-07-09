@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C)      2021 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,8 @@
 See `Flask-BabelEx documentation <https://pythonhosted.org/Flask-BabelEx/>`_
 for corresponding methods.
 """
+
+from inspect import currentframe
 
 from flask import current_app, request, session
 
@@ -70,3 +73,9 @@ def get_locale():
 def get_timezone():
     """Get default timezone (i.e. ``BABEL_DEFAULT_TIMEZONE``)."""
     return current_app.extensions['babel'].default_timezone
+
+
+def f(s):
+    """Perform the f-string interpolation after gettext has been called."""
+    frame = currentframe().f_back
+    return eval(f"f'{s}'", frame.f_locals, frame.f_globals)

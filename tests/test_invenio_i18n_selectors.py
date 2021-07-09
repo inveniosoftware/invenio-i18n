@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C)      2021 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,10 +12,11 @@
 from __future__ import absolute_import, print_function
 
 from flask import session
+from flask_babelex import lazy_gettext as _
 from flask_login import LoginManager, login_user
 
 from invenio_i18n import InvenioI18N
-from invenio_i18n.selectors import get_locale
+from invenio_i18n.selectors import f, get_locale
 
 
 class FakeUser(object):
@@ -131,3 +133,9 @@ def test_get_locale_anonymous_user(app):
 
     with app.test_request_context():
         assert 'en' == get_locale()
+
+
+def test_fstring_wrapper():
+    """Test f-string wrapper."""
+    name = "example"
+    assert "Test name example" == f(_(f"Test name {name}"))

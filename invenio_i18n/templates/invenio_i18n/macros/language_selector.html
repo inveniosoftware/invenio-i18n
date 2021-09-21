@@ -15,7 +15,7 @@
     <div class="form-group">
       <p class="form-control-static">{{ _('Language:') }}</p>
       {% for l in current_i18n.get_locales() %}
-        <button class="btn btn-link" name="lang_code" type="submit" value="{{ l.language }}" {% if current_i18n.language == lang %}disabled{% endif%}>{{ l.get_display_name() }}</button>
+        <button class="btn btn-link" name="lang_code" type="submit" value="{{ l.language }}" {% if current_i18n.language == l.language %}disabled{% endif%}>{{ l.get_display_name() }}</button>
       {% endfor %}
     </div>
   </form>

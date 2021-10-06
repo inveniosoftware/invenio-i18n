@@ -25,7 +25,7 @@ tests_require = [
 
 extras_require = {
     'docs': [
-        'Sphinx>=3',
+        'Sphinx>=4.2.0',
     ],
     'tests': tests_require,
 }
@@ -40,8 +40,8 @@ setup_requires = [
 ]
 
 install_requires = [
-    'invenio-base>=1.2.3',
     'Flask-BabelEx>=0.9.4',
+    'invenio-base>=1.2.4',
 ]
 
 packages = find_packages()

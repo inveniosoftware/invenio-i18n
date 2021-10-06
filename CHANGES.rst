@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version 1.3.1 (released 2021-10-06)
+
+- Fixes issue with language selector button not disabling the currently
+  selected field.
+
 Version 1.3.0 (released 2020-12-07)
 
 - Integrates Semantic-UI templates and assets.

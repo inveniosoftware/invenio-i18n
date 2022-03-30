@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 1.3.2 (released 2022-03-30)
+
+- Adds support for Flask v2.1
+
 Version 1.3.1 (released 2021-10-06)
 
 - Fixes issue with language selector button not disabling the currently

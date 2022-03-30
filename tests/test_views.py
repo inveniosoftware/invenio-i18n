@@ -40,7 +40,7 @@ def test_lang_view(app):
         # Set language to danish
         res = client.get(da_lang_url)
         assert res.status_code == 302
-        assert res.location == 'http://localhost/'
+        assert res.location == '/'
         assert session[app.config['I18N_SESSION_KEY']] == 'da'
 
         res = client.get("/")
@@ -49,7 +49,7 @@ def test_lang_view(app):
         # Set language to english
         res = client.get(en_lang_url)
         assert res.status_code == 302
-        assert res.location == 'http://localhost/'
+        assert res.location == '/'
         assert session[app.config['I18N_SESSION_KEY']] == 'en'
 
         res = client.get("/")
@@ -79,22 +79,22 @@ def test_lang_view_redirect(app):
 
     with app.test_client() as client:
         # Request body
-        res = client.get(da_lang_url, data={'next': next_url})
+        res = client.post(da_lang_url, data={'next': next_url})
         assert res.status_code == 302
-        assert res.location == 'http://localhost/page/'
+        assert res.location == '/page/'
         assert session[app.config['I18N_SESSION_KEY']] == 'da'
 
         # Query string
         res = client.get(da_lang_url + "?next={0}".format(next_url))
-        assert res.location == 'http://localhost/page/'
+        assert res.location == '/page/'
 
         # Referrer header
         res = client.get(da_lang_url, headers={'Referer': next_url})
-        assert res.location == 'http://localhost/page/'
+        assert res.location == '/page/'
 
         # Unsafe redirects
         res = client.get(da_lang_url + "?next=http://example.org")
-        assert res.location == 'http://localhost/'
+        assert res.location == '/'
         res = client.get(
             da_lang_url, headers={'Referer': 'http://example.org'})
-        assert res.location == 'http://localhost/'
+        assert res.location == '/'

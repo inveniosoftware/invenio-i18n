@@ -33,8 +33,10 @@ def get_locale():
 
     Will only accept languages defined in ``I18N_LANGUAGES``.
     """
-    locales = [x[0] for x in
-               current_app.extensions['invenio-i18n'].get_languages()]
+    locales = []
+    if 'invenio-i18n' in current_app.extensions:
+        locales = [x[0] for x in
+                   current_app.extensions['invenio-i18n'].get_languages()]
 
     # In the case of the user specifies a language for the resource.
     if 'ln' in request.args:
@@ -53,6 +55,7 @@ def get_locale():
     language_user_key = current_app.config['I18N_USER_LANG_ATTR']
     if language_user_key is not None and \
             hasattr(current_app, 'login_manager') and \
+            current_user is not None and \
             current_user.is_authenticated:
         language = getattr(current_user, language_user_key, None)
         if language is not None and language in locales:

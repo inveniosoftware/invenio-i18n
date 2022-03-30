@@ -65,7 +65,7 @@ def create_blueprint(register_default_routes=True, url_prefix=None):
     if register_default_routes:
         blueprint.add_url_rule('/', view_func=set_lang, methods=['POST'])
         blueprint.add_url_rule('/<lang_code>', view_func=set_lang,
-                               methods=['GET'])
+                               methods=['GET', 'POST'])
 
     return blueprint
 

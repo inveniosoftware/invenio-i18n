@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-          python-version: [3.6, 3.7, 3.8]
+          python-version: [3.7, 3.8, 3.9]
           requirements-level: [min, pypi]
 
     steps:
@@ -43,7 +43,7 @@ jobs:
       - name: Generate dependencies
         run: |
           python -m pip install --upgrade pip setuptools py wheel requirements-builder
-          requirements-builder -e all ${{ matrix.requirements-file }} --level=${{ matrix.requirements-level }} setup.py > .${{ matrix.requirements-level }}-${{ matrix.python-version }}-requirements.txt
+          requirements-builder -e tests ${{ matrix.requirements-file }} --level=${{ matrix.requirements-level }} setup.py > .${{ matrix.requirements-level }}-${{ matrix.python-version }}-requirements.txt
 
       - name: Cache pip
         uses: actions/cache@v2
@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r .${{matrix.requirements-level}}-${{ matrix.python-version }}-requirements.txt
-          pip install -e .[all]
+          pip install -e .[tests]
           pip freeze
 
       - name: Run tests

@@ -17,7 +17,6 @@ python -m setup compile_catalog
 python -m babel.messages.frontend compile -d tests/translations/
 python -m check_manifest
 python -m sphinx.cmd.build -qnNW docs docs/_build/html
-python -m sphinx.cmd.build -qnNW -b doctest docs docs/_build/doctest
 python -m pytest
 tests_exit_code=$?
 exit "$tests_exit_code"

@@ -8,4 +8,5 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 from setuptools import setup
+
 setup()

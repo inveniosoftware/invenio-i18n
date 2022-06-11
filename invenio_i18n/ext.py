@@ -21,12 +21,16 @@ from werkzeug.local import LocalProxy
 from . import config
 from ._compat import text_type
 from .babel import MultidirDomain
-from .jinja2 import filter_language_name, filter_language_name_local, \
-    filter_to_user_timezone, filter_to_utc
+from .jinja2 import (
+    filter_language_name,
+    filter_language_name_local,
+    filter_to_user_timezone,
+    filter_to_utc,
+)
 from .selectors import get_locale, get_timezone
 from .views import create_blueprint
 
-current_i18n = LocalProxy(lambda: current_app.extensions['invenio-i18n'])
+current_i18n = LocalProxy(lambda: current_app.extensions["invenio-i18n"])
 
 
 def get_lazystring_encoder(app):
@@ -37,7 +41,6 @@ def get_lazystring_encoder(app):
     from speaklater import _LazyString
 
     class JSONEncoder(app.json_encoder):
-
         def default(self, o):
             if isinstance(o, _LazyString):
                 return text_type(o)
@@ -49,9 +52,14 @@ def get_lazystring_encoder(app):
 class InvenioI18N(object):
     """Invenio I18N extension."""
 
-    def __init__(self, app=None, date_formats=None, localeselector=None,
-                 timezoneselector=None,
-                 entry_point_group='invenio_i18n.translations'):
+    def __init__(
+        self,
+        app=None,
+        date_formats=None,
+        localeselector=None,
+        timezoneselector=None,
+        entry_point_group="invenio_i18n.translations",
+    ):
         """Initialize extension.
 
         :param app: Flask application.
@@ -99,10 +107,10 @@ class InvenioI18N(object):
         self.babel.timezoneselector(self.timezoneselector or get_timezone)
 
         # 1. Paths listed in I18N_TRANSLATIONS_PATHS
-        for p in app.config.get('I18N_TRANSLATIONS_PATHS', []):
+        for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
             self.domain.add_path(p)
         # 2. <app.root_path>/translations
-        app_translations = os.path.join(app.root_path, 'translations')
+        app_translations = os.path.join(app.root_path, "translations")
         if os.path.exists(app_translations):
             self.domain.add_path(app_translations)
         # 3. Entrypoints
@@ -111,33 +119,31 @@ class InvenioI18N(object):
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).
-        app.add_template_filter(filter_to_utc, name='toutc')
-        app.add_template_filter(filter_to_user_timezone, name='tousertimezone')
-        app.add_template_filter(filter_language_name, name='language_name')
-        app.add_template_filter(
-            filter_language_name_local, name='language_name_local')
-        app.add_template_global(current_i18n, name='current_i18n')
+        app.add_template_filter(filter_to_utc, name="toutc")
+        app.add_template_filter(filter_to_user_timezone, name="tousertimezone")
+        app.add_template_filter(filter_language_name, name="language_name")
+        app.add_template_filter(filter_language_name_local, name="language_name_local")
+        app.add_template_global(current_i18n, name="current_i18n")
 
         # Lazy string aware JSON encoder.
         app.json_encoder = get_lazystring_encoder(app)
 
-        app.extensions['invenio-i18n'] = self
+        app.extensions["invenio-i18n"] = self
 
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
-            if k.startswith('I18N_'):
+            if k.startswith("I18N_"):
                 app.config.setdefault(k, getattr(config, k))
 
     def iter_languages(self):
         """Iterate over list of languages."""
         default_lang = self.babel.default_locale.language
-        default_title = self.babel.default_locale.get_display_name(
-            default_lang)
+        default_title = self.babel.default_locale.get_display_name(default_lang)
 
         yield (default_lang, default_title)
 
-        for lang, title in current_app.config.get('I18N_LANGUAGES', []):
+        for lang, title in current_app.config.get("I18N_LANGUAGES", []):
             yield lang, title
 
     def get_languages(self):
@@ -153,7 +159,7 @@ class InvenioI18N(object):
         """
         if self._locales_cache is None:
             langs = [self.babel.default_locale]
-            for lang, dummy_title in current_app.config.get('I18N_LANGUAGES', []):
+            for lang, dummy_title in current_app.config.get("I18N_LANGUAGES", []):
                 langs.append(self.babel.load_locale(lang))
             self._locales_cache = langs
         return self._locales_cache

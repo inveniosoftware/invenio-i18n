@@ -33,101 +33,111 @@ class FakeUser(object):
 
 def test_get_locale_querystring(app):
     """Test getting locales from the querystring."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish'),
-                                    ('en', 'English'),
-                                    ('es', 'Spanish')]
+    app.config["I18N_LANGUAGES"] = [
+        ("da", "Danish"),
+        ("en", "English"),
+        ("es", "Spanish"),
+    ]
     InvenioI18N(app)
 
-    with app.test_request_context('/?ln=da'):
-        assert 'da' == get_locale()
+    with app.test_request_context("/?ln=da"):
+        assert "da" == get_locale()
 
-    with app.test_request_context('/?ln=en'):
-        assert 'en' == get_locale()
+    with app.test_request_context("/?ln=en"):
+        assert "en" == get_locale()
 
-    with app.test_request_context('/?ln=es'):
-        assert 'es' == get_locale()
+    with app.test_request_context("/?ln=es"):
+        assert "es" == get_locale()
 
 
 def test_get_locale_session(app):
     """Test getting locales from the current session."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish'),
-                                    ('en', 'English'),
-                                    ('es', 'Spanish')]
-    app.secret_key = 'secret key'
+    app.config["I18N_LANGUAGES"] = [
+        ("da", "Danish"),
+        ("en", "English"),
+        ("es", "Spanish"),
+    ]
+    app.secret_key = "secret key"
     InvenioI18N(app)
 
     with app.test_request_context():
-        session['language'] = 'da'
-        assert 'da' == get_locale()
+        session["language"] = "da"
+        assert "da" == get_locale()
 
     with app.test_request_context():
-        session['language'] = 'en'
-        assert 'en' == get_locale()
+        session["language"] = "en"
+        assert "en" == get_locale()
 
     with app.test_request_context():
-        session['language'] = 'es'
-        assert 'es' == get_locale()
+        session["language"] = "es"
+        assert "es" == get_locale()
 
 
 def test_get_locale_user_settings(app):
     """Test getting locales from the user settings."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish'),
-                                    ('en', 'English'),
-                                    ('es', 'Spanish')]
-    app.secret_key = 'secret key'
+    app.config["I18N_LANGUAGES"] = [
+        ("da", "Danish"),
+        ("en", "English"),
+        ("es", "Spanish"),
+    ]
+    app.secret_key = "secret key"
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = "login"
     InvenioI18N(app)
 
     with app.test_request_context():
-        login_user(FakeUser('da'))
-        assert 'da' == get_locale()
+        login_user(FakeUser("da"))
+        assert "da" == get_locale()
 
     with app.test_request_context():
-        login_user(FakeUser('en'))
-        assert 'en' == get_locale()
+        login_user(FakeUser("en"))
+        assert "en" == get_locale()
 
     with app.test_request_context():
-        login_user(FakeUser('es'))
-        assert 'es' == get_locale()
+        login_user(FakeUser("es"))
+        assert "es" == get_locale()
 
 
 def test_get_locale_headers(app):
     """Test getting locale from the headers of the request."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish'),
-                                    ('en', 'English'),
-                                    ('es', 'Spanish')]
+    app.config["I18N_LANGUAGES"] = [
+        ("da", "Danish"),
+        ("en", "English"),
+        ("es", "Spanish"),
+    ]
     InvenioI18N(app)
 
-    with app.test_request_context(headers=[('Accept-Language', 'da')]):
-        assert 'da' == get_locale()
+    with app.test_request_context(headers=[("Accept-Language", "da")]):
+        assert "da" == get_locale()
 
-    with app.test_request_context(headers=[('Accept-Language', 'en')]):
-        assert 'en' == get_locale()
+    with app.test_request_context(headers=[("Accept-Language", "en")]):
+        assert "en" == get_locale()
 
-    with app.test_request_context(headers=[('Accept-Language', 'es')]):
-        assert 'es' == get_locale()
+    with app.test_request_context(headers=[("Accept-Language", "es")]):
+        assert "es" == get_locale()
 
 
 def test_get_locale_default(app):
     """Test getting locale by default."""
-    app.config['I18N_LANGUAGES'] = [('da', 'Danish'),
-                                    ('en', 'English'),
-                                    ('es', 'Spanish')]
+    app.config["I18N_LANGUAGES"] = [
+        ("da", "Danish"),
+        ("en", "English"),
+        ("es", "Spanish"),
+    ]
     InvenioI18N(app)
 
     with app.test_request_context():
-        assert 'en' == get_locale()
+        assert "en" == get_locale()
 
 
 def test_get_locale_anonymous_user(app):
     """Test anonymous user locale selection by default."""
-    app.secret_key = 'secret key'
+    app.secret_key = "secret key"
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = "login"
     InvenioI18N(app)
 
     with app.test_request_context():
-        assert 'en' == get_locale()
+        assert "en" == get_locale()

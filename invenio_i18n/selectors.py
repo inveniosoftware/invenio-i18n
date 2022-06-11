@@ -34,29 +34,30 @@ def get_locale():
     Will only accept languages defined in ``I18N_LANGUAGES``.
     """
     locales = []
-    if 'invenio-i18n' in current_app.extensions:
-        locales = [x[0] for x in
-                   current_app.extensions['invenio-i18n'].get_languages()]
+    if "invenio-i18n" in current_app.extensions:
+        locales = [x[0] for x in current_app.extensions["invenio-i18n"].get_languages()]
 
     # In the case of the user specifies a language for the resource.
-    if 'ln' in request.args:
-        language = request.args.get('ln')
+    if "ln" in request.args:
+        language = request.args.get("ln")
         if language in locales:
             return language
 
     # In the case of the user has set a language for the current session.
-    language_session_key = current_app.config['I18N_SESSION_KEY']
+    language_session_key = current_app.config["I18N_SESSION_KEY"]
     if language_session_key in session:
         language = session[language_session_key]
         if language in locales:
             return language
 
     # In the case of the registered user has a prefered language.
-    language_user_key = current_app.config['I18N_USER_LANG_ATTR']
-    if language_user_key is not None and \
-            hasattr(current_app, 'login_manager') and \
-            current_user is not None and \
-            current_user.is_authenticated:
+    language_user_key = current_app.config["I18N_USER_LANG_ATTR"]
+    if (
+        language_user_key is not None
+        and hasattr(current_app, "login_manager")
+        and current_user is not None
+        and current_user.is_authenticated
+    ):
         language = getattr(current_user, language_user_key, None)
         if language is not None and language in locales:
             return language
@@ -67,9 +68,9 @@ def get_locale():
         return headers_best_match
 
     # If there is no way to know the language, return BABEL_DEFAULT_LOCALE
-    return current_app.config['BABEL_DEFAULT_LOCALE']
+    return current_app.config["BABEL_DEFAULT_LOCALE"]
 
 
 def get_timezone():
     """Get default timezone (i.e. ``BABEL_DEFAULT_TIMEZONE``)."""
-    return current_app.extensions['babel'].default_timezone
+    return current_app.extensions["babel"].default_timezone

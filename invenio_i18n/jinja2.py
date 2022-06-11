@@ -39,8 +39,11 @@ def filter_language_name(lang_code):
 
     Installed on application as ``language_name``.
     """
-    return current_app.extensions['babel'].load_locale(
-        lang_code).get_display_name(get_locale().language)
+    return (
+        current_app.extensions["babel"]
+        .load_locale(lang_code)
+        .get_display_name(get_locale().language)
+    )
 
 
 def filter_language_name_local(lang_code):
@@ -48,5 +51,4 @@ def filter_language_name_local(lang_code):
 
     Installed on application as ``language_name_local``.
     """
-    return current_app.extensions['babel'].load_locale(
-        lang_code).display_name
+    return current_app.extensions["babel"].load_locale(lang_code).display_name

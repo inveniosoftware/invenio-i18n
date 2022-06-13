@@ -137,6 +137,7 @@ def test_get_locale_anonymous_user(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = "login"
+    login_manager.user_loader(lambda id_: {})
     InvenioI18N(app)
 
     with app.test_request_context():

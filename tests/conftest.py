@@ -18,4 +18,4 @@ from flask import Flask
 @pytest.fixture
 def app():
     """Application fixture."""
-    return Flask('testapp')
+    return Flask("testapp")

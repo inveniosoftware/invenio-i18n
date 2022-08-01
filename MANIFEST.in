@@ -24,3 +24,4 @@ recursive-include examples *.html *.po *.py *.sh
 recursive-include invenio_i18n *.js
 recursive-include invenio_i18n *.po *.mo *.pot *.html
 recursive-include tests *.po *.mo *.py
+include .git-blame-ignore-revs

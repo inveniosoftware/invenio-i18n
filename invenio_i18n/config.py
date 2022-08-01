@@ -31,7 +31,7 @@ Example configuration with english and danish with english as default language:
 .. note:: You should not include ``BABEL_DEFAULT_LOCALE`` in this list.
 """
 
-I18N_SET_LANGUAGE_URL = '/lang'
+I18N_SET_LANGUAGE_URL = "/lang"
 """URL prefix for set language view.
 
 Set to ``None`` to prevent view from being installed.
@@ -40,10 +40,10 @@ Set to ``None`` to prevent view from being installed.
 I18N_DEFAULT_REDIRECT_ENDPOINT = None
 """Endpoint to redirect if no next parameter is provided."""
 
-I18N_SESSION_KEY = 'language'
+I18N_SESSION_KEY = "language"
 """Key to retrieve language identifier from the current session object."""
 
-I18N_USER_LANG_ATTR = 'prefered_language'
+I18N_USER_LANG_ATTR = "prefered_language"
 """Attribute name which contains language identifier on the User object.
 
 It is used only when the login manager is installed and a user is

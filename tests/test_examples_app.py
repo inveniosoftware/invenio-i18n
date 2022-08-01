@@ -23,18 +23,19 @@ def example_app():
 
     # Go to example directory
     project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    exampleappdir = os.path.join(project_dir, 'examples')
+    exampleappdir = os.path.join(project_dir, "examples")
     os.chdir(exampleappdir)
 
     # Setup example
-    cmd = './app-setup.sh'
+    cmd = "./app-setup.sh"
     exit_status = subprocess.call(cmd, shell=True)
     assert exit_status == 0
 
     # Starting example web app
-    cmd = 'FLASK_APP=app.py flask run --debugger -p 5000'
-    webapp = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                              preexec_fn=os.setsid, shell=True)
+    cmd = "FLASK_APP=app.py flask run --debugger -p 5000"
+    webapp = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, preexec_fn=os.setsid, shell=True
+    )
     time.sleep(10)
 
     # Return webapp
@@ -44,7 +45,7 @@ def example_app():
     os.killpg(webapp.pid, signal.SIGTERM)
 
     # Tear down example app
-    cmd = './app-teardown.sh'
+    cmd = "./app-teardown.sh"
     subprocess.call(cmd, shell=True)
 
     # Return to the original directory
@@ -54,16 +55,16 @@ def example_app():
 def test_example_app(example_app):
     """Test example app."""
     # Open page in english
-    cmd = 'curl http://0.0.0.0:5000/'
-    output = subprocess.check_output(cmd, shell=True).decode('utf-8')
-    assert 'Hello world!' in output
+    cmd = "curl http://0.0.0.0:5000/"
+    output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+    assert "Hello world!" in output
 
     # Open page in danish
-    cmd = 'curl http://0.0.0.0:5000/?ln=da'
-    output = subprocess.check_output(cmd, shell=True).decode('utf-8')
-    assert 'Hej Verden!' in output
+    cmd = "curl http://0.0.0.0:5000/?ln=da"
+    output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+    assert "Hej Verden!" in output
 
     # Open page in spanish
-    cmd = 'curl http://0.0.0.0:5000/?ln=es'
-    output = subprocess.check_output(cmd, shell=True).decode('utf-8')
-    assert 'Hola mundo!' in output
+    cmd = "curl http://0.0.0.0:5000/?ln=es"
+    output = subprocess.check_output(cmd, shell=True).decode("utf-8")
+    assert "Hola mundo!" in output

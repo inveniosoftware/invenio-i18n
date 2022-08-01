@@ -51,14 +51,14 @@ from invenio_i18n.views import create_blueprint_from_app
 # Create Flask application
 app = Flask(__name__)
 app.config.update(
-    SECRET_KEY='CHANGE_ME',
-    BABEL_DEFAULT_LOCALE='en',
-    I18N_LANGUAGES=[('da', _('Danish')), ('es', _('Spanish'))],
+    SECRET_KEY="CHANGE_ME",
+    BABEL_DEFAULT_LOCALE="en",
+    I18N_LANGUAGES=[("da", _("Danish")), ("es", _("Spanish"))],
 )
 InvenioI18N(app)
 app.register_blueprint(create_blueprint_from_app(app))
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return render_template('invenio_i18n/page.html')
+    return render_template("invenio_i18n/page.html")

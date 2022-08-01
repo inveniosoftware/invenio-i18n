@@ -27,12 +27,12 @@ def set_locale(ln):
     """
     ctx = _request_ctx_stack.top
     if ctx is None:
-        raise RuntimeError('Working outside of request context.')
-    new_locale = current_app.extensions['babel'].load_locale(ln)
-    old_locale = getattr(ctx, 'babel_locale', None)
-    setattr(ctx, 'babel_locale', new_locale)
+        raise RuntimeError("Working outside of request context.")
+    new_locale = current_app.extensions["babel"].load_locale(ln)
+    old_locale = getattr(ctx, "babel_locale", None)
+    setattr(ctx, "babel_locale", new_locale)
     yield
-    setattr(ctx, 'babel_locale', old_locale)
+    setattr(ctx, "babel_locale", old_locale)
 
 
 class MultidirDomain(Domain):
@@ -45,7 +45,7 @@ class MultidirDomain(Domain):
     Entry points are added to the list of paths before the ``paths``.
     """
 
-    def __init__(self, paths=None, entry_point_group=None, domain='messages'):
+    def __init__(self, paths=None, entry_point_group=None, domain="messages"):
         """Initialize domain.
 
         :param paths: List of paths with translations.
@@ -67,15 +67,15 @@ class MultidirDomain(Domain):
     def add_entrypoint(self, entry_point_group):
         """Load translations from an entry point."""
         for ep in iter_entry_points(group=entry_point_group):
-            if not resource_isdir(ep.module_name, 'translations'):
+            if not resource_isdir(ep.module_name, "translations"):
                 continue
-            dirname = resource_filename(ep.module_name, 'translations')
+            dirname = resource_filename(ep.module_name, "translations")
             self.add_path(dirname)
 
     def add_path(self, path):
         """Load translations from an existing path."""
         if not os.path.exists(path):
-            raise RuntimeError('Path does not exists: %s.' % path)
+            raise RuntimeError("Path does not exists: %s." % path)
         self.paths.append(path)
 
     def _get_translation_for_locale(self, locale):
@@ -97,8 +97,9 @@ class MultidirDomain(Domain):
                 # Translations is probably NullTranslations
                 if isinstance(catalog, NullTranslations):
                     current_app.logger.debug(
-                        'Compiled translations seems to be missing'
-                        ' in {0}.'.format(dirname))
+                        "Compiled translations seems to be missing"
+                        " in {0}.".format(dirname)
+                    )
                     continue
                 raise
 

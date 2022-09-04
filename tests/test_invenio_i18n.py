@@ -81,11 +81,11 @@ def test_get_languages(app):
         ]
 
 
-def test_json_encoder(app):
+def test_json_provider_class(app):
     """Test extension initalization."""
     InvenioI18N(app)
-    assert app.json_encoder().encode("test") == '"test"'
-    assert app.json_encoder().encode(lazy_gettext("test")) == '"test"'
+    assert app.json_provider_class().encode("test") == '"test"'
+    assert app.json_provider_class().encode(lazy_gettext("test")) == '"test"'
 
 
 def test_timezone_selector(app):

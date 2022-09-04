@@ -10,6 +10,7 @@
 
 from __future__ import absolute_import, print_function
 
+import json
 import os.path
 
 from flask import current_app
@@ -40,7 +41,7 @@ def get_lazystring_encoder(app):
     """
     from speaklater import _LazyString
 
-    class JSONEncoder(app.json_encoder):
+    class JSONEncoder(json.JSONEncoder):
         def default(self, o):
             if isinstance(o, _LazyString):
                 return text_type(o)
@@ -126,7 +127,7 @@ class InvenioI18N(object):
         app.add_template_global(current_i18n, name="current_i18n")
 
         # Lazy string aware JSON encoder.
-        app.json_encoder = get_lazystring_encoder(app)
+        app.json_provider_class = get_lazystring_encoder(app)
 
         app.extensions["invenio-i18n"] = self
 

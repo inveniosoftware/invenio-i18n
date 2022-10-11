@@ -19,4 +19,5 @@ Contributors
 - Nikos Filippakis
 - Paulina Lach
 - Sebastian Witowski
+- Sam Arbid (KTH)
 - Tibor Simko

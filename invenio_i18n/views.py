@@ -9,11 +9,9 @@
 
 """Views for Invenio-I18N."""
 
-from __future__ import absolute_import, print_function
+from urllib.parse import urljoin, urlparse
 
 from flask import Blueprint, abort, current_app, redirect, request, session, url_for
-
-from ._compat import urljoin, urlparse
 
 
 def is_local_url(target):

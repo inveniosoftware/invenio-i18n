@@ -8,8 +8,6 @@
 
 """Flask-BabelEx domain for merging translations from many directories."""
 
-from __future__ import absolute_import, print_function
-
 import os
 from contextlib import contextmanager
 

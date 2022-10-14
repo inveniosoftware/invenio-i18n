@@ -285,8 +285,6 @@ the changes.
    $ tx pull -a
 """
 
-from __future__ import absolute_import, print_function
-
 # Monkey patch Werkzeug 2.1
 # Flask-Login uses the safe_str_cmp method which has been removed in Werkzeug
 # 2.1. Flask-Login v0.6.0 (yet to be released at the time of writing) fixes the

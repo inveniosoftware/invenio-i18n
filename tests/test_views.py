@@ -8,8 +8,6 @@
 
 """Basic tests."""
 
-from __future__ import absolute_import, print_function
-
 from flask import session, url_for
 from flask_babelex import get_locale
 

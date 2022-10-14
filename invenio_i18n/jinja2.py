@@ -12,8 +12,6 @@ See full documentation of corresponding methods in Flask-BabelEx:
 https://pythonhosted.org/Flask-BabelEx/
 """
 
-from __future__ import absolute_import, print_function
-
 from flask import current_app
 from flask_babelex import get_locale, to_user_timezone, to_utc
 

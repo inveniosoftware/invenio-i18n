@@ -8,8 +8,6 @@
 
 """Invenio internationalization module."""
 
-from __future__ import absolute_import, print_function
-
 import json
 import os.path
 
@@ -20,7 +18,6 @@ from flask_babelex import get_timezone as get_current_timezone
 from werkzeug.local import LocalProxy
 
 from . import config
-from ._compat import text_type
 from .babel import MultidirDomain
 from .jinja2 import (
     filter_language_name,
@@ -29,9 +26,9 @@ from .jinja2 import (
     filter_to_utc,
 )
 from .selectors import get_locale, get_timezone
-from .views import create_blueprint
 
 current_i18n = LocalProxy(lambda: current_app.extensions["invenio-i18n"])
+text_type = str
 
 
 def get_lazystring_encoder(app):

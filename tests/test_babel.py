@@ -12,7 +12,7 @@ from os.path import dirname, join
 
 import pytest
 from babel.support import NullTranslations, Translations
-from flask_babelex import Babel, get_locale
+from flask_babel import Babel, get_locale
 
 from invenio_i18n.babel import MultidirDomain, set_locale
 

@@ -6,28 +6,31 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Flask-BabelEx domain for merging translations from many directories."""
+"""Flask-Babel domain for merging translations from many directories."""
 
 import os
 from contextlib import contextmanager
 
-from babel.support import NullTranslations, Translations
-from flask import _request_ctx_stack, current_app
-from flask_babelex import Domain, get_locale
+from babel import Locale
+from flask_babel import Domain, _get_current_context
 from pkg_resources import iter_entry_points, resource_filename, resource_isdir
 
 
+# TODO:
+# think of replacing it with force_locale from flask_babel
 @contextmanager
 def set_locale(ln):
     """Set Babel localization in request context.
 
     :param ln: Language identifier.
     """
-    ctx = _request_ctx_stack.top
+    ctx = _get_current_context()
     if ctx is None:
         raise RuntimeError("Working outside of request context.")
-    new_locale = current_app.extensions["babel"].load_locale(ln)
+
+    new_locale = Locale.parse(ln)
     old_locale = getattr(ctx, "babel_locale", None)
+
     setattr(ctx, "babel_locale", new_locale)
     yield
     setattr(ctx, "babel_locale", old_locale)
@@ -51,16 +54,18 @@ class MultidirDomain(Domain):
         :param domain: Name of message catalog domain.
             (Default: ``'messages'``)
         """
-        self.paths = []
+        super().__init__(domain=domain)
+        self._translation_directories = []
+
         if entry_point_group:
             self.add_entrypoint(entry_point_group)
+
         for p in paths or []:
             self.add_path(p)
-        super(MultidirDomain, self).__init__(domain=domain)
 
     def has_paths(self):
         """Determine if any paths have been specified."""
-        return bool(self.paths)
+        return bool(self._translation_directories)
 
     def add_entrypoint(self, entry_point_group):
         """Load translations from an entry point."""
@@ -73,54 +78,5 @@ class MultidirDomain(Domain):
     def add_path(self, path):
         """Load translations from an existing path."""
         if not os.path.exists(path):
-            raise RuntimeError("Path does not exists: %s." % path)
-        self.paths.append(path)
-
-    def _get_translation_for_locale(self, locale):
-        """Get translation for a specific locale."""
-        translations = None
-
-        for dirname in self.paths:
-            # Load a single catalog.
-            catalog = Translations.load(dirname, [locale], domain=self.domain)
-            if translations is None:
-                if isinstance(catalog, Translations):
-                    translations = catalog
-                continue
-
-            try:
-                # Merge catalog into global catalog
-                translations.merge(catalog)
-            except AttributeError:
-                # Translations is probably NullTranslations
-                if isinstance(catalog, NullTranslations):
-                    current_app.logger.debug(
-                        "Compiled translations seems to be missing"
-                        " in {0}.".format(dirname)
-                    )
-                    continue
-                raise
-
-        return translations or NullTranslations()
-
-    def get_translations(self):
-        """Return the correct gettext translations for a request.
-
-        This will never fail and return a dummy translation object if used
-        outside of the request or if a translation cannot be found.
-        """
-        ctx = _request_ctx_stack.top
-        if ctx is None:
-            return NullTranslations()
-
-        locale = get_locale()
-
-        cache = self.get_translations_cache(ctx)
-
-        translations = cache.get(str(locale))
-
-        if translations is None:
-            translations = self._get_translation_for_locale(locale)
-            cache[str(locale)] = translations
-
-        return translations
+            raise RuntimeError(f"Path does not exists: {path}")
+        self._translation_directories.append(path)

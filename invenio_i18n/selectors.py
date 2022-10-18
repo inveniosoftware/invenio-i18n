@@ -6,9 +6,9 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""Default locale and timezone selectors for Flask-BabelEx.
+"""Default locale and timezone selectors for Flask-Babel.
 
-See `Flask-BabelEx documentation <https://pythonhosted.org/Flask-BabelEx/>`_
+See `Flask-Babel documentation <https://python-babel.github.io/flask-babel/>`
 for corresponding methods.
 """
 

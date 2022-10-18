@@ -40,10 +40,8 @@ You can uninstall the example application as follows:
 SPHINX-END
 """
 
-from __future__ import absolute_import, print_function
-
 from flask import Flask, render_template
-from flask_babelex import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 
 from invenio_i18n import InvenioI18N
 from invenio_i18n.views import create_blueprint_from_app

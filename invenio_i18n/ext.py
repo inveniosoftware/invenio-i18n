@@ -11,10 +11,11 @@
 import json
 import os.path
 
+from babel import Locale
 from flask import current_app
-from flask_babelex import Babel
-from flask_babelex import get_locale as get_current_locale
-from flask_babelex import get_timezone as get_current_timezone
+from flask_babel import Babel, LazyString, _get_current_context
+from flask_babel import get_locale as get_current_locale
+from flask_babel import get_timezone as get_current_timezone
 from werkzeug.local import LocalProxy
 
 from . import config
@@ -36,11 +37,10 @@ def get_lazystring_encoder(app):
 
     Installed on Flask application by default by :class:`InvenioI18N`.
     """
-    from speaklater import _LazyString
 
     class JSONEncoder(json.JSONEncoder):
         def default(self, o):
-            if isinstance(o, _LazyString):
+            if isinstance(o, LazyString):
                 return text_type(o)
             return super(JSONEncoder, self).default(o)
 
@@ -115,6 +115,10 @@ class InvenioI18N(object):
         if self.entry_point_group:
             self.domain.add_entrypoint(self.entry_point_group)
 
+        ctx = _get_current_context()
+        if ctx:
+            ctx.babel_domain = self.domain
+
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).
         app.add_template_filter(filter_to_utc, name="toutc")
@@ -131,7 +135,7 @@ class InvenioI18N(object):
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
-            if k.startswith("I18N_"):
+            if k.startswith("I18N_") or k.startswith("BABEL_"):
                 app.config.setdefault(k, getattr(config, k))
 
     def iter_languages(self):
@@ -158,7 +162,7 @@ class InvenioI18N(object):
         if self._locales_cache is None:
             langs = [self.babel.default_locale]
             for lang, dummy_title in current_app.config.get("I18N_LANGUAGES", []):
-                langs.append(self.babel.load_locale(lang))
+                langs.append(Locale.parse(lang))
             self._locales_cache = langs
         return self._locales_cache
 

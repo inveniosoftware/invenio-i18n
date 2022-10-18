@@ -13,7 +13,7 @@ from datetime import datetime
 from os.path import dirname, join
 
 from flask import render_template_string
-from flask_babelex import (
+from flask_babel import (
     format_datetime,
     format_number,
     get_locale,
@@ -121,13 +121,15 @@ def test_locale_selector(app):
         I18N_LANGUAGES=[("da", "Danish")],
         I18N_TRANSLATIONS_PATHS=[join(dirname(__file__), "translations")],
     )
-    i18n = InvenioI18N(app)
 
     with app.test_request_context(headers=[("Accept-Language", "da")]):
+        InvenioI18N(app)
         assert str(get_locale()) == "da"
         assert format_number(10.1) == "10,1"
         assert gettext("Translate") == "Oversætte"
+
     with app.test_request_context(headers=[("Accept-Language", "en")]):
+        InvenioI18N(app)
         assert str(get_locale()) == "en"
         assert format_number(10.1) == "10.1"
         assert gettext("Translate") == "From test catalog"

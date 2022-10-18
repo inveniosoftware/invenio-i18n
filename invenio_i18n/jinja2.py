@@ -8,12 +8,13 @@
 
 """Babel datetime localization template filters for Jinja.
 
-See full documentation of corresponding methods in Flask-BabelEx:
-https://pythonhosted.org/Flask-BabelEx/
+See full documentation of corresponding methods in Flask-Babel
+
+ * https://python-babel.github.io/flask-babel/
 """
 
-from flask import current_app
-from flask_babelex import get_locale, to_user_timezone, to_utc
+from babel import Locale
+from flask_babel import get_locale, to_user_timezone, to_utc
 
 
 def filter_to_user_timezone(dt):
@@ -37,11 +38,7 @@ def filter_language_name(lang_code):
 
     Installed on application as ``language_name``.
     """
-    return (
-        current_app.extensions["babel"]
-        .load_locale(lang_code)
-        .get_display_name(get_locale().language)
-    )
+    return Locale.parse(lang_code).get_display_name(get_locale().language)
 
 
 def filter_language_name_local(lang_code):
@@ -49,4 +46,4 @@ def filter_language_name_local(lang_code):
 
     Installed on application as ``language_name_local``.
     """
-    return current_app.extensions["babel"].load_locale(lang_code).display_name
+    return Locale.parse(lang_code).display_name

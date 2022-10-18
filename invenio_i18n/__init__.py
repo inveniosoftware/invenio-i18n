@@ -9,18 +9,16 @@
 r"""Invenio internationalization module.
 
 This module provide features for loading and merging message catalogs. It is
-built on top of `Flask-BabelEx <https://pythonhosted.org/Flask-BabelEx/>`_ and
-most external modules should just depend on Flask-BabelEx instead of
-Invenio-I18N. Only applications in need of loading and merging many message
-catalogs should integrate this module.
+built on top of `Flask-Babel <https://python-babel.github.io/flask-babel/>`_.
+All other packages should depend on Invenio-I18N.
 
 Quick start
 -----------
-First initialize the extension (Flask-BabelEx is also automatically initialized
+First initialize the extension (Flask-Babel is also automatically initialized
 by the extension):
 
 >>> from flask import Flask
->>> from flask_babelex import lazy_gettext as _
+>>> from flask_babel import lazy_gettext as _
 >>> app = Flask('myapp')
 >>> app.config['I18N_LANGUAGES'] = [('cs', _('Czech')), ('da', _('Danish'))]
 >>> from invenio_i18n import InvenioI18N
@@ -28,9 +26,9 @@ by the extension):
 >>> i18n = InvenioI18N(app)
 >>> app.register_blueprint(create_blueprint_from_app(app))
 
-You can now use the Flask-BabelEx localization features:
+You can now use the Flask-Babel localization features:
 
->>> from flask_babelex import format_number
+>>> from flask_babel import format_number
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
 ...     format_number(10.1) == '10.1'
 True
@@ -40,7 +38,7 @@ True
 
 as well as internationalization features:
 
->>> from flask_babelex import gettext
+>>> from flask_babel import gettext
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
 ...     gettext('Language:') == 'Language:'
 True
@@ -56,9 +54,9 @@ templates for translation so that they can be automatically extracted:
 Python
 ~~~~~~
 You specify translations in Python by importing ``gettext`` or ``lazy_gettext``
-from Flask-BabelEx:
+from Flask-Babel:
 
->>> from flask_babelex import gettext as _
+>>> from flask_babel import gettext as _
 >>> _('Test') == 'Test'
 True
 
@@ -283,6 +281,7 @@ the changes.
    $ python setup.py extract_messages_js
    $ tx push -s
    $ tx pull -a
+
 """
 
 # Monkey patch Werkzeug 2.1
@@ -303,8 +302,10 @@ except AttributeError:
 
     security.safe_str_cmp = hmac.compare_digest
 
+from flask_babel import lazy_gettext
+
 from .ext import InvenioI18N
 
 __version__ = "1.3.3"
 
-__all__ = ("__version__", "InvenioI18N")
+__all__ = ("__version__", "InvenioI18N", "lazy_gettext")

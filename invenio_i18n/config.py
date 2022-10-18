@@ -8,10 +8,10 @@
 
 """Configuration for the Invenio internationalization module.
 
-In addition to the configuration variables listed below, Flask-BabelEx also
+In addition to the configuration variables listed below, Flask-Babel also
 sets system-wide defaults. For further details see:
 
- * https://pythonhosted.org/Flask-BabelEx/#configuration
+ * https://python-babel.github.io/flask-babel/#configuration
 """
 
 I18N_TRANSLATIONS_PATHS = []
@@ -24,7 +24,7 @@ Example configuration with english and danish with english as default language:
 
 .. code-block:: python
 
-    from flask_babelex import lazy_gettext as _
+    from flask_babel import lazy_gettext as _
     BABEL_DEFAULT_LOCALE = 'en'
     I18N_LANGUAGES = (('da', _('Danish')),)
 
@@ -49,3 +49,5 @@ I18N_USER_LANG_ATTR = "prefered_language"
 It is used only when the login manager is installed and a user is
 authenticated. Set to ``None`` to prevent selector from being used.
 """
+
+BABEL_DOMAIN = "messages"

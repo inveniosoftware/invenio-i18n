@@ -55,7 +55,7 @@ def example_app():
 def test_example_app(example_app):
     """Test example app."""
     # Open page in english
-    cmd = "curl http://0.0.0.0:5000/"
+    cmd = "curl http://0.0.0.0:5000/?ln=en"
     output = subprocess.check_output(cmd, shell=True).decode("utf-8")
     assert "Hello world!" in output
 

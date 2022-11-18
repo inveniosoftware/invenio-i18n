@@ -307,6 +307,6 @@ except AttributeError:
 
 from .ext import InvenioI18N
 
-__version__ = "1.3.2"
+__version__ = "1.3.3"
 
 __all__ = ("__version__", "InvenioI18N")

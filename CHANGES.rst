@@ -8,6 +8,12 @@
 Changes
 =======
 
+Version 1.3.3 (released 2022-11-18)
+
+- Adds translations
+- Updates invenio dependencies
+- refactors CI tests
+
 Version 1.3.2 (released 2022-03-30)
 
 - Adds support for Flask v2.1

@@ -119,6 +119,10 @@ class InvenioI18N(object):
         if ctx:
             ctx.babel_domain = self.domain
 
+        app.config["BABEL_TRANSLATION_DIRECTORIES"] = ";".join(
+            self.domain._translation_directories
+        )
+
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).
         app.add_template_filter(filter_to_utc, name="toutc")

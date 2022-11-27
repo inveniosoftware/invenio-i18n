@@ -8,14 +8,17 @@
 
 """Selector tests."""
 
+from os.path import dirname, join
+
 from flask import session
+from flask_babel import gettext
 from flask_login import LoginManager, login_user
 
 from invenio_i18n import InvenioI18N
 from invenio_i18n.selectors import get_locale
 
 
-class FakeUser(object):
+class FakeUser:
     """Fake class simulation a user."""
 
     def __init__(self, prefered_language):
@@ -78,42 +81,50 @@ def test_get_locale_user_settings(app):
         ("en", "English"),
         ("es", "Spanish"),
     ]
+
     app.secret_key = "secret key"
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = "login"
     InvenioI18N(app)
-
     with app.test_request_context():
         login_user(FakeUser("da"))
         assert "da" == get_locale()
+        assert gettext("Language:") == "Sprog:"
 
     with app.test_request_context():
         login_user(FakeUser("en"))
         assert "en" == get_locale()
+        assert gettext("Language:") == "Language:"
 
     with app.test_request_context():
         login_user(FakeUser("es"))
         assert "es" == get_locale()
+        assert gettext("Language:") == "Idioma:"
 
 
 def test_get_locale_headers(app):
     """Test getting locale from the headers of the request."""
-    app.config["I18N_LANGUAGES"] = [
-        ("da", "Danish"),
-        ("en", "English"),
-        ("es", "Spanish"),
-    ]
+    app.config.update(
+        I18N_LANGUAGES=[
+            ("da", "Danish"),
+            ("en", "English"),
+            ("es", "Spanish"),
+        ],
+        I18N_TRANSLATIONS_PATHS=[join(dirname(__file__), "translations")],
+    )
     InvenioI18N(app)
-
     with app.test_request_context(headers=[("Accept-Language", "da")]):
         assert "da" == get_locale()
+        assert gettext("Translate") == "Oversætte"
 
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         assert "en" == get_locale()
+        assert gettext("Language:") == "Language:"
 
     with app.test_request_context(headers=[("Accept-Language", "es")]):
         assert "es" == get_locale()
+        assert gettext("Language:") == "Idioma:"
 
 
 def test_get_locale_default(app):

@@ -70,13 +70,13 @@ Jinja2
 In templates you can use either the underscore function:
 
 >>> from flask import render_template_string
->>> with app.app_context():
+>>> with app.test_request_context():
 ...     render_template_string("{{_('Test')}}") == 'Test'
 True
 
 or the ``{% trans %}`` tag:
 
->>> with app.app_context():
+>>> with app.test_request_context():
 ...     r = render_template_string('{% trans %}Long translation{% endtrans %}')
 ...     r == 'Long translation'
 True

@@ -17,4 +17,4 @@ python -m setup compile_catalog
 python -m babel.messages.frontend compile -d tests/translations/
 python -m check_manifest
 python -m sphinx.cmd.build -qnNW docs docs/_build/html
-python -m pytest -s
+python -m pytest

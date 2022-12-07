@@ -9,31 +9,9 @@
 """Flask-Babel domain for merging translations from many directories."""
 
 import os
-from contextlib import contextmanager
 
-from babel import Locale
-from flask_babel import Domain, _get_current_context
+from flask_babel import Domain
 from pkg_resources import iter_entry_points, resource_filename, resource_isdir
-
-
-# TODO:
-# think of replacing it with force_locale from flask_babel
-@contextmanager
-def set_locale(ln):
-    """Set Babel localization in request context.
-
-    :param ln: Language identifier.
-    """
-    ctx = _get_current_context()
-    if ctx is None:
-        raise RuntimeError("Working outside of request context.")
-
-    new_locale = Locale.parse(ln)
-    old_locale = getattr(ctx, "babel_locale", None)
-
-    setattr(ctx, "babel_locale", new_locale)
-    yield
-    setattr(ctx, "babel_locale", old_locale)
 
 
 class MultidirDomain(Domain):

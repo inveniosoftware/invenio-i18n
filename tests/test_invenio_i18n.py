@@ -14,6 +14,7 @@ from os.path import dirname, join
 
 from flask import render_template_string
 from flask_babel import (
+    force_locale,
     format_datetime,
     format_number,
     get_locale,
@@ -23,7 +24,6 @@ from flask_babel import (
 from invenio_assets import InvenioAssets
 from pytz import timezone
 
-from invenio_i18n.babel import set_locale
 from invenio_i18n.ext import InvenioI18N, current_i18n
 
 
@@ -199,7 +199,7 @@ def test_jinja_templates(app):
         assert render_template_string('{{"en"|language_name_local}}') == "English"
         assert render_template_string('{{"da"|language_name_local}}') == "dansk"
 
-        with set_locale("da"):
+        with force_locale("da"):
             assert render_template_string('{{"en"|language_name}}') == "engelsk"
             assert render_template_string('{{"da"|language_name}}') == "dansk"
             assert render_template_string('{{"en"|language_name_local}}') == "English"

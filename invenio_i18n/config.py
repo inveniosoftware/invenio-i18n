@@ -49,5 +49,3 @@ I18N_USER_LANG_ATTR = "prefered_language"
 It is used only when the login manager is installed and a user is
 authenticated. Set to ``None`` to prevent selector from being used.
 """
-
-BABEL_DOMAIN = "messages"

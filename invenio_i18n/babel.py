@@ -41,6 +41,10 @@ class MultidirDomain(Domain):
         for p in paths or []:
             self.add_path(p)
 
+    def __str__(self):
+        """The domain name."""
+        return "messages"
+
     def has_paths(self):
         """Determine if any paths have been specified."""
         return bool(self._translation_directories)

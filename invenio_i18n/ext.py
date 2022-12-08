@@ -139,7 +139,7 @@ class InvenioI18N(object):
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
-            if k.startswith("I18N_") or k.startswith("BABEL_"):
+            if k.startswith("I18N_"):
                 app.config.setdefault(k, getattr(config, k))
 
     def iter_languages(self):

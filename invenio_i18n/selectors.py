@@ -38,14 +38,14 @@ def get_locale():
         locales = [x[0] for x in current_app.extensions["invenio-i18n"].get_languages()]
 
     # In the case of the user specifies a language for the resource.
-    if "ln" in request.args:
+    if request and "ln" in request.args:
         language = request.args.get("ln")
         if language in locales:
             return language
 
     # In the case of the user has set a language for the current session.
     language_session_key = current_app.config["I18N_SESSION_KEY"]
-    if language_session_key in session:
+    if session and language_session_key in session:
         language = session[language_session_key]
         if language in locales:
             return language
@@ -56,6 +56,7 @@ def get_locale():
         language_user_key is not None
         and hasattr(current_app, "login_manager")
         and current_user is not None
+        and hasattr(current_user, "is_authenticated")
         and current_user.is_authenticated
     ):
         language = getattr(current_user, language_user_key, None)
@@ -63,9 +64,10 @@ def get_locale():
             return language
 
     # Using the headers that the navigator has sent.
-    headers_best_match = request.accept_languages.best_match(locales)
-    if headers_best_match is not None:
-        return headers_best_match
+    if request:
+        headers_best_match = request.accept_languages.best_match(locales)
+        if headers_best_match is not None:
+            return headers_best_match
 
     # If there is no way to know the language, return BABEL_DEFAULT_LOCALE
     return current_app.config["BABEL_DEFAULT_LOCALE"]

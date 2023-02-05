@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -37,11 +38,12 @@ True
 True
 
 as well as internationalization features:
-
 >>> from flask_babel import gettext
 >>> with app.test_request_context(headers=[('Accept-Language', 'en')]):
 ...     gettext('Language:') == 'Language:'
 True
+
+>>> i18n = InvenioI18N(app)
 >>> with app.test_request_context(headers=[('Accept-Language', 'cs')]):
 ...     gettext('Language:') == 'Jazyk:'
 True
@@ -62,7 +64,6 @@ True
 
 For further details and examples see:
 
- * https://pythonhosted.org/Flask-BabelEx/#using-translations
  * http://babel.pocoo.org/en/latest/messages.html#working-with-message-catalogs
 
 Jinja2

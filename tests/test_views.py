@@ -9,7 +9,7 @@
 """Basic tests."""
 
 from flask import session, url_for
-from flask_babel import get_locale
+from flask_babel import _get_current_context, get_locale
 
 from invenio_i18n import InvenioI18N
 from invenio_i18n.views import create_blueprint_from_app
@@ -51,6 +51,8 @@ def test_lang_view(app):
         assert res.status_code == 302
         assert res.location == "/"
         assert session[app.config["I18N_SESSION_KEY"]] == "en"
+
+        _get_current_context().babel_locale = None
 
         res = client.get("/")
         assert res.get_data(as_text=True) == "en"

@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +12,7 @@
 from os.path import dirname, join
 
 from flask import session
-from flask_babel import gettext
+from flask_babel import _get_current_context, gettext
 from flask_login import LoginManager, login_user
 
 from invenio_i18n import InvenioI18N
@@ -92,10 +93,16 @@ def test_get_locale_user_settings(app):
         assert "da" == get_locale()
         assert gettext("Language:") == "Sprog:"
 
+    # the context will not the reseted with a `with` statement, therefore the
+    # babel_locale within that context remains, which leads to the problem
+    _get_current_context().babel_locale = None
+
     with app.test_request_context():
         login_user(FakeUser("en"))
         assert "en" == get_locale()
         assert gettext("Language:") == "Language:"
+
+    _get_current_context().babel_locale = None
 
     with app.test_request_context():
         login_user(FakeUser("es"))
@@ -114,13 +121,18 @@ def test_get_locale_headers(app):
         I18N_TRANSLATIONS_PATHS=[join(dirname(__file__), "translations")],
     )
     InvenioI18N(app)
+
     with app.test_request_context(headers=[("Accept-Language", "da")]):
         assert "da" == get_locale()
         assert gettext("Translate") == "Oversætte"
 
+    _get_current_context().babel_locale = None
+
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         assert "en" == get_locale()
         assert gettext("Language:") == "Language:"
+
+    _get_current_context().babel_locale = None
 
     with app.test_request_context(headers=[("Accept-Language", "es")]):
         assert "es" == get_locale()

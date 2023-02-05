@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -75,16 +76,14 @@ class InvenioI18N(object):
             configure_jinja=True,
             default_domain=self.domain,
         )
-        self.localeselector = localeselector
-        self.timezoneselector = timezoneselector
         self.entry_point_group = entry_point_group
         self._locales_cache = None
         self._languages_cache = None
 
         if app:
-            self.init_app(app)
+            self.init_app(app, localeselector, timezoneselector)
 
-    def init_app(self, app):
+    def init_app(self, app, localeselector=None, timezoneselector=None):
         """Flask application initialization.
 
         The initialization will:
@@ -99,10 +98,12 @@ class InvenioI18N(object):
         """
         self.init_config(app)
 
-        # Initialize Flask-BabelEx
-        self.babel.init_app(app)
-        self.babel.localeselector(self.localeselector or get_locale)
-        self.babel.timezoneselector(self.timezoneselector or get_timezone)
+        # Initialize Flask-Babel
+        self.babel.init_app(
+            app,
+            locale_selector=localeselector or get_locale,
+            timezone_selector=timezoneselector or get_timezone,
+        )
 
         # 1. Paths listed in I18N_TRANSLATIONS_PATHS
         for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
@@ -122,6 +123,8 @@ class InvenioI18N(object):
         app.config["BABEL_TRANSLATION_DIRECTORIES"] = ";".join(
             self.domain._translation_directories
         )
+
+        app.config["BABEL_DEFAULT_LOCALE"] = "en"
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).

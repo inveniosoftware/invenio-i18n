@@ -11,8 +11,8 @@
 
 from os.path import dirname, join
 
-from flask import session
-from flask_babel import _get_current_context, gettext
+from flask import g, session
+from flask_babel import gettext
 from flask_login import LoginManager, login_user
 
 from invenio_i18n import InvenioI18N
@@ -95,14 +95,14 @@ def test_get_locale_user_settings(app):
 
     # the context will not the reseted with a `with` statement, therefore the
     # babel_locale within that context remains, which leads to the problem
-    _get_current_context().babel_locale = None
+    g._flask_babel.babel_locale = None
 
     with app.test_request_context():
         login_user(FakeUser("en"))
         assert "en" == get_locale()
         assert gettext("Language:") == "Language:"
 
-    _get_current_context().babel_locale = None
+    g._flask_babel.babel_locale = None
 
     with app.test_request_context():
         login_user(FakeUser("es"))
@@ -126,13 +126,13 @@ def test_get_locale_headers(app):
         assert "da" == get_locale()
         assert gettext("Translate") == "Oversætte"
 
-    _get_current_context().babel_locale = None
+    g._flask_babel.babel_locale = None
 
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         assert "en" == get_locale()
         assert gettext("Language:") == "Language:"
 
-    _get_current_context().babel_locale = None
+    g._flask_babel.babel_locale = None
 
     with app.test_request_context(headers=[("Accept-Language", "es")]):
         assert "es" == get_locale()

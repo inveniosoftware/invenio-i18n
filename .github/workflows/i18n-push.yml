@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022 Graz University of Technology.
+# Copyright (C) 2022-2023 Graz University of Technology.
 #
 # Invenio-i18n is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -26,32 +26,19 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
-          pip install -e ".[all]"  
-
-      # install transifex client
-      - name: transifex-client
-        run: |
-          pip install transifex-client
-
-      # store token
-      - name: store token
-        run: |
-          touch ~/.transifexrc
-          echo [https://www.transifex.com] >> ~/.transifexrc
-          echo api_hostname=https://api.transifex.com >> ~/.transifexrc
-          echo hostname=https://www.transifex.com >> ~/.transifexrc
-          echo password=${{ secrets.TRANSIFEX_TOKEN }} >> ~/.transifexrc
-          echo username=api  >> ~/.transifexrc
+          pip install -e ".[all]"
 
       # extract
       - name: extract_messages
         run: |
           python setup.py extract_messages
 
-      # push source
-      - name: push_messages
-        run: |
-          tx push -s
+      # Push only source file to transifex
+      - name: Push source file using transifex client
+        uses: transifex/cli-action@v1
+        with:
+          token: ${{ secrets.TRANSIFEX_TOKEN }}
+          args: push -s
 
       # remove transifex credential file
       - name: remove transifexrc file
@@ -65,5 +52,5 @@ jobs:
           commit-message: i18n:push translations
           title: i18n:push translations
           body: i18n:push translations
-          branch: 101-translations-push  # name of branch which PR is created from
-          delete-branch: true  # delete branch once merged,closed
+          branch: 101-translations-push # name of branch which PR is created from
+          delete-branch: true # delete branch once merged,closed

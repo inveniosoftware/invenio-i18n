@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -10,11 +11,10 @@
 
 import os
 
-from flask_babel import Domain
 from pkg_resources import iter_entry_points, resource_filename, resource_isdir
 
 
-class MultidirDomain(Domain):
+class MultidirDomain:
     """Domain supporting merging translations from many catalogs.
 
     The domain contains an internal list of paths that it loads translations
@@ -32,7 +32,6 @@ class MultidirDomain(Domain):
         :param domain: Name of message catalog domain.
             (Default: ``'messages'``)
         """
-        super().__init__(domain=domain)
         self._translation_directories = []
 
         if entry_point_group:
@@ -40,14 +39,6 @@ class MultidirDomain(Domain):
 
         for p in paths or []:
             self.add_path(p)
-
-    def __str__(self):
-        """The domain name."""
-        return "messages"
-
-    def has_paths(self):
-        """Determine if any paths have been specified."""
-        return bool(self._translation_directories)
 
     def add_entrypoint(self, entry_point_group):
         """Load translations from an entry point."""

@@ -14,7 +14,7 @@ import os.path
 
 from babel import Locale
 from flask import current_app
-from flask_babel import Babel, LazyString, _get_current_context
+from flask_babel import Babel, LazyString
 from flask_babel import get_locale as get_current_locale
 from flask_babel import get_timezone as get_current_timezone
 from werkzeug.local import LocalProxy
@@ -97,31 +97,16 @@ class InvenioI18N(object):
          * Install a custom JSON encoder on app.
         """
         self.init_config(app)
+        self.init_multidir_domain(app)
 
         # Initialize Flask-Babel
         self.babel.init_app(
             app,
+            default_translation_directories=";".join(
+                self.domain._translation_directories
+            ),
             locale_selector=localeselector or get_locale,
             timezone_selector=timezoneselector or get_timezone,
-        )
-
-        # 1. Paths listed in I18N_TRANSLATIONS_PATHS
-        for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
-            self.domain.add_path(p)
-        # 2. <app.root_path>/translations
-        app_translations = os.path.join(app.root_path, "translations")
-        if os.path.exists(app_translations):
-            self.domain.add_path(app_translations)
-        # 3. Entrypoints
-        if self.entry_point_group:
-            self.domain.add_entrypoint(self.entry_point_group)
-
-        ctx = _get_current_context()
-        if ctx:
-            ctx.babel_domain = self.domain
-
-        app.config["BABEL_TRANSLATION_DIRECTORIES"] = ";".join(
-            self.domain._translation_directories
         )
 
         app.config["BABEL_DEFAULT_LOCALE"] = "en"
@@ -144,6 +129,21 @@ class InvenioI18N(object):
         for k in dir(config):
             if k.startswith("I18N_"):
                 app.config.setdefault(k, getattr(config, k))
+
+    def init_multidir_domain(self, app):
+        """Initialize MultidirDomain."""
+        # 1. Paths listed in I18N_TRANSLATIONS_PATHS
+        for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
+            self.domain.add_path(p)
+
+        # 2. <app.root_path>/translations
+        app_translations = os.path.join(app.root_path, "translations")
+        if os.path.exists(app_translations):
+            self.domain.add_path(app_translations)
+
+        # 3. Entrypoints
+        if self.entry_point_group:
+            self.domain.add_entrypoint(self.entry_point_group)
 
     def iter_languages(self):
         """Iterate over list of languages."""
@@ -171,6 +171,7 @@ class InvenioI18N(object):
             for lang, dummy_title in current_app.config.get("I18N_LANGUAGES", []):
                 langs.append(Locale.parse(lang))
             self._locales_cache = langs
+
         return self._locales_cache
 
     @property

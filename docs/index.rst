@@ -19,7 +19,6 @@ Invenio-I18N.
    installation
    configuration
    usage
-   examplesapp
 
 
 API Reference

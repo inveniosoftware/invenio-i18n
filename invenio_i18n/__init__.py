@@ -307,7 +307,7 @@ from flask_babel import Babel, LazyString, get_locale, gettext, lazy_gettext
 
 from .ext import InvenioI18N
 
-__version__ = "1.3.3"
+__version__ = "2.0.0"
 
 _ = gettext
 

@@ -8,6 +8,14 @@
 Changes
 =======
 
+Version 2.0.0 (released 2023-02-27)
+
+- Remove deprecated flask-babelex
+- Expose LazyString, gettext from flask_babel to invenio
+- Fix get_locale in cli (without request context)
+- Replace set_locale with flask_babel.set_locale
+- Use Multidomain translation in flask_babel context
+
 Version 1.3.3 (released 2022-11-18)
 
 - Adds translations

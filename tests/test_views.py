@@ -9,9 +9,9 @@
 """Basic tests."""
 
 from flask import session, url_for
-from flask_babel import _get_current_context, get_locale
+from flask_babel import _get_current_context
 
-from invenio_i18n import InvenioI18N
+from invenio_i18n import InvenioI18N, get_locale
 from invenio_i18n.views import create_blueprint_from_app
 
 

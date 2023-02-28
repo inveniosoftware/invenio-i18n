@@ -303,8 +303,17 @@ except AttributeError:
 
     security.safe_str_cmp = hmac.compare_digest
 
-from flask_babel import Babel, LazyString, get_locale, gettext, lazy_gettext
+from flask_babel import (
+    Babel,
+    LazyString,
+    force_locale,
+    format_number,
+    get_locale,
+    gettext,
+    lazy_gettext,
+)
 
+from .babel import format_datetime
 from .ext import InvenioI18N
 
 __version__ = "2.0.0"
@@ -319,5 +328,8 @@ __all__ = (
     "Babel",
     "_",
     "get_locale",
+    "force_locale",
     "LazyString",
+    "format_datetime",
+    "format_number",
 )

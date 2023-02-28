@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2016 TIND.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -13,8 +14,11 @@ from datetime import datetime
 from os.path import dirname, join
 
 from flask import render_template_string
-from flask_babel import (
-    _get_current_context,
+from flask_babel import _get_current_context
+from invenio_assets import InvenioAssets
+from pytz import timezone
+
+from invenio_i18n import (
     force_locale,
     format_datetime,
     format_number,
@@ -22,9 +26,6 @@ from flask_babel import (
     gettext,
     lazy_gettext,
 )
-from invenio_assets import InvenioAssets
-from pytz import timezone
-
 from invenio_i18n.ext import InvenioI18N, current_i18n
 
 
@@ -97,8 +98,8 @@ def test_timezone_selector(app):
         )
         # Adds the new date format due to a library update 2
         assert format_datetime(datetime(1987, 3, 5, 17, 12), "full") in [
-            "Thursday, March 5, 1987 at 5:12:00 PM GMT+00:00",
-            "Thursday, March 5, 1987 at 5:12:00 PM Coordinated Universal Time",
+            "Thursday, March 5, 1987, 5:12:00 PM GMT+00:00",
+            "Thursday, March 5, 1987, 5:12:00 PM Coordinated Universal Time",
         ]
         assert (
             format_datetime(datetime(1987, 3, 5, 17, 12), "short") == "3/5/87, 5:12 PM"

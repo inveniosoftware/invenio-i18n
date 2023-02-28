@@ -20,7 +20,7 @@ from flask_babel import get_timezone as get_current_timezone
 from werkzeug.local import LocalProxy
 
 from . import config
-from .babel import MultidirDomain
+from .babel import MultidirDomain, format_datetime
 from .jinja2 import (
     filter_language_name,
     filter_language_name_local,
@@ -117,6 +117,7 @@ class InvenioI18N(object):
         app.add_template_filter(filter_to_user_timezone, name="tousertimezone")
         app.add_template_filter(filter_language_name, name="language_name")
         app.add_template_filter(filter_language_name_local, name="language_name_local")
+        app.add_template_filter(format_datetime, name="datetimeformat")
         app.add_template_global(current_i18n, name="current_i18n")
 
         # Lazy string aware JSON encoder.

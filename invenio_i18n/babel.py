@@ -11,7 +11,13 @@
 
 import os
 
+from flask_babel import format_datetime as flask_babel_format_datetime
 from pkg_resources import iter_entry_points, resource_filename, resource_isdir
+
+
+def format_datetime(*args, **kwargs):
+    """Wrapper to remove the unicode problem."""
+    return flask_babel_format_datetime(*args, **kwargs).replace("\u202f", " ")
 
 
 class MultidirDomain:

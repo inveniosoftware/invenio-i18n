@@ -12,10 +12,9 @@
 from os.path import dirname, join
 
 from flask import g, session
-from flask_babel import gettext
 from flask_login import LoginManager, login_user
 
-from invenio_i18n import InvenioI18N
+from invenio_i18n import InvenioI18N, gettext
 from invenio_i18n.selectors import get_locale
 
 

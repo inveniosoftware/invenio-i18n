@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,7 +10,6 @@
 """Basic tests."""
 
 from flask import session, url_for
-from flask_babel import _get_current_context
 
 from invenio_i18n import InvenioI18N, get_locale
 from invenio_i18n.views import create_blueprint_from_app
@@ -52,8 +52,7 @@ def test_lang_view(app):
         assert res.location == "/"
         assert session[app.config["I18N_SESSION_KEY"]] == "en"
 
-        _get_current_context().babel_locale = None
-
+    with app.test_client() as client:
         res = client.get("/")
         assert res.get_data(as_text=True) == "en"
 

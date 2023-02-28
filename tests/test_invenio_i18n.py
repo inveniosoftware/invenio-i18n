@@ -14,7 +14,6 @@ from datetime import datetime
 from os.path import dirname, join
 
 from flask import render_template_string
-from flask_babel import _get_current_context
 from invenio_assets import InvenioAssets
 from pytz import timezone
 
@@ -110,7 +109,6 @@ def test_timezone_selector(app):
         assert (
             format_datetime(datetime(1987, 3, 5, 17, 12), "dd mm yyyy") == "05 12 1987"
         )
-    _get_current_context().babel_locale = None
 
     with app.test_request_context(headers=[("Accept-Language", "da")]):
         assert str(get_locale()) == "da"
@@ -131,7 +129,6 @@ def test_locale_selector(app):
         assert str(get_locale()) == "da"
         assert format_number(10.1) == "10,1"
         assert gettext("Translate") == "Oversætte"
-    _get_current_context().babel_locale = None
 
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         InvenioI18N(app)
@@ -159,13 +156,13 @@ def test_current_i18n(app):
         assert str(current_i18n.locale) == "da"
         assert str(current_i18n.timezone) == "UTC"
         assert current_i18n.locale.text_direction == "ltr"
-    _get_current_context().babel_locale = None
+
     with app.test_request_context(headers=[("Accept-Language", "en")]):
         assert current_i18n.language == "en"
         assert str(current_i18n.locale) == "en"
         assert str(current_i18n.timezone) == "UTC"
         assert current_i18n.locale.text_direction == "ltr"
-    _get_current_context().babel_locale = None
+
     with app.test_request_context(headers=[("Accept-Language", "ar")]):
         assert current_i18n.language == "ar"
         assert str(current_i18n.locale) == "ar"

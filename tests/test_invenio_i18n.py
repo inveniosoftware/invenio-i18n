@@ -92,15 +92,17 @@ def test_timezone_selector(app):
     InvenioI18N(app)
     with app.test_request_context():
         assert (
-            format_datetime(datetime(1987, 3, 5, 17, 12)) == "Mar 5, 1987, 5:12:00 PM"
+            format_datetime(datetime(1987, 3, 5, 17, 12))
+            == "Mar 5, 1987, 5:12:00\u202fPM"
         )
         # Adds the new date format due to a library update 2
         assert format_datetime(datetime(1987, 3, 5, 17, 12), "full") in [
-            "Thursday, March 5, 1987 at 5:12:00 PM GMT+00:00",
-            "Thursday, March 5, 1987 at 5:12:00 PM Coordinated Universal Time",
+            "Thursday, March 5, 1987, 5:12:00\u202fPM GMT+00:00",
+            "Thursday, March 5, 1987, 5:12:00\u202fPM Coordinated Universal Time",
         ]
         assert (
-            format_datetime(datetime(1987, 3, 5, 17, 12), "short") == "3/5/87, 5:12 PM"
+            format_datetime(datetime(1987, 3, 5, 17, 12), "short")
+            == "3/5/87, 5:12\u202fPM"
         )
         assert (
             format_datetime(datetime(1987, 3, 5, 17, 12), "dd mm yyy") == "05 12 1987"
@@ -183,7 +185,7 @@ def test_jinja_templates(app):
     with app.test_request_context():
         assert (
             render_template_string("{{dt|datetimeformat}}", dt=dt)
-            == "Mar 5, 1987, 5:12:00 PM"
+            == "Mar 5, 1987, 5:12:00\u202fPM"
         )
         assert render_template_string("{{dt|toutc}}", dt=dt_tz) == "1987-03-05 16:12:00"
         assert (

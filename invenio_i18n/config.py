@@ -29,6 +29,11 @@ Example configuration with english and danish with english as default language:
     I18N_LANGUAGES = (('da', _('Danish')),)
 
 .. note:: You should not include ``BABEL_DEFAULT_LOCALE`` in this list.
+
+Note:
+BABEL_DEFAULT_LOCALE dictates the default Locale for the application.
+If the locale is not in the list of supported languages, an error will be raised.
+'en' is the default value for BABEL_DEFAULT_LOCALE and is synonymous of 'en_US'.
 """
 
 I18N_SET_LANGUAGE_URL = "/lang"

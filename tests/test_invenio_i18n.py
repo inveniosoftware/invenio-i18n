@@ -12,6 +12,7 @@
 from datetime import datetime
 from os.path import dirname, join
 
+from babel import Locale
 from flask import render_template_string
 from flask_babel import (
     force_locale,
@@ -145,6 +146,25 @@ def test_get_locales(app):
 
     with app.app_context():
         assert [str(lang) for lang in i18n.get_locales()] == ["en", "da"]
+
+
+def test_is_locale_available(app):
+    """Test checking if provided locale is available."""
+    app.config["I18N_LANGUAGES"] = [("da", "Danish")]
+    i18n = InvenioI18N(app)
+
+    # default locale
+    assert i18n.is_locale_available("en")
+    # additional locale
+    assert i18n.is_locale_available("da")
+    # valid locale but it is not configured
+    assert Locale.parse("es")
+    assert not i18n.is_locale_available("es")
+    # locale for which no translations are available
+    assert not i18n.is_locale_available("de_AT")
+    # false value passed
+    for v in ["no_loc-ale", {"de"}, ["de"], 42, None, {}]:
+        assert not i18n.is_locale_available(v)
 
 
 def test_current_i18n(app):

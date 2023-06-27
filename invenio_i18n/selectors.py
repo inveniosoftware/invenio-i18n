@@ -13,7 +13,7 @@ See `Flask-Babel documentation <https://python-babel.github.io/flask-babel/>`
 for corresponding methods.
 """
 
-from flask import current_app, g, request, session
+from flask import current_app, request, session
 
 try:
     from flask_login import current_user
@@ -37,14 +37,6 @@ def get_locale():
     locales = []
     if "invenio-i18n" in current_app.extensions:
         locales = [x[0] for x in current_app.extensions["invenio-i18n"].get_languages()]
-
-    # In the case of the app forcing a locale.
-    # See also: https://github.com/python-babel/flask-babel/blob/69d3340cd0ff52f3e23a47518285a7e6d8f8c640/flask_babel/__init__.py#L316
-    babel_ctx = g.get("_flask_babel")
-    if babel_ctx and hasattr(babel_ctx, "forced_babel_locale"):
-        language = babel_ctx.forced_babel_locale.language
-        if language in locales:
-            return language
 
     # In the case of the user specifies a language for the resource.
     if request and "ln" in request.args:

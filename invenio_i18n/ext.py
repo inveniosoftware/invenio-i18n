@@ -12,7 +12,7 @@
 import json
 import os.path
 
-from babel import Locale
+from babel import Locale, UnknownLocaleError
 from flask import current_app
 from flask_babel import Babel, LazyString
 from flask_babel import get_locale as get_current_locale
@@ -173,6 +173,18 @@ class InvenioI18N(object):
             self._locales_cache = langs
 
         return self._locales_cache
+
+    def is_locale_available(self, locale):
+        """Check if provided locale is available.
+
+        First parse a locale and then check if it is configured as available.
+        Could be that locale data is available (Locale will not raise) but it
+        is not configured as available in the app.
+        """
+        try:
+            return Locale.parse(locale) in self.get_locales()
+        except (UnknownLocaleError, TypeError):
+            return False
 
     @property
     def locale(self):

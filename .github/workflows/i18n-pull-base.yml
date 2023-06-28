@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2022-2023 Graz University of Technology.
+# Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-i18n is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,17 +15,9 @@ on:
 jobs:
   i18n-pull:
     runs-on: ubuntu-20.04
-    env:
-      PYTHON-VERSION: 3.9
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      # setup python
-      - name: Set up Python ${{ env.PYTHON-VERSION }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON-VERSION }}
 
       # Pull all available translations from transifex
       - name: Pull translated files using transifex client
@@ -33,12 +25,6 @@ jobs:
         with:
           token: ${{ secrets.TRANSIFEX_TOKEN }}
           args: pull -a -f
-
-      # remove transifex credential file
-      - name: remove transifexrc file
-        uses: JesseTG/rm@v1.0.2
-        with:
-          path: ~/.transifexrc
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3

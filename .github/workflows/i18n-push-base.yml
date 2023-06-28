@@ -45,15 +45,18 @@ jobs:
       - name: Extract backend messages
         if: ${{ inputs.extract-backend }}
         run: |
-          cd ${{ inputs.backend-path }}
           python setup.py extract_messages
 
-      # extract frontend messages
-      - name: Extract frontend messages
+      # setup node
+      - name: Setup node
         if: ${{ inputs.frontend-package-name != '' }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE-VERSION }}
+
+      # extract frontend messages
+      - name: Extract frontend messages
+        if: ${{ inputs.frontend-package-name != '' }}
         working-directory: ./${{ inputs.frontend-package-name }}/theme/assets/semantic-ui/translations/${{ inputs.frontend-package-name }}
         # installing from package-lock.json
         run: |
@@ -66,12 +69,6 @@ jobs:
         with:
           token: ${{ secrets.TRANSIFEX_TOKEN }}
           args: push -s
-
-      # remove transifex credential file
-      - name: remove transifexrc file
-        uses: JesseTG/rm@v1.0.2
-        with:
-          path: ~/.transifexrc
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3

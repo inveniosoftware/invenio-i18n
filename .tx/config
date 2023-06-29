@@ -2,6 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
+# Copyright (C) 2023-2023 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,8 +10,8 @@
 [main]
 host = https://www.transifex.com
 
-[invenio.invenio-i18n-messages]
+[o:inveniosoftware:p:invenio:r:invenio-i18n-messages]
 file_filter = invenio_i18n/translations/<lang>/LC_MESSAGES/messages.po
 source_file = invenio_i18n/translations/messages.pot
 source_lang = en
-type = PO
+type        = PO

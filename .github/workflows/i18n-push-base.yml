@@ -13,7 +13,7 @@ on:
         required: true
         type: boolean
         default: true
-      frontend-package-name:
+      frontend-package-path:
         required: false
         type: string
     secrets:
@@ -49,15 +49,15 @@ jobs:
 
       # setup node
       - name: Setup node
-        if: ${{ inputs.frontend-package-name != '' }}
+        if: ${{ inputs.frontend-package-path != '' }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE-VERSION }}
 
       # extract frontend messages
       - name: Extract frontend messages
-        if: ${{ inputs.frontend-package-name != '' }}
-        working-directory: ./${{ inputs.frontend-package-name }}/theme/assets/semantic-ui/translations/${{ inputs.frontend-package-name }}
+        if: ${{ inputs.frontend-package-path != '' }}
+        working-directory: ./${{ inputs.frontend-package-path }}
         # installing from package-lock.json
         run: |
           npm ci

@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 2.1.0 (released 2023-07-12)
+
+- add method to check if locale is available
+
 Version 2.0.0 (released 2023-02-27)
 
 - Remove deprecated flask-babelex

@@ -29,8 +29,8 @@ i18n = WebpackThemeBundle(
                 "i18n_app": "./js/invenio_i18n/app.js",
             },
             dependencies={
-                "semantic-ui-less": "~2.4.1",
-                "semantic-ui-css": "~2.4.1",
+                "semantic-ui-less": "^2.4.1",
+                "semantic-ui-css": "^2.4.1",
                 "font-awesome": "~4.4.0",
                 "jquery": "~3.2.1",
             },

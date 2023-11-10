@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 2.1.1 (released 2023-11-10)
+
+- semantic-ui: Update dependency restriction to be compatible with react-searchkit
+
 Version 2.1.0 (released 2023-07-12)
 
 - add method to check if locale is available

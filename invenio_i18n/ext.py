@@ -109,7 +109,7 @@ class InvenioI18N(object):
             timezone_selector=timezoneselector or get_timezone,
         )
 
-        app.config["BABEL_DEFAULT_LOCALE"] = "en"
+        app.config.setdefault("BABEL_DEFAULT_LOCALE", "en")
 
         # Register Jinja2 template filters for date formatting (Flask-Babel
         # already installs other filters).

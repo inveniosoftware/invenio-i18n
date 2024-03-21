@@ -63,6 +63,7 @@ def test_default_lang(app):
     i18n = InvenioI18N(app)
     with app.app_context():
         assert [str(x) for x in i18n.get_locales()] == ["da", "en", "de"]
+        assert app.config["BABEL_DEFAULT_LOCALE"] == "da"
 
 
 def test_get_languages(app):
@@ -78,6 +79,7 @@ def test_get_languages(app):
             ("en", "engelsk"),
             ("de", "tysk"),
         ]
+        assert app.config["BABEL_DEFAULT_LOCALE"] == "da"
 
 
 def test_json_provider_class(app):

@@ -2,7 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
-# Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2023-2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -58,6 +58,7 @@ class InvenioI18N(object):
         localeselector=None,
         timezoneselector=None,
         entry_point_group="invenio_i18n.translations",
+        translation_bundle_entry_point="invenio_i18n.translations_bundle",
     ):
         """Initialize extension.
 
@@ -77,6 +78,7 @@ class InvenioI18N(object):
             default_domain=self.domain,
         )
         self.entry_point_group = entry_point_group
+        self.translation_bundle_entry_point = translation_bundle_entry_point
         self._locales_cache = None
         self._languages_cache = None
 
@@ -144,6 +146,10 @@ class InvenioI18N(object):
         # 3. Entrypoints
         if self.entry_point_group:
             self.domain.add_entrypoint(self.entry_point_group)
+
+        # 4. bundle entrypoint
+        if self.translation_bundle_entry_point:
+            self.domain.add_entrypoint(self.translation_bundle_entry_point)
 
     def iter_languages(self):
         """Iterate over list of languages."""

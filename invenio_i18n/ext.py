@@ -138,18 +138,18 @@ class InvenioI18N(object):
         for p in app.config.get("I18N_TRANSLATIONS_PATHS", []):
             self.domain.add_path(p)
 
-        # 2. <app.root_path>/translations
-        app_translations = os.path.join(app.root_path, "translations")
-        if os.path.exists(app_translations):
-            self.domain.add_path(app_translations)
-
-        # 3. Entrypoints
+        # 2. Entrypoints
         if self.entry_point_group:
             self.domain.add_entrypoint(self.entry_point_group)
 
-        # 4. bundle entrypoint
+        # 3. bundle entrypoint
         if self.translation_bundle_entry_point:
             self.domain.add_entrypoint(self.translation_bundle_entry_point)
+
+        # 4. <app.root_path>/translations
+        app_translations = os.path.join(app.root_path, "translations")
+        if os.path.exists(app_translations):
+            self.domain.add_path(app_translations)
 
     def iter_languages(self):
         """Iterate over list of languages."""

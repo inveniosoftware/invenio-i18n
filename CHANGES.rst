@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version 2.1.2 (released 2024-08-05)
+
+- fix BABEL_DEFAULT_LOCALE overridability
+
 Version 2.1.1 (released 2023-11-10)
 
 - semantic-ui: Update dependency restriction to be compatible with react-searchkit

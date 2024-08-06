@@ -5,7 +5,7 @@
 # Invenio-i18n is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 
-name: i18n:push translations
+name: "i18n: push translations (reusable workflow)"
 on:
   workflow_call:
     inputs:
@@ -24,15 +24,15 @@ jobs:
   i18n-extract:
     runs-on: ubuntu-20.04
     env:
-      PYTHON-VERSION: 3.9
-      NODE-VERSION: 14.x
+      PYTHON-VERSION: 3.12
+      NODE-VERSION: 18
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # setup python
       - name: Set up Python ${{ env.PYTHON-VERSION }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON-VERSION }}
 
@@ -50,7 +50,7 @@ jobs:
       # setup node
       - name: Setup node
         if: ${{ inputs.frontend-package-path != '' }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE-VERSION }}
 
@@ -65,13 +65,13 @@ jobs:
 
       # Push only source file to transifex
       - name: Push source file using transifex client
-        uses: transifex/cli-action@v1
+        uses: transifex/cli-action@v2
         with:
           token: ${{ secrets.TRANSIFEX_TOKEN }}
           args: push -s
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: i18n:push translations
           title: i18n:push translations

@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version 3.0.0 (released 2024-12-02)
+
+- setup: update dependencies
+
 Version 2.2.0 (released 2024-11-28)
 
 - setup: upper pin packages

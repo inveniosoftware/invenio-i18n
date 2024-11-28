@@ -1,12 +1,21 @@
 ..
     This file is part of Invenio.
     Copyright (C) 2015-2018 CERN.
+    Copyright (C) 2024 Graz University of Technology.
 
     Invenio is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
 Changes
 =======
+
+Version 2.2.0 (released 2024-11-28)
+
+- setup: upper pin packages
+- fix: tests by pin pytz
+- fix: my-site not overriding packages
+- ext: add bundle entrypoint
+- github: update reusable workflows
 
 Version 2.1.2 (released 2024-08-05)
 

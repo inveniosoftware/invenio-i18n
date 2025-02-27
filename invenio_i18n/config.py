@@ -61,3 +61,9 @@ Webpack entrypoints are used to determine the asset path for distributing JS/Rea
 Entrypoint names usually match the corresponding package name, but some differ.
 This mapping is used to associate exceptional entrypoint names with their package names.
 """
+
+I18N_TRANSIFEX_JS_RESOURCES_MAP = {}
+"""Mapping of transifex resource names to invenioRDM package names.
+
+All resources/packages that should be translated with Transifex should be added here.
+"""

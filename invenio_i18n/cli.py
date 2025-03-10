@@ -40,9 +40,7 @@ def i18n():
     help="Entrypoint group used to get package assets paths. Default: \"invenio_assets.webpack\" You don't need to set this option under normal circumstances.'",
 )
 def distribute_js_translations(input_directory: Path, entrypoint_group: str):
-    """Distribute JS/React localizations"""
-
-    # TODO: should we keep naming "translation" or change to "localization"?
+    """Distribute JS/React translation files"""
 
     exceptional_package_name_mapper = current_app.config[
         "I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP"
@@ -84,9 +82,13 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
                 continue
 
             target_translations_path = base_path / package_name / "messages" / language
-            # TODO: maybe we should add confirmation or info message for missing languages before create their directories?
-            # TODO: set parents=False if base_path / domain / "messages" part is mandatory. Custom 3rd party packages might not have this, idk.
-            target_translations_path.mkdir(parents=True, exist_ok=True)
+
+            if not target_translations_path.exists():
+                click.secho(
+                    f"Translations directory for {package_name} in language {language} not found. Creating...",
+                    fg="yellow",
+                )
+                target_translations_path.mkdir(parents=True)
 
             with (target_translations_path / "translations.json").open(
                 "w"
@@ -94,6 +96,6 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
                 json.dump(translations, target_file, indent=2, ensure_ascii=False)
 
             click.secho(
-                f"{package_name} localizations for language {language} have been written.",
+                f"{package_name} translations for language {language} have been written.",
                 fg="green",
             )

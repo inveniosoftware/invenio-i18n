@@ -10,7 +10,7 @@
 """CLI for Invenio internationalization module"""
 import json
 import subprocess
-from importlib.metadata import entry_points
+from importlib_metadata import entry_points
 from pathlib import Path
 
 import click

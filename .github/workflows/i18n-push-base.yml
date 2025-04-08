@@ -39,6 +39,8 @@ jobs:
       # install dependencies
       - name: Install dependencies
         run: |
+          # python 3.12 doesn't have it anymore out of the box
+          pip install setuptools
           pip install -e ".[all]"
 
       # extract backend messages

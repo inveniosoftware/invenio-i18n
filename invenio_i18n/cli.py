@@ -10,6 +10,7 @@
 
 """CLI for Invenio internationalization module"""
 import subprocess
+import traceback
 from json import JSONDecodeError, dump, load
 from pathlib import Path
 
@@ -34,11 +35,11 @@ type = PO
 
 
 def source_translation_files(input_directory):
-    """Map source translation file paths to their languages."""
+    """Map source translation file contents to their languages."""
     for source_file in input_directory.iterdir():
         if not source_file.is_file() or source_file.suffix != ".json":
             msg = f"source file: {source_file} is not meant to be distributed."
-            secho(msg, fg="red")
+            secho(msg, fg="yellow")
             continue
 
         language = source_file.stem
@@ -47,8 +48,9 @@ def source_translation_files(input_directory):
             try:
                 obj = load(source_file)
             except JSONDecodeError as error:
-                msg = f"source file: {source_file} couldn't be loaded because of error: {str(error)}"
-                secho(msg, fg="yellow")
+                tb = traceback.format_exc()
+                msg = f"ERROR: source file: {source_file.name} couldn't be loaded because of error: {str(error)}\n{tb}"
+                secho(msg, fg="red")
             else:
                 yield language, obj
 
@@ -62,16 +64,13 @@ def calculate_target_packages(
     package_translations_base_paths = {}
 
     for entry_point in entry_points(group=entrypoint_group):
-        package_path = entry_point.load().path
+        package_name = entry_point.name
+        package_path = Path(entry_point.load().path)
 
-        if not package_path:
-            msg = f"Package {package_path} doesn't have webpack entrypoint. Skipping..."
-            secho(msg, fg="yellow")
-            continue
+        # Some webpack entry points use names that differ from their package names.
+        # Map these exceptional webpack entry‑point names to their correct package names.
+        package_name = exceptional_package_names.get(package_name, package_name)
 
-        package_name = exceptional_package_names.get(
-            package_path.name, package_path.name
-        )
         target_translations_path = (
             package_path / "translations" / package_name / "messages" / language
         )
@@ -162,7 +161,41 @@ def i18n():
     help="Entrypoint group used to get package assets paths. Default: \"invenio_assets.webpack\" You don't need to set this option under normal circumstances.'",
 )
 def distribute_js_translations(input_directory: Path, entrypoint_group: str):
-    """Distribute JS/React translation files"""
+    """
+    Distribute package‑specific JavaScript translations.
+
+    Usage
+    -----
+    .. code-block:: console
+       $ i18n distribute-js-translations -i js_translations/
+
+    The command expects an input directory that contains one unified JSON file per
+    language, named after the locale code—e.g., de.json, tr.json, de_AT.json, etc.
+
+    The ``invenio i18n fetch-from-transifex`` command can be used to retrieve translations from Transifex and unify them.
+
+    The command uses invenio_assets.webpack entrypoint group to determine package asset paths. In order for the command to work properly, add the following config to the ``invenio.cfg``:
+
+    .. code-block:: python
+       I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP = {
+         "jobs": "invenio_jobs",
+         "invenio_previewer_theme": "invenio_previewer",
+         "invenio_app_rdm_theme": "invenio_app_rdm",
+       }
+
+
+    Distribution of translation
+    ---------------------------
+    This CLI command processes unified per‑language JSON files in a given input path.  The command extracts translations that belong to the target package, discovers asset root paths of packages through the ``invenio_assets.webpack``
+    entry‑point group and writes it to the package’s  translation folder in react-i18next format here.
+
+    For example, for locale ``tr`` the extracted fragment for
+    ``invenio_communities`` is written to:
+
+    ``<site‑packages>/invenio-communities/assets/semantic-ui/translations/invenio_communities/messages/tr/translations.json``
+
+    Missing directories and files will be created automatically if not exist.
+    """
 
     exceptional_package_names = current_app.config[
         "I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP"
@@ -175,6 +208,11 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
         )
 
         for package_name, translations in unified_translations.items():
+            if package_name not in target_packages:
+                msg = f"Package {package_name} doesn't have webpack entrypoint. Skipping..."
+                secho(msg, fg="yellow")
+                continue
+
             target_file = target_packages[package_name]
 
             with target_file.open("w") as file_pointer:

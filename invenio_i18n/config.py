@@ -50,11 +50,7 @@ I18N_USER_LANG_ATTR = "prefered_language"
 It is used only when the login manager is installed and a user is
 authenticated. Set to ``None`` to prevent selector from being used.
 """
-I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP = {
-    "jobs": "invenio_jobs",
-    "invenio_previewer_theme": "invenio_previewer",
-    "invenio_app_rdm_theme": "invenio_app_rdm",
-}
+I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP = {}
 """Exceptional package name mapper for JS/React localization distribution.
 
 Webpack entrypoints are used to determine the asset path for distributing JS/React localizations.

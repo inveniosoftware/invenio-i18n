@@ -3,6 +3,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
 # Copyright (C) 2025 TUBITAK ULAKBIM.
+# Copyright (C) 2025 University of Münster.
 # Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
@@ -90,8 +91,8 @@ def calculate_target_packages(
 def create_transifex_configuration(temporary_cache, js_resources):
     """Create transifex fetch configuration.
 
-    This configuration is build dynamically because the targeted packages are
-    customizable over the configuration variable.
+    This configuration is built dynamically because the targeted packages are
+    customizable over the configuration variable I18N_TRANSIFEX_JS_RESOURCES_MAP.
     """
     environment = Environment(loader=BaseLoader())
     config_template = environment.from_string(TRANSIFEX_CONFIG_TEMPLATE)
@@ -124,10 +125,10 @@ def fetch_translations_from_transifex(token, temporary_cache, languages, js_reso
     subprocess.run(transifex_pull_cmd)
 
 
-def map_to_invenio_style(pofile):
-    """Map to invenio style.
+def map_to_i18next_style(pofile):
+    """Map translations from po to i18next style.
 
-    For plurals we need a special treatment.
+    Plurals need a special format.
     """
     obj = {}
     for entry in pofile:
@@ -240,7 +241,51 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
     help="Directory to which collected translations in JSON format should be written.",
 )
 def fetch_from_transifex(token, languages, output_directory):
-    """Compile message catalog."""
+    """Retrieve package translations from Transifex and unify them to a single file using i18next format.
+
+    Usage
+    -----
+    .. code-block:: console
+       $ i18n fetch-from-transifex -t <your transifex API token> -l 'de,en,fr' -o js_translations/
+
+    The command expects an API token associated with a Transifex account to be able to pull translations.
+    Such a token can be generated in the user settings on the Transifex website.
+
+    The output directory will be used to store downloaded translations per package as well as the unified translation file.
+
+    To supply the packages for which translations should be pulled, add the following config to your instance's ``invenio.cfg``:
+
+    .. code-block:: python
+        I18N_TRANSIFEX_JS_RESOURCES_MAP = {
+            "invenio-administration-messages-ui": "invenio_administration",
+            "invenio-app-rdm-messages-ui": "invenio_app_rdm",
+            "invenio-communities-messages-ui": "invenio_communities",
+            "invenio-rdm-records-messages-ui": "invenio_rdm_records",
+            "invenio-requests-messages-ui": "invenio_requests",
+            "invenio-search-ui-messages-js": "invenio_search_ui"
+        }
+
+    Fetching and unifying of translations
+    ---------------------------
+    This CLI command pulls translations in PO format from Transifex for all packages specified in the config.
+    It will then unify all translations to a single JSON file in a format that can be used with the i18next library.
+    The unified file will contain keys for package names on the top level and a nested dict with translation keys and values for each package, e.g.:
+
+    .. code-block:: json
+        {
+            "invenio_administration": {
+                "Error": "Fehler",
+                "Save": "Speichern",
+                ...
+            },
+            "invenio_app_rdm": {
+                "Basic information": "Allgemeine Informationen",
+                "New": "Neu",
+                ...
+            },
+            ...
+        }
+    """
     js_resources = current_app.config["I18N_TRANSIFEX_JS_RESOURCES_MAP"]
 
     temporary_cache = output_directory / "tmp"
@@ -256,7 +301,7 @@ def fetch_from_transifex(token, languages, output_directory):
             po_path = f"{temporary_cache}/{package}/{language}/messages.po"
             pofile = polib.pofile(po_path)
 
-            collected_translations[language][package] = map_to_invenio_style(pofile)
+            collected_translations[language][package] = map_to_i18next_style(pofile)
 
         output_file = Path(f"{output_directory}/{language}.json")
         with output_file.open("w", encoding="utf-8") as fp:

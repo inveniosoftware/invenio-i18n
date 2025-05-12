@@ -56,9 +56,9 @@ def source_translation_files(input_directory):
 
 
 def calculate_target_packages(
-    exceptional_package_names,
-    entrypoint_group,
-    language,
+        exceptional_package_names,
+        entrypoint_group,
+        language,
 ):
     """Calculate target packages."""
     package_translations_base_paths = {}
@@ -72,7 +72,7 @@ def calculate_target_packages(
         package_name = exceptional_package_names.get(package_name, package_name)
 
         target_translations_path = (
-            package_path / "translations" / package_name / "messages" / language
+                package_path / "translations" / package_name / "messages" / language
         )
 
         if not target_translations_path.exists():
@@ -81,7 +81,7 @@ def calculate_target_packages(
             target_translations_path.mkdir(parents=True)
 
         package_translations_base_paths[package_name] = (
-            target_translations_path / "translations.json"
+                target_translations_path / "translations.json"
         )
 
     return package_translations_base_paths
@@ -258,6 +258,6 @@ def fetch_from_transifex(token, languages, output_directory):
 
             collected_translations[language][package] = map_to_invenio_style(pofile)
 
-        output_file = (Path(f"{output_directory}/{language}.json"),)
+        output_file = Path(f"{output_directory}/{language}.json")
         with output_file.open("w", encoding="utf-8") as fp:
             dump(collected_translations[language], fp, indent=4, ensure_ascii=False)

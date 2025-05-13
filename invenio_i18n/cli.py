@@ -9,7 +9,7 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-"""CLI for Invenio internationalization module"""
+"""CLI for Invenio internationalization module."""
 import subprocess
 import traceback
 from json import JSONDecodeError, dump, load
@@ -57,9 +57,9 @@ def source_translation_files(input_directory):
 
 
 def calculate_target_packages(
-        exceptional_package_names,
-        entrypoint_group,
-        language,
+    exceptional_package_names,
+    entrypoint_group,
+    language,
 ):
     """Calculate target packages."""
     package_translations_base_paths = {}
@@ -73,7 +73,7 @@ def calculate_target_packages(
         package_name = exceptional_package_names.get(package_name, package_name)
 
         target_translations_path = (
-                package_path / "translations" / package_name / "messages" / language
+            package_path / "translations" / package_name / "messages" / language
         )
 
         if not target_translations_path.exists():
@@ -82,7 +82,7 @@ def calculate_target_packages(
             target_translations_path.mkdir(parents=True)
 
         package_translations_base_paths[package_name] = (
-                target_translations_path / "translations.json"
+            target_translations_path / "translations.json"
         )
 
     return package_translations_base_paths
@@ -197,7 +197,6 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 
     Missing directories and files will be created automatically if not exist.
     """
-
     exceptional_package_names = current_app.config[
         "I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP"
     ]

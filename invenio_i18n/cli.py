@@ -61,8 +61,10 @@ def calculate_target_packages(
     entrypoint_group,
     language,
 ):
-    """Calculate target packages."""
-    package_translations_base_paths = {}
+    """Calculate target package translation paths.
+    Maps each package to its target translation file path by inspecting entrypoint and handling exceptional package names.
+    """
+    package_translations_paths = {}
 
     for entry_point in entry_points(group=entrypoint_group):
         package_name = entry_point.name
@@ -76,20 +78,15 @@ def calculate_target_packages(
             package_path / "translations" / package_name / "messages" / language
         )
 
-        if not target_translations_path.exists():
-            msg = f"Translations directory for {package_name} in language {language} not found. Creating..."
-            secho(msg, fg="yellow")
-            target_translations_path.mkdir(parents=True)
-
-        package_translations_base_paths[package_name] = (
+        package_translations_paths[package_name] = (
             target_translations_path / "translations.json"
         )
 
-    return package_translations_base_paths
+    return package_translations_paths
 
 
 def create_transifex_configuration(temporary_cache, js_resources):
-    """Create transifex fetch configuration.
+    """Create a transifex fetch configuration.
 
     This configuration is built dynamically because the targeted packages are
     customizable over the configuration variable I18N_TRANSIFEX_JS_RESOURCES_MAP.
@@ -168,7 +165,7 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
     Usage
     -----
     .. code-block:: console
-       $ i18n distribute-js-translations -i js_translations/
+       $ invenio i18n distribute-js-translations -i js_translations/
 
     The command expects an input directory that contains one unified JSON file per
     language, named after the locale code—e.g., de.json, tr.json, de_AT.json, etc.
@@ -215,6 +212,11 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 
             target_file = target_packages[package_name]
 
+            if not target_file.parent.exists():
+                msg = f"Translations directory for {package_name} in language {language} not found. Creating..."
+                secho(msg, fg="yellow")
+                target_file.parent.mkdir(parents=True)
+
             with target_file.open("w") as file_pointer:
                 dump(translations, file_pointer, indent=2, ensure_ascii=False)
 
@@ -245,7 +247,7 @@ def fetch_from_transifex(token, languages, output_directory):
     Usage
     -----
     .. code-block:: console
-       $ i18n fetch-from-transifex -t <your transifex API token> -l 'de,en,fr' -o js_translations/
+       $ invenio i18n fetch-from-transifex -t <your transifex API token> -l 'de,en,fr' -o js_translations/
 
     The command expects an API token associated with a Transifex account to be able to pull translations.
     Such a token can be generated in the user settings on the Transifex website.

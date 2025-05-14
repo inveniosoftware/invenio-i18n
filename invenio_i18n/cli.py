@@ -62,7 +62,7 @@ def calculate_target_packages(
     language,
 ):
     """Calculate target package translation paths.
-    
+
     Maps each package to its target translation file path by inspecting entrypoint and handling exceptional package names.
     """
     package_translations_paths = {}

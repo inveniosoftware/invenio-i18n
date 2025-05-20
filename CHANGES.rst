@@ -1,13 +1,19 @@
 ..
     This file is part of Invenio.
     Copyright (C) 2015-2018 CERN.
-    Copyright (C) 2024 Graz University of Technology.
+    Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
 Changes
 =======
+
+Version 3.1.0 (released 2025-05-20)
+
+- cli: add command to fetch translation from tansifex
+- cli: add command to distribute react translation to packages
+- fix: setuptools require underscores instead of dashes
 
 Version 3.0.0 (released 2024-12-02)
 

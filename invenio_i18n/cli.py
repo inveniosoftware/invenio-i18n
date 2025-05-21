@@ -228,14 +228,14 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 @i18n.command()
 @option("--token", "-t", required=True, help="API token for your Transifex account.")
 @option(
-    "--languages",
     "-l",
+    "--languages",
     required=True,
     help="Languages you want to download translations for (one or multiple comma separated values, e.g. 'de,en,fr').",
 )
 @option(
-    "--output-directory",
     "-o",
+    "--output-directory",
     required=True,
     type=ClickPath(
         exists=True, file_okay=False, dir_okay=True, writable=True, path_type=Path

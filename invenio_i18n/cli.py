@@ -137,13 +137,13 @@ def map_to_i18next_style(pofile):
     return obj
 
 
-@group(chain=True)
+@group()
 @with_appcontext
 def i18n():
     """i18n commands."""
 
 
-@i18n.command()
+@i18n.command(no_args_is_help=True)
 @with_appcontext
 @option(
     "-i",
@@ -225,7 +225,7 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
             secho(msg, fg="green")
 
 
-@i18n.command()
+@i18n.command(no_args_is_help=True)
 @option("--token", "-t", required=True, help="API token for your Transifex account.")
 @option(
     "-l",

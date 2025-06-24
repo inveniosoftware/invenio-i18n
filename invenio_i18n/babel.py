@@ -2,7 +2,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2015-2018 CERN.
-# Copyright (C) 2023-2024 Graz University of Technology.
+# Copyright (C) 2023-2025 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -10,8 +10,9 @@
 """Flask-Babel domain for merging translations from many directories."""
 
 import os
+from importlib.resources import files
 
-from pkg_resources import iter_entry_points, resource_filename, resource_isdir
+from invenio_base.utils import entry_points
 
 
 class MultidirDomain:
@@ -42,10 +43,10 @@ class MultidirDomain:
 
     def add_entrypoint(self, entry_point_group):
         """Load translations from an entry point."""
-        for ep in iter_entry_points(group=entry_point_group):
-            if not resource_isdir(ep.module_name, "translations"):
-                continue
-            dirname = resource_filename(ep.module_name, "translations")
+        for ep in entry_points(group=entry_point_group):
+            if not (files(ep.module) / "translations").is_dir():
+                return
+            dirname = str(files(ep.module) / "translations")
             self.add_path(dirname)
 
     def add_path(self, path):

@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version 3.2.0 (released 2025-07-01)
+
+- fix: pkg_resources DeprecationWarning
+
 Version 3.1.0 (released 2025-05-20)
 
 - cli: add command to fetch translation from tansifex

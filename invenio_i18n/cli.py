@@ -264,7 +264,8 @@ def fetch_from_transifex(token, languages, output_directory):
             "invenio-communities-messages-ui": "invenio_communities",
             "invenio-rdm-records-messages-ui": "invenio_rdm_records",
             "invenio-requests-messages-ui": "invenio_requests",
-            "invenio-search-ui-messages-js": "invenio_search_ui"
+            "invenio-search-ui-messages-js": "invenio_search_ui",
+            "invenio-vocabularies-messages-ui": "invenio_vocabularies",
         }
 
     Fetching and unifying of translations

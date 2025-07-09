@@ -20,7 +20,7 @@ from click import Path as ClickPath
 from click import group, option, secho
 from flask import current_app
 from flask.cli import with_appcontext
-from importlib_metadata import entry_points
+from invenio_base.utils import entry_points
 from jinja2 import BaseLoader, Environment
 
 TRANSIFEX_CONFIG_TEMPLATE = """

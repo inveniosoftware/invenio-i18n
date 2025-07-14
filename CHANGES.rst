@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v3.3.0 (released 2025-07-14)
+
+- chores: replaced importlib_xyz with importlib
+
 Version 3.2.0 (released 2025-07-01)
 
 - fix: pkg_resources DeprecationWarning

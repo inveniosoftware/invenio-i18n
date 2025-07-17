@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v3.4.0 (released 2025-07-17)
+
+- i18n: pulled translations
+- fix(action): commit msg needs whitespace after colon
+
 Version v3.3.0 (released 2025-07-14)
 
 - chores: replaced importlib_xyz with importlib

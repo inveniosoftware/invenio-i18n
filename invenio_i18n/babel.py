@@ -45,7 +45,7 @@ class MultidirDomain:
         """Load translations from an entry point."""
         for ep in entry_points(group=entry_point_group):
             if not (files(ep.module) / "translations").is_dir():
-                return
+                continue
             dirname = str(files(ep.module) / "translations")
             self.add_path(dirname)
 

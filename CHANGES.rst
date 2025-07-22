@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v3.4.2 (released 2025-07-22)
+
+- fix(actions): babel compile step missing
+
 Version v3.4.1 (released 2025-07-22)
 
 - fix(babel): migration gone wrong

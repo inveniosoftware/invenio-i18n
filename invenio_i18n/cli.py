@@ -23,6 +23,11 @@ from flask.cli import with_appcontext
 from invenio_base.utils import entry_points
 from jinja2 import BaseLoader, Environment
 
+from .collections import (
+    collect_translations_to_json,
+    validate_translations_from_packages,
+)
+
 TRANSIFEX_CONFIG_TEMPLATE = """
 [main]
 host = https://www.transifex.com
@@ -65,6 +70,7 @@ def calculate_target_packages(
 
     Maps each package to its target translation file path by inspecting entrypoint and handling exceptional package names.
     """
+
     package_translations_paths = {}
 
     for entry_point in entry_points(group=entrypoint_group):
@@ -92,6 +98,7 @@ def create_transifex_configuration(temporary_cache, js_resources):
     This configuration is built dynamically because the targeted packages are
     customizable over the configuration variable I18N_TRANSIFEX_JS_RESOURCES_MAP.
     """
+
     environment = Environment(loader=BaseLoader())
     config_template = environment.from_string(TRANSIFEX_CONFIG_TEMPLATE)
 
@@ -138,7 +145,6 @@ def map_to_i18next_style(pofile):
 
 
 @group(chain=True)
-@with_appcontext
 def i18n():
     """i18n commands."""
 
@@ -195,6 +201,7 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 
     Missing directories and files will be created automatically if not exist.
     """
+
     exceptional_package_names = current_app.config[
         "I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP"
     ]
@@ -223,6 +230,91 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 
             msg = f"{package_name} translations for language {language} have been written."
             secho(msg, fg="green")
+
+
+@i18n.command()
+@option(
+    "--packages",
+    "-p",
+    multiple=True,
+    required=True,
+    help="Packages to include. Can be specified multiple times.",
+)
+def create_global_pot(packages: tuple):
+    """
+    Collect translations and write JSON files for testing.
+
+    Usage
+    -----
+    .. code-block:: console
+       $ invenio i18n create-global-pot -p invenio-app-rdm -p invenio-rdm-records
+       $ invenio i18n create-global-pot -p invenio-communities -p invenio-requests
+
+    The command will:
+    1. Generate JSON translation files in the i18n-collected/ directory
+    """
+
+    package_list = list(packages)
+
+    # Collect translations to JSON
+    output_dir = Path.cwd() / "i18n-collected"
+    output_dir.mkdir(exist_ok=True)
+    summary = collect_translations_to_json(package_list, output_dir)
+    secho(
+        f"Collected translations for {summary['packagesProcessed']} packages into {output_dir}",
+        fg="green",
+    )
+    secho(f"Wrote merged JSON: {output_dir / 'translations.json'}", fg="blue")
+    secho(
+        "Per‑package JSON under: i18n-collected/<package>/translations.json", fg="blue"
+    )
+
+
+@i18n.command()
+@option(
+    "--packages",
+    "-p",
+    multiple=True,
+    required=True,
+    help="Packages to validate. Can be specified multiple times.",
+)
+def validate_translations(packages: tuple):
+    """
+    Validate translation quality using invenio-e2e validation system.
+
+    This command checks PO files for missing, fuzzy, and obsolete translations.
+
+    Usage
+    -----
+    .. code-block:: console
+       $ invenio i18n validate-translations -p invenio-app-rdm -p invenio-rdm-records
+       $ invenio i18n validate-translations -p invenio-communities -p invenio-requests
+
+    The command will:
+    1. Check for missing translations
+    2. Identify fuzzy translations
+    3. Find obsolete translations
+    4. Generate a validation report
+    """
+    package_list = list(packages)
+
+    output_dir = Path.cwd() / "i18n-collected"
+    output_dir.mkdir(exist_ok=True)
+
+    try:
+        summary = validate_translations_from_packages(package_list, output_dir)
+        report_path = output_dir / "validation-report.json"
+        secho(f"Validation report written: {report_path}", fg="green")
+
+        summary_data = summary.get("summary", {})
+        secho(
+            f"Summary: packages={summary_data.get('totalPackages', 0)}, "
+            f"locales={summary_data.get('totalLocales', 0)}, "
+            f"issues={summary_data.get('totalIssues', 0)}",
+            fg="blue",
+        )
+    except Exception as e:
+        secho(f"Error during validation: {e}", fg="red")
 
 
 @i18n.command()

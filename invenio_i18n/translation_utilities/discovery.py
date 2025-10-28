@@ -20,7 +20,6 @@ def normalize_package_to_module_name(package_name: str) -> str:
     :param package_name: Package name like 'invenio-app-rdm'
     :return: Module name like 'invenio_app_rdm'
     """
-
     return package_name.replace("-", "_")
 
 
@@ -30,7 +29,6 @@ def find_package_path(package_name: str) -> Path | None:
     :param package_name: Name of the package to find
     :return: Path to the package folder, or None if not found
     """
-
     module_name = normalize_package_to_module_name(package_name)
     spec = find_spec(module_name)
     if not spec or not spec.submodule_search_locations:
@@ -45,7 +43,6 @@ def iter_po_files(package_root: Path, package_name: str) -> Iterable[tuple[str, 
     :param package_name: Name of the package
     :return: Pairs of (language, file_path) like ('de', '/path/to/messages.po')
     """
-
     # Candidate roots: package-level "translations" or module-nested "<module>/translations"
     candidates: list[Path] = [
         package_root / "translations",

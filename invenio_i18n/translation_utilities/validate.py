@@ -27,21 +27,19 @@ def validate_po(
     :param po_path: Path to the file being checked
     :return: Report with all issues found (untranslated, fuzzy, obsolete)
     """
-
     # Track untranslated entries, fuzzy flags, and obsolete entries
     untranslated: list[str] = []
     fuzzy: list[str] = []
     obsolete: list[str] = []
 
     for entry in pofile:
-        if entry.obsolete:
-            obsolete.append(entry.msgid)
-            continue
-        if "fuzzy" in entry.flags:
-            fuzzy.append(entry.msgid)
-            continue
-        if not entry.msgstr and not entry.msgstr_plural:
-            untranslated.append(entry.msgid)
+        match True:
+            case _ if entry.obsolete:
+                obsolete.append(entry.msgid)
+            case _ if "fuzzy" in entry.flags:
+                fuzzy.append(entry.msgid)
+            case _ if not entry.msgstr and not entry.msgstr_plural:
+                untranslated.append(entry.msgid)
 
     issues = {
         "untranslated": untranslated,

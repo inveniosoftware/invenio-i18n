@@ -23,9 +23,14 @@ from flask.cli import with_appcontext
 from invenio_base.utils import entry_points
 from jinja2 import BaseLoader, Environment
 
-from .collections import (
+from .translation_utilities import (
     collect_translations_to_json,
     validate_translations_from_packages,
+)
+from .translation_utilities.discovery import (
+    find_package_path,
+    iter_po_files,
+    normalize_package_to_module_name,
 )
 
 TRANSIFEX_CONFIG_TEMPLATE = """
@@ -70,7 +75,6 @@ def calculate_target_packages(
 
     Maps each package to its target translation file path by inspecting entrypoint and handling exceptional package names.
     """
-
     package_translations_paths = {}
 
     for entry_point in entry_points(group=entrypoint_group):
@@ -98,7 +102,6 @@ def create_transifex_configuration(temporary_cache, js_resources):
     This configuration is built dynamically because the targeted packages are
     customizable over the configuration variable I18N_TRANSIFEX_JS_RESOURCES_MAP.
     """
-
     environment = Environment(loader=BaseLoader())
     config_template = environment.from_string(TRANSIFEX_CONFIG_TEMPLATE)
 
@@ -201,7 +204,6 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
 
     Missing directories and files will be created automatically if not exist.
     """
-
     exceptional_package_names = current_app.config[
         "I18N_JS_DISTR_EXCEPTIONAL_PACKAGE_MAP"
     ]
@@ -253,7 +255,6 @@ def create_global_pot(packages: tuple):
     The command will:
     1. Generate JSON translation files in the i18n-collected/ directory
     """
-
     package_list = list(packages)
 
     # Collect translations to JSON
@@ -291,10 +292,10 @@ def validate_translations(packages: tuple):
        $ invenio i18n validate-translations -p invenio-communities -p invenio-requests
 
     The command will:
-    1. Check for missing translations
-    2. Identify fuzzy translations
-    3. Find obsolete translations
-    4. Generate a validation report
+    Check for missing translations
+    Identify fuzzy translations
+    Find obsolete translations
+    Generate a validation report
     """
     package_list = list(packages)
 
@@ -315,6 +316,68 @@ def validate_translations(packages: tuple):
         )
     except Exception as e:
         secho(f"Error during validation: {e}", fg="red")
+
+
+@i18n.command()
+@option("--package", "-p", required=True, help="Package name like 'invenio-app-rdm'")
+@option("--locale", "-l", required=True, help="Language code like 'de' or 'fr'")
+@option("--msgid", required=True, help="Original English text")
+@option("--msgstr", required=True, help="New translation")
+def update_translation(package, locale, msgid, msgstr):
+    """Update a translation and remove fuzzy flag.
+
+    Usage
+    -----
+    .. code-block:: console
+       $ invenio i18n update-translation -p invenio-app-rdm -l de --msgid "Upload file" --msgstr "Datei hochladen"
+
+    The command will:
+    Find the PO file for the package and locale
+    Update the translation
+    Remove the fuzzy flag if present
+    Save the changes
+    """
+    package_root = find_package_path(package)
+    if not package_root:
+        secho(f"Package {package} not found", fg="red")
+        return
+
+    po_path = None
+    for loc, path in iter_po_files(package_root, package):
+        if loc == locale:
+            po_path = path
+            break
+
+    if not po_path:
+        secho(f"No PO file found for {package} in locale {locale}", fg="red")
+        return
+
+    try:
+        pofile = polib.pofile(str(po_path))
+        updated = False
+
+        for entry in pofile:
+            if entry.msgid == msgid:
+                entry.msgstr = msgstr
+                if "fuzzy" in entry.flags:
+                    entry.flags.remove("fuzzy")
+                updated = True
+                break
+
+        if updated:
+            pofile.save()
+            secho(
+                f"Updated translation for '{msgid}' in {package}/translations/{locale}",
+                fg="green",
+            )
+        else:
+            secho(
+                f"Translation '{msgid}' not found in {package}/translations/{locale}",
+                fg="yellow",
+            )
+
+    except Exception as e:
+        secho(f"Error updating translation: {e}", fg="red")
 
 
 @i18n.command()

@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
 
 import polib
@@ -29,7 +30,6 @@ def scan_package_for_translations(package_name: str) -> dict[str, dict[str, str]
     :param package_name: Name of the package like 'invenio-app-rdm'
     :return: Translations organized by language like {"de": {...}, "fr": {...}}
     """
-
     package_root = find_package_path(package_name)
     translations_by_locale = {}
 
@@ -49,7 +49,6 @@ def scan_package_for_validation(package_name: str) -> list[dict]:
     :param package_name: Name of the package to check like 'invenio-app-rdm'
     :return: List of reports showing what needs to be fixed
     """
-
     package_root = find_package_path(package_name)
     validation_reports = []
 
@@ -73,8 +72,7 @@ def collect_translations_to_json(
     :param output_dir: Where to save the translation files
     :return: Summary with number of packages and languages processed
     """
-
-    results: dict[str, dict[str, dict[str, str]]] = {}
+    collected_translations = defaultdict(dict)
 
     for package_name in packages:
         translations_by_locale = scan_package_for_translations(package_name)
@@ -87,17 +85,14 @@ def collect_translations_to_json(
 
             # Store for merged output
             for locale, translations in translations_by_locale.items():
-                if locale not in results:
-                    results[locale] = {}
-                results[locale][normalized_name] = translations
+                collected_translations[locale][normalized_name] = translations
 
     # Write merged per-locale JSON (locale -> package -> keys)
-    merged = results
-    write_json_file(output_dir / "translations.json", merged)
+    write_json_file(output_dir / "translations.json", collected_translations)
 
     return {
         "packagesProcessed": len(packages),
-        "locales": sorted(list(merged.keys())),
+        "locales": sorted(list(collected_translations.keys())),
     }
 
 
@@ -111,14 +106,13 @@ def validate_translations_from_packages(
     :param output_dir: Where to save the validation report
     :return: Summary of all issues found
     """
-
     all_validation_reports = []
 
     for package_name in packages:
         validation_reports = scan_package_for_validation(package_name)
         all_validation_reports.extend(validation_reports)
 
-    summary = _summarize_validation_reports(all_validation_reports, packages)
+    summary = _calculate_validation_report(all_validation_reports, packages)
 
     report_path = output_dir / "validation-report.json"
     write_json_file(report_path, summary)
@@ -126,14 +120,13 @@ def validate_translations_from_packages(
     return summary
 
 
-def _summarize_validation_reports(reports: list[dict], packages: list[str]) -> dict:
+def _calculate_validation_report(reports: list[dict], packages: list[str]) -> dict:
     """Create a summary of all validation issues.
 
     :param reports: Individual reports from each package
     :param packages: Names of packages that were checked
     :return: Combined summary with totals and details
     """
-
     package_breakdown: dict[str, dict] = {}
     language_breakdown: dict[str, dict] = {}
 

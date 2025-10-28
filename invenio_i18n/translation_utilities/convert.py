@@ -21,7 +21,6 @@ def po_to_i18next_json(pofile: polib.POFile, package_name: str) -> dict[str, str
     :param package_name: Name of the package
     :return: Dictionary with translations like {"Hello": "Hallo"}
     """
-
     result: dict[str, str] = {}
     normalized_package = normalize_package_to_module_name(package_name)
 

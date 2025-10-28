@@ -9,13 +9,13 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 
 def write_json_file(path: Path, data: dict) -> None:
     """Save data to a JSON file.
-    
+
     :param path: Where to save the file
     :param data: Dictionary to save as JSON
     """

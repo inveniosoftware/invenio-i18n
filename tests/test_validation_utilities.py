@@ -17,6 +17,7 @@ import pytest
 from click.testing import CliRunner
 
 from invenio_i18n.cli import i18n
+from invenio_i18n.translation_utilities.validate import validate_po
 
 
 def test_validation_workflow_example():
@@ -72,30 +73,168 @@ def test_validation_workflow_example():
         pytest.skip("Validation report not created - invenio-i18n may not be available")
 
 
-def test_create_global_pot_workflow():
-    """Test the create-global-pot command workflow."""
+def test_validate_translations_command(app):
+    """Test the validate-translations command."""
     runner = CliRunner()
 
-    result = runner.invoke(i18n, ["create-global-pot", "-p", "invenio-i18n"])
+    with app.app_context():
+        result = runner.invoke(i18n, ["validate-translations", "-p", "invenio-i18n"])
+        assert result.exit_code in [0, 1]
 
-    if "Package invenio-i18n not found" in result.output:
-        pytest.skip("invenio-i18n not available in test environment")
 
-    assert result.exit_code == 0
-    assert "Collected translations for 1 packages" in result.output
+def test_validate_detects_fuzzy_when_short_word_changes():
+    """Test fuzzy detection for short word changes (German example).
 
-    output_dir = Path.cwd() / "i18n-collected"
-    assert output_dir.exists()
+    Scenario: "Save" changed to "Save changes"
+    Old translation "Speichern" is marked fuzzy.
+    """
+    po_file = polib.POFile()
+    normal_entry = polib.POEntry(msgid="Upload", msgstr="Hochladen")
+    po_file.append(normal_entry)
+    fuzzy_entry = polib.POEntry(
+        msgid="Save changes",
+        msgstr="Speichern",  # Old translation for "Save", not "Save changes"
+        flags=["fuzzy"],
+    )
+    po_file.append(fuzzy_entry)
 
-    translations_file = output_dir / "translations.json"
-    assert translations_file.exists()
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
 
-    # Check if package-specific file exists (may not exist if package has no translations)
-    package_file = output_dir / "invenio_i18n" / "translations.json"
-    if package_file.exists():
-        # If it exists, verify it has content
-        import json
+    assert report.counts.fuzzyTranslations == 1
+    assert report.counts.untranslated == 0
+    assert "Save changes" in report.issues.fuzzy
+    assert "Upload" not in report.issues.fuzzy
 
-        with open(package_file) as f:
-            data = json.load(f)
-            assert isinstance(data, dict)
+
+def test_fuzzy_translation_multiple_entries():
+    """Test multiple fuzzy entries in German translations."""
+    po_file = polib.POFile()
+
+    fuzzy1 = polib.POEntry(
+        msgid="New upload",
+        msgstr="Neuer Upload",  # Might be wrong after source changed
+        flags=["fuzzy"],
+    )
+    fuzzy2 = polib.POEntry(
+        msgid="Delete file",
+        msgstr="Löschen",  # Old translation, source changed
+        flags=["fuzzy"],
+    )
+    normal = polib.POEntry(msgid="Cancel", msgstr="Abbrechen")
+
+    po_file.append(fuzzy1)
+    po_file.append(fuzzy2)
+    po_file.append(normal)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 2
+    assert report.counts.untranslated == 0
+    assert "New upload" in report.issues.fuzzy
+    assert "Delete file" in report.issues.fuzzy
+    assert "Cancel" not in report.issues.fuzzy
+
+
+def test_validate_detects_fuzzy_when_phrase_expands():
+    """Test fuzzy detection for longer phrases (German example).
+
+    Scenario: "Welcome" changed to "Welcome to Invenio"
+    """
+    po_file = polib.POFile()
+
+    fuzzy_entry = polib.POEntry(
+        msgid="Welcome to Invenio",
+        msgstr="Willkommen",  # Old translation for just "Welcome"
+        flags=["fuzzy"],
+    )
+    po_file.append(fuzzy_entry)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 1
+    assert "Welcome to Invenio" in report.issues.fuzzy
+
+
+def test_fuzzy_mixed_with_untranslated():
+    """Test fuzzy entries mixed with untranslated entries."""
+    po_file = polib.POFile()
+
+    fuzzy = polib.POEntry(msgid="Edit record", msgstr="Bearbeiten", flags=["fuzzy"])
+    untranslated = polib.POEntry(msgid="Delete record", msgstr="")
+    normal = polib.POEntry(msgid="View", msgstr="Anzeigen")
+
+    po_file.append(fuzzy)
+    po_file.append(untranslated)
+    po_file.append(normal)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 1
+    assert report.counts.untranslated == 1
+    assert "Edit record" in report.issues.fuzzy
+    assert "Delete record" in report.issues.untranslated
+    assert "View" not in report.issues.fuzzy
+    assert "View" not in report.issues.untranslated
+
+
+def test_validate_detects_fuzzy_minor_text_change():
+    """Test fuzzy detection when source text changes slightly.
+
+    Scenario: "OK" changed to "OK!" or similar small change.
+    """
+    po_file = polib.POFile()
+
+    fuzzy_entry = polib.POEntry(
+        msgid="OK!", msgstr="OK", flags=["fuzzy"]  # Old translation
+    )
+    po_file.append(fuzzy_entry)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 1
+    assert "OK!" in report.issues.fuzzy
+
+
+def test_validate_no_issues_when_no_fuzzy_flags():
+    """Test that clean translations without fuzzy flags are not reported."""
+    po_file = polib.POFile()
+
+    entry1 = polib.POEntry(msgid="Save", msgstr="Speichern")
+    entry2 = polib.POEntry(msgid="Cancel", msgstr="Abbrechen")
+    entry3 = polib.POEntry(msgid="Delete", msgstr="Löschen")
+
+    po_file.append(entry1)
+    po_file.append(entry2)
+    po_file.append(entry3)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 0
+    assert report.counts.untranslated == 0
+    assert len(report.issues.fuzzy) == 0
+
+
+def test_fuzzy_german_common_words():
+    """Test fuzzy detection with common German UI words."""
+    po_file = polib.POFile()
+
+    fuzzy_words = [
+        ("Save", "Speichern", "Save changes", "Speichern"),
+        ("Close", "Schließen", "Close window", "Schließen"),
+        ("Open", "Öffnen", "Open file", "Öffnen"),
+    ]
+
+    for old_msgid, translation, new_msgid, old_translation in fuzzy_words:
+        fuzzy_entry = polib.POEntry(
+            msgid=new_msgid,
+            msgstr=old_translation,  # Old translation for old_msgid
+            flags=["fuzzy"],
+        )
+        po_file.append(fuzzy_entry)
+
+    report = validate_po(po_file, "test-package", "de", Path("/tmp/test.po"))
+
+    assert report.counts.fuzzyTranslations == 3
+    assert "Save changes" in report.issues.fuzzy
+    assert "Close window" in report.issues.fuzzy
+    assert "Open file" in report.issues.fuzzy

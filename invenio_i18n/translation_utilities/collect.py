@@ -5,181 +5,169 @@
 #
 # Invenio is free software; you can redistribute it and it
 # under the terms of the MIT License; see LICENSE file for more details.
-"""Collect PO translations, convert to JSON, and validate."""
+"""Collect PO translations and convert to JSON."""
 
 from __future__ import annotations
 
-from collections import defaultdict
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 import polib
+from polib import POFile
 
 from .convert import po_to_i18next_json
-from .discovery import (
-    find_package_path,
-    iter_po_files,
-    normalize_package_to_module_name,
-)
+from .discovery import find_package_path, find_po_files, package_name_to_module_name
 from .io import write_json_file
-from .validate import validate_po
 
 
-def scan_package_for_translations(package_name: str) -> dict[str, dict[str, str]]:
+@dataclass
+class Message:
+    """A single translation message."""
+
+    msgid: str
+    text: str
+
+
+@dataclass
+class TranslationBundle:
+    """A bundle of translation messages for a specific locale."""
+
+    locale: str
+    messages: list[Message] = field(default_factory=list)
+
+
+@dataclass
+class PackageTranslation:
+    """Translations for a package, organized by locale."""
+
+    package_name: str
+    translation_bundles: list[TranslationBundle] = field(default_factory=list)
+
+    def add(self, locale: str, po_file: POFile) -> None:
+        """Add translations from a PO file for a locale."""
+        bundle = self.get_translation_bundle(locale)
+        if bundle is None:
+            bundle = TranslationBundle(locale=locale)
+            self.translation_bundles.append(bundle)
+
+        translations = po_to_i18next_json(po_file, self.package_name)
+        for msgid, msgstr in translations.items():
+            bundle.messages.append(Message(msgid=msgid, text=msgstr))
+
+    def get_translation_bundle(self, locale: str) -> Optional[TranslationBundle]:
+        """Get translation bundle for a locale, or None if not found."""
+        for bundle in self.translation_bundles:
+            if bundle.locale == locale:
+                return bundle
+        return None
+
+
+def build_global_translation_bundle(
+    locale: str,
+    package_translations: list[PackageTranslation],
+) -> dict[str, dict[str, str]]:
+    """Build a global translation bundle for a locale from multiple packages.
+
+    Combines translations from all packages for a specific locale into a single
+    dictionary structure suitable for JSON output.
+
+    :param locale: Locale code (e.g., 'de', 'en')
+    :param package_translations: List of package translations to combine
+    :return: Dictionary with package names as keys and their translations as values
+    """
+    result: dict[str, dict[str, str]] = {}
+
+    for package_translation in package_translations:
+        bundle = package_translation.get_translation_bundle(locale)
+        if bundle:
+            translations: dict[str, str] = {
+                msg.msgid: msg.text for msg in bundle.messages
+            }
+            if translations:
+                result[package_translation.package_name] = translations
+
+    return result
+
+
+def get_package_translations(
+    package_name: str, locales: Optional[list[str]] = None
+) -> PackageTranslation:
     """Get all translations from one package.
 
     :param package_name: Name of the package like 'invenio-app-rdm'
-    :return: Translations organized by language like {"de": {...}, "fr": {...}}
+    :param locales: Optional list of locales to filter. If None, all locales are included.
+    :return: PackageTranslation with translations organized by locale
     """
     package_root = find_package_path(package_name)
-    translations_by_locale = {}
+    normalized_name = package_name_to_module_name(package_name)
+    package_translation = PackageTranslation(package_name=normalized_name)
 
     if not package_root:
-        return translations_by_locale
+        return package_translation
 
-    for locale, po_path in iter_po_files(package_root, package_name):
-        pofile = polib.pofile(str(po_path))
-        translations_by_locale[locale] = po_to_i18next_json(pofile, package_name)
+    for locale, po_path in find_po_files(package_root, package_name):
+        if locales is not None and locale not in locales:
+            continue
+        po_file = polib.pofile(str(po_path))
+        package_translation.add(locale, po_file)
 
-    return translations_by_locale
-
-
-def scan_package_for_validation(package_name: str) -> list[dict]:
-    """Check one package for translation problems.
-
-    :param package_name: Name of the package to check like 'invenio-app-rdm'
-    :return: List of reports showing what needs to be fixed
-    """
-    package_root = find_package_path(package_name)
-    validation_reports = []
-
-    if not package_root:
-        return validation_reports
-
-    for locale, po_path in iter_po_files(package_root, package_name):
-        pofile = polib.pofile(str(po_path))
-        validation_reports.append(validate_po(pofile, package_name, locale, po_path))
-
-    return validation_reports
+    return package_translation
 
 
-def collect_translations_to_json(
-    packages: list[str],
-    output_dir: Path,
-) -> dict:
-    """Collect translations from packages and save as JSON files.
+def collect_translations(
+    packages: list[str], locales: Optional[list[str]] = None
+) -> list[PackageTranslation]:
+    """Collect translations from packages.
 
     :param packages: List of package names like ['invenio-app-rdm', 'invenio-rdm-records']
-    :param output_dir: Where to save the translation files
-    :return: Summary with number of packages and languages processed
+    :param locales: Optional list of locales to filter. If None, all locales are included.
+    :return: List of PackageTranslation objects
     """
-    collected_translations = defaultdict(dict)
+    package_translations: list[PackageTranslation] = []
 
     for package_name in packages:
-        translations_by_locale = scan_package_for_translations(package_name)
+        package_translation = get_package_translations(package_name, locales)
+        if package_translation.translation_bundles:
+            package_translations.append(package_translation)
 
-        # Write per-package JSON under translations/<package>/translations.json
-        if translations_by_locale:
-            normalized_name = normalize_package_to_module_name(package_name)
-            package_output = output_dir / normalized_name / "translations.json"
-            write_json_file(package_output, translations_by_locale)
-
-            # Store for merged output
-            for locale, translations in translations_by_locale.items():
-                collected_translations[locale][normalized_name] = translations
-
-    # Write merged per-locale JSON (locale -> package -> keys)
-    write_json_file(output_dir / "translations.json", collected_translations)
-
-    return {
-        "packagesProcessed": len(packages),
-        "locales": sorted(list(collected_translations.keys())),
-    }
+    return package_translations
 
 
-def validate_translations_from_packages(
-    packages: list[str],
-    output_dir: Path,
-) -> dict:
-    """Check translations for problems and save a report.
+def write_translations_to_json(
+    collected_data: list[PackageTranslation],
+    output_file: Path,
+    locales: list[str],
+    write_package_wise_too: bool = False,
+) -> None:
+    """Write collected translations to JSON files.
 
-    :param packages: List of package names to check like ['invenio-app-rdm']
-    :param output_dir: Where to save the validation report
-    :return: Summary of all issues found
+    :param collected_data: Output from collect_translations()
+    :param output_file: Path to output file (for single locale) or directory
+    :param locales: List of locales to write
+    :param write_package_wise_too: If True, also write per-package JSON files
     """
-    all_validation_reports = []
-
-    for package_name in packages:
-        validation_reports = scan_package_for_validation(package_name)
-        all_validation_reports.extend(validation_reports)
-
-    summary = _calculate_validation_report(all_validation_reports, packages)
-
-    report_path = output_dir / "validation-report.json"
-    write_json_file(report_path, summary)
-
-    return summary
-
-
-def _calculate_validation_report(reports: list[dict], packages: list[str]) -> dict:
-    """Create a summary of all validation issues.
-
-    :param reports: Individual reports from each package
-    :param packages: Names of packages that were checked
-    :return: Combined summary with totals and details
-    """
-    package_breakdown: dict[str, dict] = {}
-    language_breakdown: dict[str, dict] = {}
-
-    for report in reports:
-        pkg = report["package"]
-        locale = report["locale"]
-        counts = report["counts"]
-
-        if pkg not in package_breakdown:
-            package_breakdown[pkg] = {
-                "locales": 0,
-                "totalIssues": 0,
-                "untranslatedStrings": 0,
-                "fuzzyTranslations": 0,
-                "problematicLanguages": [],
-            }
-        package_breakdown[pkg]["locales"] += 1
-        package_breakdown[pkg]["totalIssues"] += sum(counts.values())
-        package_breakdown[pkg]["untranslatedStrings"] += counts["untranslated"]
-        package_breakdown[pkg]["fuzzyTranslations"] += counts["fuzzyTranslations"]
-        if sum(counts.values()) > 0:
-            package_breakdown[pkg]["problematicLanguages"].append(
-                {"locale": locale, "issues": counts}
+    for locale in locales:
+        bundle_dict = build_global_translation_bundle(locale, collected_data)
+        if bundle_dict:
+            locale_file = (
+                output_file.parent / f"{locale}.json"
+                if output_file.is_file()
+                else output_file / f"{locale}.json"
             )
+            write_json_file(locale_file, bundle_dict)
 
-        if locale not in language_breakdown:
-            language_breakdown[locale] = {
-                "packages": 0,
-                "totalIssues": 0,
-                "untranslatedStrings": 0,
-                "fuzzyTranslations": 0,
-                "isComplete": True,
-            }
-        language_breakdown[locale]["packages"] += 1
-        language_breakdown[locale]["totalIssues"] += sum(counts.values())
-        language_breakdown[locale]["untranslatedStrings"] += counts["untranslated"]
-        language_breakdown[locale]["fuzzyTranslations"] += counts["fuzzyTranslations"]
-        if sum(counts.values()) > 0:
-            language_breakdown[locale]["isComplete"] = False
-
-    all_locales = {report["locale"] for report in reports}
-
-    summary_data = {
-        "totalPackages": len(packages),
-        "totalLocales": len(all_locales),
-        "totalIssues": sum(sum(r["counts"].values()) for r in reports),
-        "untranslatedStrings": sum(r["counts"]["untranslated"] for r in reports),
-        "fuzzyTranslations": sum(r["counts"]["fuzzyTranslations"] for r in reports),
-    }
-
-    return {
-        "summary": summary_data,
-        "packageBreakdown": package_breakdown,
-        "languageBreakdown": language_breakdown,
-        "reports": reports,
-    }
+    if write_package_wise_too:
+        output_dir = output_file.parent if output_file.is_file() else output_file
+        for package_translation in collected_data:
+            translations_by_locale: dict[str, dict[str, str]] = {}
+            for bundle in package_translation.translation_bundles:
+                translations_by_locale[bundle.locale] = {
+                    msg.msgid: msg.text for msg in bundle.messages
+                }
+            if translations_by_locale:
+                package_output = (
+                    output_dir / package_translation.package_name / "translations.json"
+                )
+                package_output.parent.mkdir(parents=True, exist_ok=True)
+                write_json_file(package_output, translations_by_locale)

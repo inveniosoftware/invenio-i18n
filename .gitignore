@@ -50,6 +50,7 @@ coverage.xml
 
 # Translations
 *.mo
+**/assets/semantic-ui/translations/**/translations.json
 
 # Django stuff:
 *.log
@@ -63,3 +64,4 @@ target/
 # Vim swapfiles
 .*.sw?
 /i18n-collected/
+/js-translations/

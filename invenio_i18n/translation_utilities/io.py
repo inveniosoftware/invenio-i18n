@@ -16,8 +16,7 @@ from pathlib import Path
 def write_json_file(path: Path, data: dict) -> None:
     """Save data to a JSON file.
 
-    :param path: Where to save the file
-    :param data: Dictionary to save as JSON
+    Create parent directory if it doesn't exist.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

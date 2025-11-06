@@ -36,7 +36,7 @@ def find_package_path(package_name: str) -> Path | None:
     return Path(list(spec.submodule_search_locations)[0])
 
 
-def iter_po_files(package_root: Path, package_name: str) -> Iterable[tuple[str, Path]]:
+def find_po_files(package_root: Path, package_name: str) -> Iterable[tuple[str, Path]]:
     """Find all translation files in a package.
 
     :param package_root: Folder where the package is located

@@ -17,11 +17,11 @@ from .discovery import normalize_package_to_module_name
 
 
 def validate_po(
-    pofile: polib.POFile, package_name: str, locale: str, po_path: Path
-) -> dict:
+    po_file: polib.POFile, package_name: str, locale: str, po_path: Path
+) -> dict[str, str | dict[str, list[str]] | dict[str, int]]:
     """Check one translation file for problems.
 
-    :param pofile: The translation file to check
+    :param po_file: The translation file to check
     :param package_name: Name of the package
     :param locale: Language code like 'de' or 'fr'
     :param po_path: Path to the file being checked
@@ -32,14 +32,13 @@ def validate_po(
     fuzzy: list[str] = []
     obsolete: list[str] = []
 
-    for entry in pofile:
-        match True:
-            case _ if entry.obsolete:
-                obsolete.append(entry.msgid)
-            case _ if "fuzzy" in entry.flags:
-                fuzzy.append(entry.msgid)
-            case _ if not entry.msgstr and not entry.msgstr_plural:
-                untranslated.append(entry.msgid)
+    for entry in po_file:
+        if entry.obsolete:
+            obsolete.append(entry.msgid)
+        elif "fuzzy" in entry.flags:
+            fuzzy.append(entry.msgid)
+        elif not entry.msgstr and not entry.msgstr_plural:
+            untranslated.append(entry.msgid)
 
     issues = {
         "untranslated": untranslated,

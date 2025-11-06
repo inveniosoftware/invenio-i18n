@@ -17,110 +17,162 @@ import polib
 from .convert import po_to_i18next_json
 from .discovery import (
     find_package_path,
-    iter_po_files,
+    find_po_files,
     normalize_package_to_module_name,
 )
 from .io import write_json_file
 from .validate import validate_po
 
 
-def scan_package_for_translations(package_name: str) -> dict[str, dict[str, str]]:
+def get_package_translations(package_name: str) -> dict[str, dict[str, str]]:
     """Get all translations from one package.
 
     :param package_name: Name of the package like 'invenio-app-rdm'
     :return: Translations organized by language like {"de": {...}, "fr": {...}}
     """
     package_root = find_package_path(package_name)
-    translations_by_locale = {}
+    translations_by_locale: dict[str, dict[str, str]] = {}
 
     if not package_root:
         return translations_by_locale
 
-    for locale, po_path in iter_po_files(package_root, package_name):
-        pofile = polib.pofile(str(po_path))
-        translations_by_locale[locale] = po_to_i18next_json(pofile, package_name)
+    for locale, po_path in find_po_files(package_root, package_name):
+        po_file = polib.pofile(str(po_path))
+        translations_by_locale[locale] = po_to_i18next_json(po_file, package_name)
 
     return translations_by_locale
 
 
-def scan_package_for_validation(package_name: str) -> list[dict]:
-    """Check one package for translation problems.
+def get_package_validation_reports(
+    package_name: str,
+) -> list[dict[str, str | dict[str, list[str]] | dict[str, int]]]:
+    """Get validation reports for one package.
 
     :param package_name: Name of the package to check like 'invenio-app-rdm'
     :return: List of reports showing what needs to be fixed
     """
     package_root = find_package_path(package_name)
-    validation_reports = []
+    validation_reports: list[dict[str, str | dict[str, list[str]] | dict[str, int]]] = (
+        []
+    )
 
     if not package_root:
         return validation_reports
 
-    for locale, po_path in iter_po_files(package_root, package_name):
-        pofile = polib.pofile(str(po_path))
-        validation_reports.append(validate_po(pofile, package_name, locale, po_path))
+    for locale, po_path in find_po_files(package_root, package_name):
+        po_file = polib.pofile(str(po_path))
+        validation_reports.append(validate_po(po_file, package_name, locale, po_path))
 
     return validation_reports
 
 
-def collect_translations_to_json(
+def collect_translations(
     packages: list[str],
-    output_dir: Path,
-) -> dict:
-    """Collect translations from packages and save as JSON files.
+) -> dict[
+    str,
+    dict[str, dict[str, dict[str, str]]]
+    | dict[str, dict[str, dict[str, str]]]
+    | int
+    | list[str],
+]:
+    """Collect translations from packages.
 
     :param packages: List of package names like ['invenio-app-rdm', 'invenio-rdm-records']
-    :param output_dir: Where to save the translation files
-    :return: Summary with number of packages and languages processed
+    :return: Dictionary with collected translations and summary info
     """
-    collected_translations = defaultdict(dict)
+    collected_translations: defaultdict[str, dict[str, dict[str, str]]] = defaultdict(
+        dict
+    )
+    translations_by_package: dict[str, dict[str, dict[str, str]]] = {}
 
     for package_name in packages:
-        translations_by_locale = scan_package_for_translations(package_name)
+        translations_by_locale = get_package_translations(package_name)
 
-        # Write per-package JSON under translations/<package>/translations.json
         if translations_by_locale:
             normalized_name = normalize_package_to_module_name(package_name)
-            package_output = output_dir / normalized_name / "translations.json"
-            write_json_file(package_output, translations_by_locale)
+            translations_by_package[normalized_name] = translations_by_locale
 
             # Store for merged output
             for locale, translations in translations_by_locale.items():
                 collected_translations[locale][normalized_name] = translations
 
-    # Write merged per-locale JSON (locale -> package -> keys)
-    write_json_file(output_dir / "translations.json", collected_translations)
-
     return {
+        "translations_by_package": translations_by_package,
+        "collected_translations": dict(collected_translations),
         "packagesProcessed": len(packages),
         "locales": sorted(list(collected_translations.keys())),
     }
 
 
-def validate_translations_from_packages(
-    packages: list[str],
+def write_translations_to_json(
+    collected_data: dict,
     output_dir: Path,
-) -> dict:
-    """Check translations for problems and save a report.
+) -> None:
+    """Write collected translations to JSON files.
+
+    :param collected_data: Output from collect_translations()
+    :param output_dir: Where to save the translation files
+    """
+    translations_by_package = collected_data["translations_by_package"]
+    collected_translations = collected_data["collected_translations"]
+
+    for normalized_name, translations_by_locale in translations_by_package.items():
+        package_output = output_dir / normalized_name / "translations.json"
+        write_json_file(package_output, translations_by_locale)
+
+    write_json_file(output_dir / "translations.json", collected_translations)
+
+
+def write_validation_report(
+    validation_summary: dict,
+    output_dir: Path,
+) -> None:
+    """Write validation report to JSON file.
+
+    :param validation_summary: Output from validate_translations()
+    :param output_dir: Where to save the validation report
+    """
+    report_path = output_dir / "validation-report.json"
+    write_json_file(report_path, validation_summary)
+
+
+def validate_translations(
+    packages: list[str],
+) -> dict[
+    str,
+    dict[str, int]
+    | dict[str, dict[str, int | list[dict[str, dict[str, int]]]]]
+    | dict[str, dict[str, int | bool]]
+    | list[dict[str, str | dict[str, list[str]] | dict[str, int]]],
+]:
+    """Validate translations from packages.
 
     :param packages: List of package names to check like ['invenio-app-rdm']
-    :param output_dir: Where to save the validation report
     :return: Summary of all issues found
     """
-    all_validation_reports = []
+    all_validation_reports: list[
+        dict[str, str | dict[str, list[str]] | dict[str, int]]
+    ] = []
 
     for package_name in packages:
-        validation_reports = scan_package_for_validation(package_name)
+        validation_reports = get_package_validation_reports(package_name)
         all_validation_reports.extend(validation_reports)
 
     summary = _calculate_validation_report(all_validation_reports, packages)
 
-    report_path = output_dir / "validation-report.json"
-    write_json_file(report_path, summary)
-
     return summary
 
 
-def _calculate_validation_report(reports: list[dict], packages: list[str]) -> dict:
+def _calculate_validation_report(
+    reports: list[dict[str, str | dict[str, list[str]] | dict[str, int]]],
+    packages: list[str],
+) -> dict[
+    str,
+    dict[str, int]
+    | dict[str, dict[str, int | list[dict[str, dict[str, int]]]]]
+    | dict[str, dict[str, int | bool]]
+    | list[dict[str, str | dict[str, list[str]] | dict[str, int]]],
+]:
     """Create a summary of all validation issues.
 
     :param reports: Individual reports from each package

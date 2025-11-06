@@ -14,17 +14,17 @@ import polib
 from .discovery import normalize_package_to_module_name
 
 
-def po_to_i18next_json(pofile: polib.POFile, package_name: str) -> dict[str, str]:
+def po_to_i18next_json(po_file: polib.POFile, package_name: str) -> dict[str, str]:
     """Convert PO file to JSON format.
 
-    :param pofile: The translation file to convert
+    :param po_file: The translation file to convert
     :param package_name: Name of the package
     :return: Dictionary with translations like {"Hello": "Hallo"}
     """
     result: dict[str, str] = {}
     normalized_package = normalize_package_to_module_name(package_name)
 
-    for entry in pofile:
+    for entry in po_file:
         if entry.obsolete:
             continue
 

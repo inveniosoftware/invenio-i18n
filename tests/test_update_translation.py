@@ -39,10 +39,10 @@ def temp_po_file():
 
 def test_update_translation_removes_fuzzy_flag(temp_po_file):
     """Test that update-translation command removes fuzzy flag."""
-    pofile = polib.pofile(temp_po_file)
+    po_file = polib.pofile(temp_po_file)
 
     upload_entry = None
-    for entry in pofile:
+    for entry in po_file:
         if entry.msgid == "New upload":
             upload_entry = entry
             break
@@ -53,12 +53,12 @@ def test_update_translation_removes_fuzzy_flag(temp_po_file):
 
     upload_entry.msgstr = "Neuer Eintrag"
     upload_entry.flags.remove("fuzzy")
-    pofile.save()
+    po_file.save()
 
     # Verify the changes
-    updated_pofile = polib.pofile(temp_po_file)
+    updated_po_file = polib.pofile(temp_po_file)
     updated_entry = None
-    for entry in updated_pofile:
+    for entry in updated_po_file:
         if entry.msgid == "New upload":
             updated_entry = entry
             break
@@ -68,28 +68,29 @@ def test_update_translation_removes_fuzzy_flag(temp_po_file):
     assert updated_entry.msgstr == "Neuer Eintrag"
 
 
-def test_update_translation_cli_integration():
+def test_update_translation_cli_integration(app):
     """Test the CLI command integration with invenio-i18n package."""
     runner = CliRunner()
 
-    # Test with invenio-i18n package itself - which should exist
-    result = runner.invoke(
-        i18n,
-        [
-            "update-translation",
-            "-p",
-            "invenio-i18n",
-            "-l",
-            "de",
-            "--msgid",
-            "NonExistentMessage",
-            "--msgstr",
-            "Test Translation",
-        ],
-    )
+    with app.app_context():
+        # Test with invenio-i18n package itself - which should exist
+        result = runner.invoke(
+            i18n,
+            [
+                "update-translation",
+                "-p",
+                "invenio-i18n",
+                "-l",
+                "de",
+                "--msgid",
+                "NonExistentMessage",
+                "--msgstr",
+                "Test Translation",
+            ],
+        )
 
-    if "Package invenio-i18n not found" in result.output:
-        pytest.skip("invenio-i18n not available in test environment")
+        if "Package invenio-i18n not found" in result.output:
+            pytest.skip("invenio-i18n not available in test environment")
 
-    assert result.exit_code == 0
-    assert "Translation 'NonExistentMessage' not found" in result.output
+        assert result.exit_code == 0
+        assert "Translation 'NonExistentMessage' not found" in result.output

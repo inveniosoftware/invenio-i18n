@@ -23,6 +23,22 @@ from flask.cli import with_appcontext
 from invenio_base.utils import entry_points
 from jinja2 import BaseLoader, Environment
 
+from .translation_utilities import (
+    collect_translations,
+)
+from .translation_utilities import (
+    validate_translations as validate_translations_from_packages,
+)
+from .translation_utilities import (
+    write_translations_to_json,
+    write_validation_report,
+)
+from .translation_utilities.discovery import (
+    find_package_path,
+    find_po_files,
+    normalize_package_to_module_name,
+)
+
 TRANSIFEX_CONFIG_TEMPLATE = """
 [main]
 host = https://www.transifex.com
@@ -123,13 +139,13 @@ def fetch_translations_from_transifex(token, temporary_cache, languages, js_reso
     subprocess.run(transifex_pull_cmd)
 
 
-def map_to_i18next_style(pofile):
+def map_to_i18next_style(po_file):
     """Map translations from po to i18next style.
 
     Plurals need a special format.
     """
     obj = {}
-    for entry in pofile:
+    for entry in po_file:
         obj[entry.msgid] = entry.msgstr
         if entry.msgstr_plural:
             obj[entry.msgid] = entry.msgstr_plural[0]
@@ -144,7 +160,6 @@ def i18n():
 
 
 @i18n.command()
-@with_appcontext
 @option(
     "-i",
     "--input-directory",
@@ -225,13 +240,152 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
             secho(msg, fg="green")
 
 
+def _convert_to_list(ctx, param, value):
+    """Convert Click's tuple from multiple=True to a list."""
+    if value is None:
+        return []
+    return list(value)
+
+
+@i18n.command()
+@option(
+    "--packages",
+    "-p",
+    multiple=True,
+    required=True,
+    callback=_convert_to_list,
+    help="Packages to include. Can be specified multiple times.",
+)
+def create_global_pot(packages: list[str]):
+    """Collect translations and write JSON files for testing.
+
+    Collects PO translations from packages and converts them to JSON format.
+    Output files are written to the i18n-collected/ directory.
+
+    Examples:
+        invenio i18n create-global-pot -p invenio-app-rdm -p invenio-rdm-records
+        invenio i18n create-global-pot -p invenio-communities -p invenio-requests
+    """
+    # Collect translations to JSON
+    output_dir = Path.cwd() / "i18n-collected"
+    output_dir.mkdir(exist_ok=True)
+    collected_data = collect_translations(packages)
+    write_translations_to_json(collected_data, output_dir)
+    secho(
+        f"Collected translations for {collected_data['packagesProcessed']} packages into {output_dir}",
+        fg="green",
+    )
+    secho(f"Wrote merged JSON: {output_dir / 'translations.json'}", fg="blue")
+    secho(
+        "Per‑package JSON under: i18n-collected/<package>/translations.json",
+        fg="blue",
+    )
+
+
+@i18n.command()
+@option(
+    "--packages",
+    "-p",
+    multiple=True,
+    required=True,
+    callback=_convert_to_list,
+    help="Packages to validate. Can be specified multiple times.",
+)
+def validate_translations(packages: list[str]):
+    """Validate translation quality.
+
+    Checks PO files for missing, fuzzy, and obsolete translations.
+    Generates a validation report in i18n-collected/validation-report.json.
+
+    Examples:
+        invenio i18n validate-translations -p invenio-app-rdm -p invenio-rdm-records
+        invenio i18n validate-translations -p invenio-communities -p invenio-requests
+    """
+    output_dir = Path.cwd() / "i18n-collected"
+    output_dir.mkdir(exist_ok=True)
+
+    try:
+        summary = validate_translations_from_packages(packages)
+        write_validation_report(summary, output_dir)
+        report_path = output_dir / "validation-report.json"
+        secho(f"Validation report written: {report_path}", fg="green")
+
+        summary_data = summary.get("summary", {})
+        secho(
+            f"Summary: packages={summary_data.get('totalPackages', 0)}, "
+            f"locales={summary_data.get('totalLocales', 0)}, "
+            f"issues={summary_data.get('totalIssues', 0)}",
+            fg="blue",
+        )
+    except Exception as e:
+        secho(f"Error during validation: {e}", fg="red")
+
+
+@i18n.command()
+@option("--package", "-p", required=True, help="Package name like 'invenio-app-rdm'")
+@option("--locale", "-l", required=True, help="Language code like 'de' or 'fr'")
+@option("--msgid", required=True, help="Original English text")
+@option("--msgstr", required=True, help="New translation")
+def update_translation(package, locale, msgid, msgstr):
+    r"""Update a translation and remove fuzzy flag.
+
+    Usage: finds the PO file for the specified package and locale, updates the
+    translation entry, and removes the fuzzy flag if present.
+
+    Example:
+        invenio i18n update-translation -p invenio-app-rdm -l de \\
+            --msgid "Upload file" --msgstr "Datei hochladen"
+    """
+    package_root = find_package_path(package)
+    if not package_root:
+        secho(f"Package {package} not found", fg="red")
+        return
+
+    po_path = None
+    for loc, path in find_po_files(package_root, package):
+        if loc == locale:
+            po_path = path
+            break
+
+    if not po_path:
+        secho(f"No PO file found for {package} in locale {locale}", fg="red")
+        return
+
+    try:
+        po_file = polib.pofile(str(po_path))
+        updated = False
+
+        for entry in po_file:
+            if entry.msgid == msgid:
+                entry.msgstr = msgstr
+                if "fuzzy" in entry.flags:
+                    entry.flags.remove("fuzzy")
+                updated = True
+                break
+
+        if updated:
+            po_file.save()
+            secho(
+                f"Updated translation for '{msgid}' in {package}/translations/{locale}",
+                fg="green",
+            )
+        else:
+            secho(
+                f"Translation '{msgid}' not found in {package}/translations/{locale}",
+                fg="yellow",
+            )
+
+    except Exception as e:
+        secho(f"Error updating translation: {e}", fg="red")
+
+
 @i18n.command()
 @option("--token", "-t", required=True, help="API token for your Transifex account.")
 @option(
     "--languages",
     "-l",
     required=True,
-    help="Languages you want to download translations for (one or multiple comma separated values, e.g. 'de,en,fr').",
+    help="Languages you want to download translations for. One or multiple comma separated values, e.g. 'de,en,fr'.",
 )
 @option(
     "--output-directory",
@@ -301,9 +455,9 @@ def fetch_from_transifex(token, languages, output_directory):
 
         for package in js_resources.values():
             po_path = f"{temporary_cache}/{package}/{language}/messages.po"
-            pofile = polib.pofile(po_path)
+            po_file = polib.pofile(po_path)
 
-            collected_translations[language][package] = map_to_i18next_style(pofile)
+            collected_translations[language][package] = map_to_i18next_style(po_file)
 
         output_file = Path(f"{output_directory}/{language}.json")
         with output_file.open("w", encoding="utf-8") as fp:

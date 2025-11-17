@@ -16,6 +16,7 @@ from json import JSONDecodeError, dump, load
 from pathlib import Path
 
 import polib
+from click import File
 from click import Path as ClickPath
 from click import group, option, secho
 from flask import current_app
@@ -28,7 +29,7 @@ TRANSIFEX_CONFIG_TEMPLATE = """
 host = https://www.transifex.com
 
 [o:inveniosoftware:p:invenio:r:{{- resource }}]
-file_filter = {{- temporary_cache }}/{{- package }}/<lang>/messages.po
+file_filter = {{- output_directory }}/{{- package }}/<lang>/messages.po
 source_file = {{- package }}/assets/semantic-ui/translations/{{- package }}/translations.pot
 source_lang = en
 type = PO
@@ -86,7 +87,7 @@ def calculate_target_packages(
     return package_translations_paths
 
 
-def create_transifex_configuration(temporary_cache, js_resources):
+def create_transifex_configuration(output_directory, js_resources):
     """Create a transifex fetch configuration.
 
     This configuration is built dynamically because the targeted packages are
@@ -94,28 +95,27 @@ def create_transifex_configuration(temporary_cache, js_resources):
     """
     environment = Environment(loader=BaseLoader())
     config_template = environment.from_string(TRANSIFEX_CONFIG_TEMPLATE)
+    transifex_config = Path(output_directory / "collected_config")
 
-    with Path(temporary_cache / "collected_config").open("w") as fp:
+    with transifex_config.open("w") as fp:
         for resource, package in js_resources.items():
             config = config_template.render(
-                temporary_cache=temporary_cache,
+                output_directory=output_directory,
                 resource=resource,
                 package=package,
             )
             fp.write(config)
             fp.write("\n\n")
 
+    return transifex_config
 
-def fetch_translations_from_transifex(token, temporary_cache, languages, js_resources):
+
+def fetch_translations_from_transifex(token, transifex_config, languages):
     """Fetch translations from transifex."""
-    temporary_cache.mkdir(parents=True, exist_ok=True)
-
-    create_transifex_configuration(temporary_cache, js_resources)
-
     transifex_pull_cmd = [
         "tx",
         f"--token={token}",
-        f"--config={temporary_cache}/collected_config",
+        f"--config={transifex_config}",
         "pull",
         f"--languages={languages}",
         "--force",
@@ -137,13 +137,13 @@ def map_to_i18next_style(pofile):
     return obj
 
 
-@group(chain=True)
+@group()
 @with_appcontext
 def i18n():
     """i18n commands."""
 
 
-@i18n.command()
+@i18n.command(no_args_is_help=True)
 @with_appcontext
 @option(
     "-i",
@@ -225,24 +225,31 @@ def distribute_js_translations(input_directory: Path, entrypoint_group: str):
             secho(msg, fg="green")
 
 
-@i18n.command()
+@i18n.command(no_args_is_help=True)
 @option("--token", "-t", required=True, help="API token for your Transifex account.")
 @option(
-    "--languages",
     "-l",
+    "--languages",
     required=True,
     help="Languages you want to download translations for (one or multiple comma separated values, e.g. 'de,en,fr').",
 )
 @option(
-    "--output-directory",
     "-o",
+    "--output-directory",
     required=True,
     type=ClickPath(
         exists=True, file_okay=False, dir_okay=True, writable=True, path_type=Path
     ),
     help="Directory to which collected translations in JSON format should be written.",
 )
-def fetch_from_transifex(token, languages, output_directory):
+@option(
+    "-c",
+    "--transifex-config",
+    type=File("r"),
+    help="Transifex configuration file",
+    default=None,
+)
+def fetch_from_transifex(token, languages, output_directory, transifex_config):
     """Retrieve package translations from Transifex and unify them to a single file using i18next format.
 
     Usage
@@ -290,21 +297,24 @@ def fetch_from_transifex(token, languages, output_directory):
     """
     js_resources = current_app.config["I18N_TRANSIFEX_JS_RESOURCES_MAP"]
 
-    temporary_cache = output_directory / "tmp"
+    if not transifex_config:
+        transifex_config = create_transifex_configuration(
+            output_directory, js_resources
+        )
 
-    fetch_translations_from_transifex(token, temporary_cache, languages, js_resources)
+    fetch_translations_from_transifex(token, transifex_config, languages)
 
     collected_translations = {}
 
     for language in languages.split(","):
+        output_file = Path(f"{output_directory}/{language}.json")
         collected_translations[language] = {}
 
         for package in js_resources.values():
-            po_path = f"{temporary_cache}/{package}/{language}/messages.po"
+            po_path = f"{output_directory}/{package}/{language}/messages.po"
             pofile = polib.pofile(po_path)
 
             collected_translations[language][package] = map_to_i18next_style(pofile)
 
-        output_file = Path(f"{output_directory}/{language}.json")
         with output_file.open("w", encoding="utf-8") as fp:
             dump(collected_translations[language], fp, indent=4, ensure_ascii=False)

@@ -10,6 +10,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """CLI for Invenio internationalization module."""
+
 from json import dump
 from pathlib import Path
 from typing import Optional

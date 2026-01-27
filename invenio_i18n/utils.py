@@ -11,7 +11,6 @@
 
 """I18N utils."""
 
-
 from json import JSONDecodeError, dump, load
 from pathlib import Path
 from subprocess import run

@@ -1,7 +1,7 @@
 ..
     This file is part of Invenio.
     Copyright (C) 2015-2018 CERN.
-    Copyright (C) 2024-2025 Graz University of Technology.
+    Copyright (C) 2024-2026 Graz University of Technology.
     Copyright (C) 2025 KTH Royal Institute of Technology.
 
     Invenio is free software; you can redistribute it and/or modify it
@@ -9,6 +9,14 @@
 
 Changes
 =======
+
+Version v3.5.0 (released 2026-01-27)
+
+- chore(black): update formatting to >= 26.0
+- feat(i18n): improve type hints, add fuzzy tests and module docs
+- feat: add cli command to update fuzzy trns and refactor
+- feat(i18n): add translation collection/validation service and update CLI
+- feat: Update README.rst
 
 Version v3.4.3 (released 2025-10-21)
 

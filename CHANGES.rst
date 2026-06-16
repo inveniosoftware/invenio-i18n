@@ -7,6 +7,11 @@
 Changes
 =======
 
+Version v4.0.0 (released 2026-06-16)
+
+- chore(git-blame): ignore SPDX license header commit
+- chore(licenses): update license headers to use SPDX
+
 Version v3.5.0 (released 2026-01-27)
 
 - chore(black): update formatting to >= 26.0

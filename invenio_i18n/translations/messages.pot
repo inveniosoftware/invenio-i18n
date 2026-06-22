@@ -1,27 +1,27 @@
 # Translations template for invenio-i18n.
-# Copyright (C) 2024 CERN
+# Copyright (C) 2026 CERN
 # This file is distributed under the same license as the invenio-i18n
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-i18n 2.1.2\n"
+"Project-Id-Version: invenio-i18n 3.5.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2024-08-06 08:48+0000\n"
+"POT-Creation-Date: 2026-06-22 20:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.15.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:17
-#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:30
-#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:41
-#: invenio_i18n/templates/semantic-ui/invenio_i18n/macros/language_selector.html:16
+#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:13
+#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:26
+#: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:37
+#: invenio_i18n/templates/semantic-ui/invenio_i18n/macros/language_selector.html:12
 msgid "Language:"
 msgstr ""
 

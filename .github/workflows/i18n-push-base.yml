@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023-2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-i18n is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -13,6 +14,9 @@ on:
         required: true
         type: boolean
         default: true
+      backend-package-path:
+        required: false
+        type: string
       frontend-package-path:
         required: false
         type: string
@@ -45,9 +49,15 @@ jobs:
 
       # extract backend messages
       - name: Extract backend messages
-        if: ${{ inputs.extract-backend }}
+        if: ${{ inputs.extract-backend && inputs.backend-package-path == '' }}
         run: |
           python setup.py extract_messages
+
+      # case for packages using pyproject.toml instead of setup.py
+      - name: Extract backend messages from package path
+        if: ${{ inputs.extract-backend && inputs.backend-package-path != '' }}
+        run: |
+          pybabel extract -F pyproject.toml -o ${{ inputs.backend-package-path }}/translations/messages.pot ${{ inputs.backend-package-path }}
 
       # setup node
       - name: Setup node

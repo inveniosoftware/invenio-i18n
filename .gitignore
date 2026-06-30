@@ -65,3 +65,4 @@ target/
 .*.sw?
 /i18n-collected/
 /js-translations/
+uv.lock

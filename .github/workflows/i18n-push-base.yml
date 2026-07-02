@@ -28,15 +28,15 @@ jobs:
   i18n-extract:
     runs-on: ubuntu-24.04
     env:
-      PYTHON-VERSION: 3.12
-      NODE-VERSION: 22
+      PYTHON-VERSION: 3.14
+      NODE-VERSION: 24
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # setup python
       - name: Set up Python ${{ env.PYTHON-VERSION }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON-VERSION }}
 
@@ -62,7 +62,7 @@ jobs:
       # setup node
       - name: Setup node
         if: ${{ inputs.frontend-package-path != '' }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE-VERSION }}
 
@@ -83,7 +83,7 @@ jobs:
           args: push -s
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "i18n: push translations"
           title: "i18n: push translations"

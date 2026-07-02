@@ -2,10 +2,17 @@
     SPDX-FileCopyrightText: 2015-2018 CERN.
     SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
     SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+    SPDX-FileCopyrightText: 2026 TU Wien.
     SPDX-License-Identifier: MIT
 
 Changes
 =======
+
+Version v4.0.1 (released 2026-07-02)
+
+- chore(setup): migrate build backend from setuptools to hatchling
+- fix(ci): bump node, python, action versions (#173)
+- fix(i18n): support pyproject packages
 
 Version v4.0.0 (released 2026-06-16)
 

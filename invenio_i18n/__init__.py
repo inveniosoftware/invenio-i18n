@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2015-2018 CERN.
 # SPDX-FileCopyrightText: 2023-2026 Graz University of Technology.
 # SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2026 TU Wien.
 # SPDX-License-Identifier: MIT
 
 r"""Invenio internationalization module.
@@ -310,7 +311,7 @@ from flask_babel import (
 
 from .ext import InvenioI18N
 
-__version__ = "4.0.0"
+__version__ = "4.0.1"
 
 _ = gettext
 

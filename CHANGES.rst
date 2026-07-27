@@ -8,6 +8,13 @@
 Changes
 =======
 
+
+
+Version v3.6.0 (released 2026-08-07)
+
+- fix(translations): remove da_DK
+- fix(ci): run tests on maint-*
+
 Version v3.5.3 (released 2026-08-05)
 
 - fix(i18n): support pyproject packages

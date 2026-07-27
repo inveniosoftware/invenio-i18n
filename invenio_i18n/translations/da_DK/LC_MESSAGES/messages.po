@@ -4,9 +4,6 @@
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 # 
-# Translators:
-# Lars Holm Nielsen <lars.holm.nielsen@cern.ch>, 2017
-# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -14,13 +11,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2026-06-22 20:27+0000\n"
 "PO-Revision-Date: 2016-08-25 09:16+0000\n"
-"Last-Translator: Lars Holm Nielsen <lars.holm.nielsen@cern.ch>, 2017\n"
-"Language-Team: Danish (https://app.transifex.com/inveniosoftware/teams/23537/da/)\n"
+"Language-Team: Danish (Denmark) (https://app.transifex.com/inveniosoftware/teams/23537/da_DK/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
-"Language: da\n"
+"Language: da_DK\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:13
@@ -28,4 +24,4 @@ msgstr ""
 #: invenio_i18n/templates/invenio_i18n/macros/language_selector.html:37
 #: invenio_i18n/templates/semantic-ui/invenio_i18n/macros/language_selector.html:12
 msgid "Language:"
-msgstr "Sprog:"
+msgstr ""

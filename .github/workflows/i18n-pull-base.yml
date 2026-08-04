@@ -25,7 +25,7 @@ jobs:
         uses: transifex/cli-action@v2
         with:
           token: ${{ secrets.TRANSIFEX_TOKEN }}
-          args: pull -a -f
+          args: pull -a -f --minimum-perc=75
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8

@@ -2,10 +2,16 @@
     SPDX-FileCopyrightText: 2015-2018 CERN.
     SPDX-FileCopyrightText: 2024-2026 Graz University of Technology.
     SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+    SPDX-FileCopyrightText: 2026 TU Wien.
     SPDX-License-Identifier: MIT
 
 Changes
 =======
+
+Version v3.5.2 (released 2026-08-04)
+
+- fix(i18n): include ``*.mo`` files in distribution
+- i18n: pulled translations
 
 Version v3.5.1 (released 2026-07-21)
 

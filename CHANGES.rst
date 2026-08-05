@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v3.5.3 (released 2026-08-05)
+
+- fix(i18n): support pyproject packages
+
 Version v3.5.2 (released 2026-08-04)
 
 - fix(i18n): include ``*.mo`` files in distribution

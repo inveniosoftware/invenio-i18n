@@ -311,7 +311,7 @@ from flask_babel import (
 
 from .ext import InvenioI18N
 
-__version__ = "3.5.2"
+__version__ = "3.5.3"
 
 _ = gettext
 

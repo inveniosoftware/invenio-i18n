@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2015-2022 CERN.
+# SPDX-FileCopyrightText: 2015-2026 CERN.
 # SPDX-FileCopyrightText: 2016 TIND.
 # SPDX-FileCopyrightText: 2022-2025 Graz University of Technology.
 # SPDX-FileCopyrightText: 2025 TUBITAK ULAKBIM.
@@ -31,7 +31,6 @@ dependencies = [
   "flask-babel>=3.0.0",
   "invenio-base>=2.3.0,<3.0.0",
   "polib>=1.2.0",
-  "pytz<2024.2",
   "rich-click>=1.7.0",
 ]
 dynamic = ["version"]

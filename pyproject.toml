@@ -4,6 +4,7 @@
 # SPDX-FileCopyrightText: 2025 TUBITAK ULAKBIM.
 # SPDX-FileCopyrightText: 2025 University of Münster.
 # SPDX-FileCopyrightText: 2026 TU Wien.
+# SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
 [project]
@@ -74,7 +75,6 @@ build-backend = "hatchling.build"
 [tool.babel]
 [tool.babel.compile_catalog]
 directory = "invenio_i18n/translations/"
-use_fuzzy = true
 
 [tool.babel.extract_messages]
 copyright_holder = "CERN"

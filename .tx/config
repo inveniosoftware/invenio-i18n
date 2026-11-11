@@ -1,17 +1,32 @@
-# -*- coding: utf-8 -*-
 #
-# This file is part of Invenio.
-# Copyright (C) 2015-2018 CERN.
-# Copyright (C) 2023-2023 Graz University of Technology.
+# SPDX-FileCopyrightText: 2015-2018 CERN.
+# SPDX-FileCopyrightText: 2023 Graz University of Technology.
+# SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
+# SPDX-License-Identifier: MIT
 #
-# Invenio is free software; you can redistribute it and/or modify it
-# under the terms of the MIT License; see LICENSE file for more details.
+
+# Workflow: backend extract, pull and compile
+# Requires an authenticated Transifex CLI.
+# 1) $ cd "$(git rev-parse --show-toplevel)"
+# 2) $ pybabel extract -F pyproject.toml -o invenio_i18n/translations/messages.pot invenio_i18n
+# 3) $ tx pull -a
+# 4) $ pybabel compile -d invenio_i18n/translations
+
+# Optional workflow: push extracted sources
+# 1) $ cd "$(git rev-parse --show-toplevel)"
+# 2) $ tx push -s
+
+# Optional workflow: new backend language
+# 1) $ cd "$(git rev-parse --show-toplevel)"
+# 2) $ pybabel init -i invenio_i18n/translations/messages.pot -d invenio_i18n/translations -l <lang>
+# 3) Translate the PO file, then compile:
+#    $ pybabel compile -d invenio_i18n/translations -l <lang>
 
 [main]
-host = https://www.transifex.com
+host = https://app.transifex.com
 
 [o:inveniosoftware:p:invenio:r:invenio-i18n-messages]
 file_filter = invenio_i18n/translations/<lang>/LC_MESSAGES/messages.po
 source_file = invenio_i18n/translations/messages.pot
 source_lang = en
-type        = PO
+type = PO

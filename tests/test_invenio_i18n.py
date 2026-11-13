@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2015-2018 CERN.
+# SPDX-FileCopyrightText: 2015-2026 CERN.
 # SPDX-FileCopyrightText: 2016 TIND.
 # SPDX-License-Identifier: MIT
 
@@ -6,6 +6,7 @@
 
 from datetime import datetime
 from os.path import dirname, join
+from zoneinfo import ZoneInfo
 
 from babel import Locale
 from flask import render_template_string
@@ -18,7 +19,6 @@ from flask_babel import (
     lazy_gettext,
 )
 from invenio_assets import InvenioAssets
-from pytz import timezone
 
 from invenio_i18n.ext import InvenioI18N, current_i18n
 
@@ -197,7 +197,7 @@ def test_jinja_templates(app):
     assert app.jinja_env.filters["tousertimezone"]
 
     dt = datetime(1987, 3, 5, 17, 12)
-    dt_tz = datetime(1987, 3, 5, 17, 12, tzinfo=timezone("CET"))
+    dt_tz = datetime(1987, 3, 5, 17, 12, tzinfo=ZoneInfo("CET"))
 
     with app.test_request_context():
         assert (

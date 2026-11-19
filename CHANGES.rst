@@ -8,6 +8,23 @@
 Changes
 =======
 
+Version v4.0.3 (released 2026-11-19)
+
+- chore(deps): remove pytz upper-pin
+    * The pytz library was upper-pinned
+      due to a wrong usage in tests which
+      has been removed.
+    * flask-babel depends on pytz so the
+      library is still included but is
+      upgraded to the latest available version.
+
+- chore(tests): replace pytz.timezone usage by zoneinfo.ZoneInfo
+    * The pytz library is deprecated and the Python standard
+      library can be used to get a timezone by name.
+    * Add tzdata to test dependencies to fix CET timezone.
+
+- fix(ci): correct CHANGES.rst formatting
+
 Version v4.0.2 (released 2026-08-04)
 
 - fix(i18n): include .mo files in distribution

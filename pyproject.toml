@@ -10,7 +10,7 @@
 name = "invenio-i18n"
 description = "Invenio internationalization (I18N) module."
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = "MIT"
 authors = [
   { name = "CERN", email = "info@inveniosoftware.org" },
